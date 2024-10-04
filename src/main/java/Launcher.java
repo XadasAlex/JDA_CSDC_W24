@@ -49,7 +49,7 @@ public class Launcher implements EventListener {
         String token = "n.d";
 
         try {
-            Path path = Paths.get("C:\\Users\\Alex Gebhart\\IdeaProjects\\JDA_CSDC_W24\\src\\main\\resources\\TOKEN.txt");
+            Path path = Paths.get("src/main/resources/TOKEN.txt");
             token = Files.readAllLines(path).getFirst();
         } catch (IOException e) {
             throw new RuntimeException(e);
