@@ -16,4 +16,8 @@ public class ContentSender {
         MessageChannel channel = e.getChannel();
         channel.sendMessage("Pong!").queue();
     }
+
+    public static void vote(MessageReceivedEvent e, List<String> content) {
+        System.out.println(content);
+    }
 }

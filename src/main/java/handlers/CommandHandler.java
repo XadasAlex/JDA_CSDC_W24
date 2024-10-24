@@ -17,6 +17,12 @@ public class CommandHandler {
             case "join":
                 Channel c = ChannelActions.getMembersChannel(event.getMember());
                 ChannelActions.joinChannel(event.getGuild().getAudioManager(), (AudioChannel) c);
+                break;
+            case "leave":
+                ChannelActions.leaveChannel(event.getGuild().getAudioManager());
+                break;
+            case "vote":
+                ContentSender.vote(event, commandList);
 
         }
     }

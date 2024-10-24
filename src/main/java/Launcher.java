@@ -2,11 +2,9 @@ import bot.utils.ErrorHandler;
 import bot.utils.MessageAnalyzer;
 import handlers.CommandHandler;
 import listeners.MessageListener;
+import listeners.ReadyListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.events.GenericEvent;
-import net.dv8tion.jda.api.events.session.ReadyEvent;
-import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import java.io.IOException;
@@ -16,7 +14,7 @@ import java.nio.file.Paths;
 import java.util.EnumSet;
 
 
-public class Launcher implements EventListener {
+public class Launcher {
 
 
     public static void main(String[] args) throws InterruptedException  {
@@ -32,9 +30,11 @@ public class Launcher implements EventListener {
                 .createDefault(TOKEN)
                 .enableIntents(INTENTS)
                 .addEventListeners(new MessageListener(ma, ch, eh))
+                .addEventListeners(new ReadyListener())
                 .build();
 
         jda.awaitReady();
+
     }
 
     public static EnumSet<GatewayIntent> createIntents() {
@@ -57,12 +57,4 @@ public class Launcher implements EventListener {
 
         return token;
     }
-
-    @Override
-    public void onEvent(GenericEvent event)
-    {
-        if (event instanceof ReadyEvent)
-            System.out.println("API is ready!");
-    }
-
 }

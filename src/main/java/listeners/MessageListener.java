@@ -36,9 +36,10 @@ public class MessageListener extends ListenerAdapter {
         }
 
         String content = event.getMessage().getContentDisplay();
+        String rawContent = event.getMessage().getContentRaw();
 
         if (MA.isCommand(content)) {
-            List<String> commandList = MA.getContentList(content);
+            List<String> commandList = MA.getContentList(content); // !play music https://www.youtbe.com
             CommandHandler.forwardCommand(event, commandList);
         }
     }
