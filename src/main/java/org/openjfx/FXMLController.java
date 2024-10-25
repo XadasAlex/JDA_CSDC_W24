@@ -1,4 +1,4 @@
-package gui.javafx;
+package org.openjfx;
 
 import java.net.URL;
 import java.util.ResourceBundle;

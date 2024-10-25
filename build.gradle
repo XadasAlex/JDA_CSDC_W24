@@ -1,8 +1,7 @@
 plugins {
     id 'application'
-    id 'java'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
 }
-
 
 repositories {
     mavenCentral()
@@ -11,16 +10,14 @@ repositories {
 dependencies {
     implementation 'net.dv8tion:JDA:5.1.0'
     implementation "ch.qos.logback:logback-classic:1.5.6"
-
-    def javafxVersion = '21.0.2'
-    def osName = 'win'
-
-    implementation "org.openjfx:javafx-controls:${javafxVersion}:${osName}"
-    implementation "org.openjfx:javafx-fxml:${javafxVersion}:${osName}"
-    implementation "org.openjfx:javafx-base:${javafxVersion}:${osName}"
-    implementation "org.openjfx:javafx-graphics:${javafxVersion}:${osName}"
 }
 
+javafx {
+    version = "19"
+    modules = [ 'javafx.controls', 'javafx.fxml']
+}
+
+mainClassName = 'org.openjfx.MyApp'
 
 
 

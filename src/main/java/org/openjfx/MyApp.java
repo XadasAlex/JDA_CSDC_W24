@@ -1,4 +1,4 @@
-package gui.javafx;
+package org.openjfx;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
