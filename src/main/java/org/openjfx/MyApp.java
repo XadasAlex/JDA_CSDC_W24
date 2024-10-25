@@ -5,10 +5,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import launcher.Launcher;
+import net.dv8tion.jda.api.JDA;
 
 
 public class MyApp extends Application {
-
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("scene.fxml"));
@@ -18,6 +19,7 @@ public class MyApp extends Application {
 
         stage.setTitle("JavaFX and Gradle");
         stage.setScene(scene);
+
         stage.show();
     }
 

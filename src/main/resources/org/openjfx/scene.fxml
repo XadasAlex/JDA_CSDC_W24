@@ -3,9 +3,15 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.StackPane?>
 
-
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.FXMLController">
+<?import javafx.scene.image.ImageView?>
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+           prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="org.openjfx.FXMLController">
     <children>
-        <Label fx:id="label" text="Label" />
+        <Label text="JDA DiscordBot Dashboard" StackPane.alignment="TOP_CENTER"/>
+        <Label fx:id="sessionL" text="Logged in as: "/>
+        <Label fx:id="statusL" text="Status: " StackPane.alignment="CENTER_LEFT"/>
+        <ImageView fx:id="profileIV" StackPane.alignment="CENTER_RIGHT"/>
+        <Label fx:id="serverListL" text="Servers joined:" StackPane.alignment="BOTTOM_LEFT"/>
     </children>
 </StackPane>
