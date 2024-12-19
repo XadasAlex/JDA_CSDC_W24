@@ -102,16 +102,7 @@ public class Bot {
     }
 
     public static String getAuthToken() {
-        String token = "n.d";
-
-        try {
-            Path path = Paths.get("src/main/resources/TOKEN.txt");
-            token = Files.readAllLines(path).getFirst();
-        } catch (IOException ඞ) {
-            throw new RuntimeException(ඞ);
-        }
-
-        return token;
+        return System.getenv("DISCORD_BOT_TOKEN");
     }
 
     public JDA getJda() {
