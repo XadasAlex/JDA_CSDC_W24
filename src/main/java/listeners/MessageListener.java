@@ -1,46 +1,87 @@
 package listeners;
 
-import bot.utils.ErrorHandler;
-import bot.utils.MessageAnalyzer;
-import handlers.CommandHandler;
-import net.dv8tion.jda.api.entities.channel.ChannelType;
+import utils.MessageSender;
+import utils.GuildCommands;
+import utils.MessageCommands;
+import utils.VoiceCommands;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.commands.Command;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MessageListener extends ListenerAdapter {
-    private final MessageAnalyzer MA;
-    private final CommandHandler CH;
-    private final ErrorHandler EH;
+    private final static String PREFIX = "-";
 
-    public MessageListener(MessageAnalyzer ma, CommandHandler ch, ErrorHandler eh) {
-        this.MA = ma;
-        this.CH = ch;
-        this.EH = eh;
+    private static boolean isCommand(MessageReceivedEvent event) {
+        return event.getMessage().getContentRaw().startsWith(PREFIX);
+    }
+
+    private static boolean isCommand(String content) {
+        return content.startsWith(PREFIX);
+    }
+
+    public static void handleMessage(MessageReceivedEvent event) {
+
+        if (!isCommand(event)) return;
+        String message = event.getMessage().getContentRaw();
+        message = message.replaceFirst(PREFIX, "");
+        List<String> command = Arrays.asList(message.split("\s"));
+
+
+        switch (command.getFirst()) {
+            case "embed":
+                MessageSender.sendEmbed(event);
+            case "ping":
+                MessageCommands.ping(event);
+                break;
+            case "kick":
+                GuildCommands.kick(event);
+                break;
+            case "gpt":
+                MessageCommands.gptResponse(event, command);
+                break;
+            case "join":
+                VoiceCommands.joinMembersChannel(event);
+                break;
+            case "leave":
+                VoiceCommands.leaveCurrentChannel(event);
+                break;
+            case "play":
+                //VoiceCommands.play(event);
+                break;
+            case "help":
+                MessageSender.sendHelpList(event);
+                break;
+            case "test":
+                MessageSender.sendEmbedTest(event);
+                break;
+        }
+
+        String combined2Command = command.stream().limit(2).collect(Collectors.joining(" "));
+        System.out.println(combined2Command);
+
+        switch (combined2Command) {
+            case "create vc":
+                break;
+            case "create tc":
+                break;
+        }
+
+
     }
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        if (event.isFromType(ChannelType.PRIVATE))
-        {
-            System.out.printf("[PM] %s: %s\n", event.getAuthor().getName(),
-                    event.getMessage().getContentDisplay());
-        }
-        else
-        {
-            System.out.printf("[%s][%s] %s: %s\n", event.getGuild().getName(),
-                    event.getChannel().getName(), event.getMember().getEffectiveName(),
-                    event.getMessage().getContentDisplay());
-        }
+        System.out.println(event.getMessage().getContentRaw());
 
-        String content = event.getMessage().getContentDisplay();
-        String rawContent = event.getMessage().getContentRaw();
+        if (event.getAuthor().isBot()) return;
 
-        if (MA.isCommand(content)) {
-            List<String> commandList = MA.getContentList(content); // !play music https://www.youtbe.com
-            CommandHandler.forwardCommand(event, commandList);
+        if (event.isFromGuild()) {
+            handleMessage(event);
         }
     }
+
+
 }

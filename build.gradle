@@ -1,5 +1,5 @@
 plugins {
-    id 'application'
+    id 'java'
     id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
@@ -8,16 +8,24 @@ repositories {
 }
 
 dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
     implementation 'net.dv8tion:JDA:5.1.0'
-    implementation "ch.qos.logback:logback-classic:1.5.6"
+    implementation 'ch.qos.logback:logback-classic:1.5.6'
+    implementation 'com.google.code.gson:gson:2.8.8'
+    // implementation 'dev.arbjerg:lavaplayer:2.2.2'
+    // implementation 'dev.arbjerg:lavalink-client:3.1.0'
+    // implementation 'com.github.topi314.lavasearch:lavasearch:1.0.0'
 }
 
 javafx {
     version = "19"
-    modules = [ 'javafx.controls', 'javafx.fxml']
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.graphics' ]
 }
 
-mainClassName = 'org.openjfx.MyApp'
 
+test {
+    useJUnitPlatform()
+}
 
 

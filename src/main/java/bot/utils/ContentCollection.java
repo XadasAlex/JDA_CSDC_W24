@@ -16,9 +16,5 @@ public class ContentCollection {
         } catch (IndexOutOfBoundsException e) {
             e.printStackTrace();
         }
-
-
-
-
     }
 }

@@ -2,6 +2,7 @@ package handlers;
 
 import bot.utils.ContentSender;
 import bot.utils.ChannelActions;
+import bot.utils.MessageAnalyzer;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -23,6 +24,8 @@ public class CommandHandler {
                 break;
             case "vote":
                 ContentSender.vote(event, commandList);
+                break;
+            case "kick":
 
         }
     }

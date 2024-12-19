@@ -5,8 +5,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import launcher.Launcher;
-import net.dv8tion.jda.api.JDA;
 
 
 public class MyApp extends Application {
@@ -21,10 +19,6 @@ public class MyApp extends Application {
         stage.setScene(scene);
 
         stage.show();
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 
 }
