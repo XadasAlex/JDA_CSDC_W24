@@ -1,6 +1,7 @@
 package commands.chat;
 
 import commands.ICommand;
+import net.dv8tion.jda.api.Permission;
 import utils.MessageSender;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -10,6 +11,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class CmdRollDice implements ICommand {
     @Override
@@ -28,6 +30,16 @@ public class CmdRollDice implements ICommand {
                 new OptionData(OptionType.INTEGER, "lower-bound", "defines the lowest number rollable", false),
                 new OptionData(OptionType.INTEGER, "upper-bound", "defines the highest number rollable", false)
         );
+    }
+
+    @Override
+    public Set<Permission> getRequiredPermissions() {
+        return Set.of();
+    }
+
+    @Override
+    public boolean hasPermission(SlashCommandInteractionEvent event) {
+        return false;
     }
 
     private static int random(int lower, int upper) {
@@ -74,5 +86,10 @@ public class CmdRollDice implements ICommand {
 
         event.replyEmbeds(randomEmbed.build()).queue();
 
+    }
+
+    @Override
+    public void executeWithPermission(SlashCommandInteractionEvent event) {
+        ICommand.super.executeWithPermission(event);
     }
 }

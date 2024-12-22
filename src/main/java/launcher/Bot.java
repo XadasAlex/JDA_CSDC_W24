@@ -2,38 +2,31 @@ package launcher;
 
 import api.ChatGPT;
 
-import javafx.application.Platform;
+import com.google.gson.Gson;
 import listeners.CommandManagerListener;
 import listeners.ReactionListener;
 
 import commands.chat.*;
-import commands.guild.Kick;
+import commands.guild.CmdKick;
 import commands.testing.ButtonTest;
 import commands.testing.DropDownTest;
 import commands.testing.EntityDDTest;
 
-import listeners.ReadyListener;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
-import org.openjfx.MyApp;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import java.awt.*;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
 public class Bot {
-    // JDA init variables
-    private final String TOKEN;
-    private final EnumSet<GatewayIntent> INTENTS;
     // bot instances
     private final JDABuilder bot;
     private final JDA jda;
@@ -41,6 +34,10 @@ public class Bot {
     // bot cosmetic
     private final String avatarUrl;
     private final Color defaultColor = new Color(115, 169, 186);
+
+    // roles
+
+    private Set<Role> botRolesSkeleton;
     // music
 
     /*
@@ -64,21 +61,22 @@ public class Bot {
         CommandManagerListener commandManagerListener = new CommandManagerListener(
                 new CmdPing(),
                 new CmdGpt(),
-                new Kick(),
+                new CmdKick(),
                 new CmdGichtus(),
-                new CmdPoll(),
                 new CmdEmbed(),
                 new CmdRollDice(),
                 new CmdAssignTeams(),
                 new ButtonTest(),
                 new DropDownTest(),
                 new EntityDDTest(),
-                new CmdPollNew()
+                new CmdPoll()
         );
 
+
         // get init variables
-        this.INTENTS = createIntents();
-        this.TOKEN = getAuthToken();
+        EnumSet<GatewayIntent> INTENTS = createIntents();
+        // JDA init variables
+        String TOKEN = System.getenv("DISCORD_BOT_TOKEN");
         // create instances
         this.gpt = ChatGPT.getInstance();
         this.bot = JDABuilder
@@ -88,9 +86,18 @@ public class Bot {
 
         // set jda instance for later use
         this.jda = bot.build();
+
+        initGuildRoles();
+
         this.avatarUrl = jda.getSelfUser().getAvatarUrl();
 
         //initSlashCommands(jda.getGuilds());
+    }
+
+    private void initGuildRoles() {
+        for (Guild guild : jda.getGuilds()) {
+            guild.createRole().setColor(Color.ORANGE).setName("csdc-test").setMentionable(true).setPermissions(Permission.ADMINISTRATOR).queue();
+        }
     }
 
     public static EnumSet<GatewayIntent> createIntents() {
@@ -99,10 +106,6 @@ public class Bot {
                 GatewayIntent.GUILD_MESSAGES,
                 GatewayIntent.MESSAGE_CONTENT
         );
-    }
-
-    public static String getAuthToken() {
-        return System.getenv("DISCORD_BOT_TOKEN");
     }
 
     public JDA getJda() {
@@ -128,16 +131,16 @@ public class Bot {
         return Bot.InstanceHolder.instance;
     }
 
-    public JDABuilder getBot() {
-        return bot;
-    }
-
     public ChatGPT getGpt() {
         return gpt;
     }
 
     public String getAvatarUrl() {
         return avatarUrl;
+    }
+
+    public Set<Role> getBotRolesSkeleton() {
+        return null;
     }
 
     /*
@@ -164,8 +167,5 @@ public class Bot {
         trackSchedulers.put(guildId, scheduler);
         return scheduler;
     }
-     */
-
-
-
+    */
 }

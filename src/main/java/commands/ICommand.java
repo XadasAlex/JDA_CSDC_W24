@@ -1,16 +1,19 @@
 package commands;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-import java.util.List;
+public interface ICommand extends ICommandBase{
 
-public interface ICommand {
-    String getName();
+    public void execute(SlashCommandInteractionEvent event);
 
-    String getDescription();
+    default void executeWithPermission(SlashCommandInteractionEvent event) {
+        if (!hasPermission(event)) {
+            // TODO: error replies class for that usecase
+            event.reply("You don't have permission to use this command!").setEphemeral(true).queue();
+            return;
+        }
 
-    List<OptionData> getOptions();
+        execute(event);
+    }
 
-    void execute(SlashCommandInteractionEvent event);
 }

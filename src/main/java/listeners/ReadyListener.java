@@ -8,4 +8,8 @@ import org.openjfx.MyApp;
 
 
 public class ReadyListener extends ListenerAdapter {
+    @Override
+    public void onReady(ReadyEvent event) {
+        return;
+    }
 }

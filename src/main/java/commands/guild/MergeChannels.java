@@ -1,6 +1,7 @@
 package commands.guild;
 
 import commands.ICommand;
+import net.dv8tion.jda.api.Permission;
 import utils.GuildCommands;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
@@ -11,6 +12,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class MergeChannels implements ICommand {
     @Override
@@ -39,6 +41,16 @@ public class MergeChannels implements ICommand {
     }
 
     @Override
+    public Set<Permission> getRequiredPermissions() {
+        return Set.of();
+    }
+
+    @Override
+    public boolean hasPermission(SlashCommandInteractionEvent event) {
+        return false;
+    }
+
+    @Override
     public void execute(SlashCommandInteractionEvent event) {
         List<VoiceChannel> channels = new ArrayList<>();
 
@@ -54,5 +66,10 @@ public class MergeChannels implements ICommand {
 
             }
         }
+    }
+
+    @Override
+    public void executeWithPermission(SlashCommandInteractionEvent event) {
+        ICommand.super.executeWithPermission(event);
     }
 }

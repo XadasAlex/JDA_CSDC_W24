@@ -1,6 +1,7 @@
 package commands.testing;
 
 import commands.ICommand;
+import net.dv8tion.jda.api.Permission;
 import utils.MessageSender;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -9,6 +10,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.util.List;
+import java.util.Set;
 
 public class ButtonTest implements ICommand {
     @Override
@@ -27,6 +29,11 @@ public class ButtonTest implements ICommand {
     }
 
     @Override
+    public Set<Permission> getRequiredPermissions() {
+        return Set.of();
+    }
+
+    @Override
     public void execute(SlashCommandInteractionEvent event) {
         String description = "Diese Frage stellte mir Elon Musk, gegen Ende eines langen Abends in einem eldlen Fisch Restaurant im Silicon Valley.";
         EmbedBuilder buttonEmbed = MessageSender.createEmbedBlueprint(
@@ -42,6 +49,16 @@ public class ButtonTest implements ICommand {
                 ).queue();
 
 
+    }
+
+    @Override
+    public void executeWithPermission(SlashCommandInteractionEvent event) {
+        ICommand.super.executeWithPermission(event);
+    }
+
+    @Override
+    public boolean hasPermission(SlashCommandInteractionEvent event) {
+        return false;
     }
 
 }

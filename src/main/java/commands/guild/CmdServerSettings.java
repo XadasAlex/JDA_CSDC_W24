@@ -1,11 +1,13 @@
 package commands.guild;
 
 import commands.ICommand;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 
 import java.util.List;
+import java.util.Set;
 
 public class CmdServerSettings implements ICommand {
     @Override
@@ -24,11 +26,26 @@ public class CmdServerSettings implements ICommand {
     }
 
     @Override
+    public Set<Permission> getRequiredPermissions() {
+        return Set.of();
+    }
+
+    @Override
     public void execute(SlashCommandInteractionEvent event) {
         if (!event.getName().equals(getName())) return;
 
         ActionRow settingsActionRow = createSettingsActionRow();
 
+    }
+
+    @Override
+    public void executeWithPermission(SlashCommandInteractionEvent event) {
+        ICommand.super.executeWithPermission(event);
+    }
+
+    @Override
+    public boolean hasPermission(SlashCommandInteractionEvent event) {
+        return false;
     }
 
     private ActionRow createSettingsActionRow() {

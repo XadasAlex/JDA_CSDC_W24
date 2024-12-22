@@ -1,119 +1,96 @@
 package commands.chat;
 
 import commands.ICommand;
+import net.dv8tion.jda.api.Permission;
 import utils.Helper;
-import utils.polls.Poll;
-import utils.polls.PollManager;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.utils.messages.MessagePollBuilder;
 
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-
-import static utils.MessageSender.createEmbedBlueprint;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 public class CmdPoll implements ICommand {
-
-    public static EmbedBuilder createPollEmbed(SlashCommandInteractionEvent event, String title, String description, List<String> pollOptions, List<Integer> results) {
-        EmbedBuilder pollEmbed = createEmbedBlueprint(event, title, getDisplayName() ,description);
-        return addOptionFields(pollEmbed, pollOptions, results);
-    }
-
-    public static EmbedBuilder createPollEmbed(Member member, String title, String description, List<String> pollOptions, List<Integer> results) {
-        System.out.println(member.getEffectiveName());
-        EmbedBuilder pollEmbed = createEmbedBlueprint(member, title, getDisplayName() ,description);
-        return addOptionFields(pollEmbed, pollOptions, results);
-    }
-
-    private static EmbedBuilder addOptionFields(EmbedBuilder pollEmbed, List<String> pollOptions, List<Integer> results) {
-        List<String> numberEmojis = Helper.getPollEmojis();
-
-        for (int i = 0; i < pollOptions.size(); i++) {
-            double percent = 0;
-            if (results != null) {
-                int total = results.stream().mapToInt(Integer::intValue).sum();
-                if (total > 0) {
-                    percent = (double) results.get(i) / total * 100;
-                }
-            }
-
-            pollEmbed.addField(numberEmojis.get(i) + ": " + pollOptions.get(i), Helper.createProgressBar(percent, 20) + "  " + String.format("%.2f", percent) + "%", false);
-        }
-
-        return pollEmbed;
-    }
-
-    public static EmbedBuilder createPollEmbed(Message message, String title, String description, List<String> pollOptions, List<Integer> results) {
-        EmbedBuilder pollEmbed = createEmbedBlueprint(message, title, getDisplayName(), description);
-        return addOptionFields(pollEmbed, pollOptions, results);
-    }
-
     @Override
     public String getName() {
-        return "dpoll";
-    }
-
-    public static String getDisplayName() {
-        return "This command is deprecated use /poll instead";
+        return "poll";
     }
 
     @Override
     public String getDescription() {
-        return "Creates A Poll";
+        return "creates a poll";
     }
 
     @Override
     public List<OptionData> getOptions() {
         return List.of(
-                new OptionData(OptionType.STRING, "title", "Title of the poll", true),
-                new OptionData(OptionType.STRING, "description", "Description of the poll", true),
-                new OptionData(OptionType.STRING, "options", "Poll options, at least two and delimit them with \",\"", true)
+                new OptionData(OptionType.STRING, "title","Title of the poll", true),
+                new OptionData(OptionType.STRING,"options", "Poll options, at least two and delimit them with \",\"", true),
+                new OptionData(OptionType.BOOLEAN, "multi-answer", "allow members to vote for multiple answers", false),
+                new OptionData(OptionType.STRING, "duration", "how long should the poll be active? format: 4d20h", false)
         );
+    }
+
+    @Override
+    public Set<Permission> getRequiredPermissions() {
+        return Set.of(Permission.MESSAGE_SEND_POLLS);
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         OptionMapping options = event.getOption("options");
         OptionMapping titleOption = event.getOption("title");
-        OptionMapping descriptionOption = event.getOption("description");
+        OptionMapping multiAnswerOption = event.getOption("multi-answer");
+        OptionMapping durationOption = event.getOption("duration");
 
-        if (options != null && titleOption != null && descriptionOption != null) {
+        boolean hasDuration = durationOption != null;
+        boolean multiAnswer = multiAnswerOption != null && multiAnswerOption.getAsBoolean();
+
+        if (options != null && titleOption != null) {
             String stringPolls = options.getAsString();
             String title = titleOption.getAsString();
-            String description = descriptionOption.getAsString();
 
             List<String> pollOptions = Arrays.stream(stringPolls.split(",")).map(String::trim).toList();
 
             if (pollOptions.size() < 2 || pollOptions.size() > 8) return;
 
-            EmbedBuilder pollEmbed = createPollEmbed(event, title, description, pollOptions, null);
             List<String> numberEmojis = Helper.getPollEmojis();
 
-            CompletableFuture<InteractionHook> hook = new CompletableFuture<>();
+            MessagePollBuilder poll = new MessagePollBuilder(title);
+            poll.setMultiAnswer(multiAnswer);
 
-            event.replyEmbeds(pollEmbed.build()).queue(hook::complete, hook::completeExceptionally);
+            if (hasDuration) {
+                String duration = durationOption.getAsString();
+                long durationSeconds = Helper.getDurationInSecondsFromString(duration);
+                Duration pollDuration = Duration.ofSeconds(durationSeconds);
 
-            hook.thenAccept(pollHook -> {
-                RestAction<Message> retrievedMessage = pollHook.retrieveOriginal();
-                retrievedMessage.queue(msg -> {
-                            for (int i = 0; i < pollOptions.size(); i++) {
-                                Emoji reaction = Emoji.fromUnicode(numberEmojis.get(i));
-                                msg.addReaction(reaction).queue();
-                            }
+                if (pollDuration.getSeconds() >= 3600 && pollDuration.getSeconds() < (7 * 24 * 3600)) {
+                    System.out.println(pollDuration.getSeconds());
+                    poll.setDuration(pollDuration);
+                }
+            }
 
-                            Poll poll = new Poll(msg, event.getMember(), title, description, pollOptions);
-                            PollManager.getInstance().addPoll(msg.getGuildId(), poll);
-                        }
-                );
-            });
+            for (int i = 0; i < pollOptions.size(); i++) {
+                Emoji number = Emoji.fromUnicode(numberEmojis.get(i));
+                poll.addAnswer(pollOptions.get(i), number);
+            }
+
+            event.replyPoll(poll.build()).queue();
         }
+    }
+
+    @Override
+    public void executeWithPermission(SlashCommandInteractionEvent event) {
+        ICommand.super.executeWithPermission(event);
+    }
+
+    @Override
+    public boolean hasPermission(SlashCommandInteractionEvent event) {
+        return false;
     }
 }

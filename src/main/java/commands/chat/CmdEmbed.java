@@ -3,17 +3,24 @@ package commands.chat;
 import launcher.Bot;
 import commands.ICommand;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.SelfUser;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.List;
+import java.util.Set;
 
 public class CmdEmbed implements ICommand {
     @Override
     public String getName() {
         return "embed";
+    }
+
+    @Override
+    public boolean hasPermission(SlashCommandInteractionEvent event) {
+        return false;
     }
 
     public static String getDisplayName() {
@@ -32,6 +39,11 @@ public class CmdEmbed implements ICommand {
     }
 
     @Override
+    public Set<Permission> getRequiredPermissions() {
+        return Set.of();
+    }
+
+    @Override
     public void execute(SlashCommandInteractionEvent event) {
         EmbedBuilder embed = new EmbedBuilder();
         Bot botInstance = Bot.getInstance();
@@ -45,5 +57,10 @@ public class CmdEmbed implements ICommand {
         embed.setFooter(String.format("Requested by: %s", author.getEffectiveName()), author.getEffectiveAvatarUrl());
 
         event.replyEmbeds(embed.build()).queue();
+    }
+
+    @Override
+    public void executeWithPermission(SlashCommandInteractionEvent event) {
+        ICommand.super.executeWithPermission(event);
     }
 }

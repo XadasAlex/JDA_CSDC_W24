@@ -1,6 +1,7 @@
 package listeners;
 
 import commands.ICommand;
+import commands.ICommandAsync;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -24,8 +25,8 @@ public class CommandManagerListener extends ListenerAdapter {
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
-        for(Guild guild : event.getJDA().getGuilds()) {
-            for(ICommand command : commands) {
+        for (Guild guild : event.getJDA().getGuilds()) {
+            for (ICommand command : commands) {
                 guild.upsertCommand(command.getName(), command.getDescription()).addOptions(command.getOptions()).queue();
             }
         }
@@ -33,9 +34,14 @@ public class CommandManagerListener extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        for(ICommand command : commands) {
+        for (ICommand command : commands) {
             if (command.getName().equals(event.getName())) {
-                command.execute(event);
+                if (command instanceof ICommandAsync) {
+                    ((ICommandAsync) command).executeAsync(event);
+                } else {
+                    command.execute(event);
+                }
+
                 break;
             }
         }
