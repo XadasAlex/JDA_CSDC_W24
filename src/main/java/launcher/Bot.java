@@ -2,7 +2,6 @@ package launcher;
 
 import api.ChatGPT;
 
-import com.google.gson.Gson;
 import listeners.CommandManagerListener;
 import listeners.ReactionListener;
 
@@ -19,8 +18,10 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import listeners.StatListener;
 
 import java.awt.*;
+import java.io.File;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,12 +35,8 @@ public class Bot {
     // bot cosmetic
     private final String avatarUrl;
     private final Color defaultColor = new Color(115, 169, 186);
-
-    // roles
-
-    private Set<Role> botRolesSkeleton;
+    private final Color errorColor = new Color(255, 51, 51);
     // music
-
     /*
     private final MusicHandler;
     private final AudioPlayerManager playerManager;
@@ -48,9 +45,17 @@ public class Bot {
     */
 
     // lazy load singleton - don't change access modifier to public
+    private static final class InstanceHolder {
+        private static final Bot instance = new Bot();
+    }
+
+    // lazy load singleton
+    public static Bot getInstance() {
+        return Bot.InstanceHolder.instance;
+    }
+
     private Bot() {
         /* music
-
         LavalinkClient client = new LavalinkClient(696275723924799529L);
         this.playerManager = new DefaultAudioPlayerManager();
         this.musicHandler = new MusicHandler(playerManager, this);
@@ -69,10 +74,12 @@ public class Bot {
                 new ButtonTest(),
                 new DropDownTest(),
                 new EntityDDTest(),
-                new CmdPoll()
+                new CmdPoll(),
+                new CmdAllowStats(),
+                new CmdHelper(),
+                new CmdLeaderBoard(),
+                new CmdStats()
         );
-
-
         // get init variables
         EnumSet<GatewayIntent> INTENTS = createIntents();
         // JDA init variables
@@ -82,22 +89,12 @@ public class Bot {
         this.bot = JDABuilder
                 .createDefault(TOKEN)
                 .enableIntents(INTENTS)
-                .addEventListeners(new ReactionListener(), commandManagerListener);
+                .addEventListeners(new ReactionListener(), new StatListener(), commandManagerListener);
 
         // set jda instance for later use
         this.jda = bot.build();
-
-        initGuildRoles();
-
         this.avatarUrl = jda.getSelfUser().getAvatarUrl();
-
         //initSlashCommands(jda.getGuilds());
-    }
-
-    private void initGuildRoles() {
-        for (Guild guild : jda.getGuilds()) {
-            guild.createRole().setColor(Color.ORANGE).setName("csdc-test").setMentionable(true).setPermissions(Permission.ADMINISTRATOR).queue();
-        }
     }
 
     public static EnumSet<GatewayIntent> createIntents() {
@@ -116,19 +113,12 @@ public class Bot {
         return defaultColor;
     }
 
+    public Color getErrorColor() {
+        return errorColor;
+    }
+
     public List<String> getServerListName() {
         return this.getJda().getGuilds().stream().map(Guild::getName).collect(Collectors.toList());
-    }
-
-
-    // lazy load singleton
-    private static final class InstanceHolder {
-        private static final Bot instance = new Bot();
-    }
-
-    // lazy load singleton
-    public static Bot getInstance() {
-        return Bot.InstanceHolder.instance;
     }
 
     public ChatGPT getGpt() {
@@ -139,9 +129,6 @@ public class Bot {
         return avatarUrl;
     }
 
-    public Set<Role> getBotRolesSkeleton() {
-        return null;
-    }
 
     /*
     public MusicHandler getMusicHandler() {
