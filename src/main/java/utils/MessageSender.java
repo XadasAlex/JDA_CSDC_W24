@@ -24,14 +24,23 @@ public class MessageSender {
         event.getChannel().sendMessage(message).queue();
     }
 
-    public static void sendMessage(MessageChannel channel, String message) {
-        channel.sendMessage(message).queue();
-    }
-
     public static EmbedBuilder createBaseEmbed(MessageReceivedEvent event, String title, String description) {
         Member member = event.getMember();
         if (member == null) return null;
         return createBaseEmbed(member, title, description);
+    }
+
+    public static EmbedBuilder createErrorEmbed(String title, String description, Member author) {
+        EmbedBuilder embed = new EmbedBuilder();
+        Bot botInstance = Bot.getInstance();
+        String avatarUrl = botInstance.getAvatarUrl();
+
+        embed.setTitle(title, avatarUrl);
+        embed.setAuthor(author.getEffectiveName(), null, author.getAvatarUrl());
+        embed.setColor(botInstance.getErrorColor());
+        embed.setDescription(description);
+        embed.setFooter(String.format("Requested by: %s", title));
+        return embed;
     }
 
     public static EmbedBuilder createBaseEmbed(Member author, String title, String description) {
@@ -73,7 +82,7 @@ public class MessageSender {
         if (embed == null) return;
         event.getChannel().sendMessageEmbeds(embed.build()).queue();
     }
-
+    /*
     public static void sendPoll(MessageReceivedEvent event, String title, String description, List<String> pollOptions) {
         if (pollOptions.size() > 9) return;
 
@@ -130,69 +139,5 @@ public class MessageSender {
 
     }
 
-
-    public static void sendEmbedTest(MessageReceivedEvent event) {
-        EmbedBuilder embed = new EmbedBuilder();
-
-
-        // Set title, description, and URL
-        embed.setTitle("My Embed Title", "https://cdn.discordapp.com/avatars/696275723924799529/ea67ba1d70196ac6efa8afe26532fa47.png?size=1024");
-        embed.setDescription("This is an example of a more complex embedded message.");
-
-        // Set the author with a link and icon
-        embed.setAuthor("Author Name", "https://author-link.com", "https://example.com/author-icon.png");
-
-        // Set the footer with text and an icon
-
-
-        // Add fields, with some inline
-        embed.addField("Field 1", "This is the first field.", false);
-        embed.addField("Field 2", "This is the second field.", true);
-        embed.addField("Field 3", "This is the third field.", true);
-
-        // Add a timestamp
-
-
-        // Set color of the embed (using a hex color code)
-        embed.setColor(Color.GREEN);
-
-        // Set an image and a thumbnail
-        embed.setImage("https://example.com/image.png");
-        embed.setThumbnail("https://example.com/thumbnail.png");
-        AtomicReference<Message> messageBuffer = new AtomicReference<>();
-        event.getChannel().sendMessageEmbeds(embed.build()).queue(messageBuffer::set);
-
-
-        embed.setTitle("sheesh");
-
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
-        scheduler.schedule(() -> {
-            messageBuffer.get().editMessageEmbeds(embed.build()).queue();
-            scheduler.shutdown(); // Ensure the scheduler shuts down
-        }, 4, TimeUnit.SECONDS);
-
-    }
-
-
-
-    public static void sendEmbed(MessageReceivedEvent event) {
-        EmbedBuilder embed = new EmbedBuilder();
-        embed.setTitle("Title", event.getAuthor().getAvatarUrl());
-        embed.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-        embed.setFooter("footer", event.getAuthor().getAvatarUrl());
-        embed.setDescription("this is the description");
-        embed.setColor(Bot.getInstance().getDefaultColor());
-        embed.setImage("https://cdn.discordapp.com/attachments/1304116218059292709/1306790034216845353/Jack-Doherty-Car-News-1024x576-66177854.jpg?ex=6737f28f&is=6736a10f&hm=6e6ef76ea6212bf1169085da890cbf417f0d7dd6e727613fb9bb8b4a1fcbe235&");
-        embed.setThumbnail("https://cdn.discordapp.com/attachments/1304116218059292709/1306790034216845353/Jack-Doherty-Car-News-1024x576-66177854.jpg?ex=6737f28f&is=6736a10f&hm=6e6ef76ea6212bf1169085da890cbf417f0d7dd6e727613fb9bb8b4a1fcbe235&");
-        embed.setTimestamp(Instant.now());
-
-        event.getChannel().sendMessageEmbeds(embed.build()).queue();
-    }
-
-    public static void sendHelpList(MessageReceivedEvent event) {
-        EmbedBuilder helpEmbed = createBaseEmbed(event, "Help: Listing my Commands", "");
-
-
-    }
+     */
 }
