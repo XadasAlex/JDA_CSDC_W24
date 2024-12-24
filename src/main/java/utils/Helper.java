@@ -5,13 +5,16 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +33,17 @@ public class Helper {
         return Arrays.stream(numberEmojis).toList();
     }
 
+    public static long currentTimeSeconds() {
+        return System.currentTimeMillis() / 1000;
+    }
+
+    public static String getBaseStatPath(String guildId) {
+        return getProjectPath().concat(String.format("/src/main/resources/guilds/%s/stats", guildId));
+    }
+
+    public static String getMemberStatPath(String guildId, String memberId) {
+        return getBaseStatPath(guildId).concat(String.format("/%s.json", memberId));
+    }
 
     public static String createProgressBar(double percentage, int detail) {
         int filledSegments = (int) (percentage * detail / 100);
@@ -143,6 +157,13 @@ public class Helper {
         return ids;
     }
 
+    public static String formatSeconds(long totalSeconds) {
+        long seconds = totalSeconds % 60;
+        int minutes = (int) ((totalSeconds / 60.0) % 60);
+        int hours = (int) totalSeconds / 3600;
+
+        return String.format("%02d:%02d:%02d", hours, minutes, (int) seconds);
+    }
 
     public static long getDurationInSecondsFromString(String duration) {
         if (duration == null || duration.isBlank()) return 0L;
@@ -167,4 +188,52 @@ public class Helper {
 
         return (d.getSeconds() + h.getSeconds());
     }
+
+    public static String getProjectPath() {
+        return new File("").getAbsolutePath();
+    }
+
+    public static String sFormatting(int number) {
+        return number > 1 ? "s" : "";
+    }
+
+    public static String sFormatting(long number) {
+        return number > 1 ? "s" : "";
+    }
+
+    public static String getTimeAgo(long timeAgoSeconds) {
+        Instant now = Instant.now();
+        Instant then = Instant.ofEpochSecond(timeAgoSeconds);
+
+        Duration duration = Duration.between(then, now);
+        long seconds = duration.getSeconds();
+
+        if (seconds < 60) {
+            return String.format("%d second%s ago.", seconds, sFormatting(seconds));
+        }
+
+        if (seconds < 3600) {
+            long minutes = duration.toMinutes();
+            return String.format("%d minute%s ago.", minutes, sFormatting(minutes));
+        }
+
+        if (seconds < 86400) {
+            long hours = duration.toHours();
+            return String.format("%d hour%s ago.", hours, sFormatting(hours));
+        }
+
+        if (seconds < 2592000) {
+            long days = duration.toDays();
+            return String.format("%d day%s ago.", days, sFormatting(days));
+        }
+
+        if (seconds < 31536000) {
+            long months = duration.toDays() / 30;
+            return String.format("%d month%s ago.", months, sFormatting(months));
+        }
+
+        long years = duration.toDays() / 365;
+        return String.format("%d year%s ago.", years, sFormatting(years));
+    }
+
 }
