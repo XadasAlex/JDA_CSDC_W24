@@ -24,23 +24,12 @@ public class CmdJoin implements ICommand {
         return List.of();
     }
 
-    @Override
-    public Set<Permission> getRequiredPermissions() {
-        return Set.of();
-    }
+
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
 
     }
 
-    @Override
-    public void executeWithPermission(SlashCommandInteractionEvent event) {
-        ICommand.super.executeWithPermission(event);
-    }
 
-    @Override
-    public boolean hasPermission(SlashCommandInteractionEvent event) {
-        return false;
-    }
 }

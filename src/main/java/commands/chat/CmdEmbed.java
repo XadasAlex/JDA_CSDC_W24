@@ -18,11 +18,6 @@ public class CmdEmbed implements ICommand {
         return "embed";
     }
 
-    @Override
-    public boolean hasPermission(SlashCommandInteractionEvent event) {
-        return false;
-    }
-
     public static String getDisplayName() {
         return "Embed";
     }
@@ -39,11 +34,6 @@ public class CmdEmbed implements ICommand {
     }
 
     @Override
-    public Set<Permission> getRequiredPermissions() {
-        return Set.of();
-    }
-
-    @Override
     public void execute(SlashCommandInteractionEvent event) {
         EmbedBuilder embed = new EmbedBuilder();
         Bot botInstance = Bot.getInstance();
@@ -57,10 +47,5 @@ public class CmdEmbed implements ICommand {
         embed.setFooter(String.format("Requested by: %s", author.getEffectiveName()), author.getEffectiveAvatarUrl());
 
         event.replyEmbeds(embed.build()).queue();
-    }
-
-    @Override
-    public void executeWithPermission(SlashCommandInteractionEvent event) {
-        ICommand.super.executeWithPermission(event);
     }
 }

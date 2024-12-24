@@ -37,11 +37,6 @@ public class CmdPoll implements ICommand {
     }
 
     @Override
-    public Set<Permission> getRequiredPermissions() {
-        return Set.of(Permission.MESSAGE_SEND_POLLS);
-    }
-
-    @Override
     public void execute(SlashCommandInteractionEvent event) {
         OptionMapping options = event.getOption("options");
         OptionMapping titleOption = event.getOption("title");
@@ -82,15 +77,5 @@ public class CmdPoll implements ICommand {
 
             event.replyPoll(poll.build()).queue();
         }
-    }
-
-    @Override
-    public void executeWithPermission(SlashCommandInteractionEvent event) {
-        ICommand.super.executeWithPermission(event);
-    }
-
-    @Override
-    public boolean hasPermission(SlashCommandInteractionEvent event) {
-        return false;
     }
 }

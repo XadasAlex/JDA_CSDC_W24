@@ -22,11 +22,6 @@ public class CmdAssignTeams implements ICommand {
     }
 
     @Override
-    public boolean hasPermission(SlashCommandInteractionEvent event) {
-        return false;
-    }
-
-    @Override
     public String getDescription() {
         return "Assembles a team with the given players";
     }
@@ -38,11 +33,6 @@ public class CmdAssignTeams implements ICommand {
                 new OptionData(OptionType.INTEGER, "teams", "how many teams should be created? Default is 2.", false),
                 new OptionData(OptionType.BOOLEAN, "ccm", "[Create Channels & Move] the players to their team if they were tagged before", false)
         );
-    }
-
-    @Override
-    public Set<Permission> getRequiredPermissions() {
-        return Set.of();
     }
 
     @Override
@@ -91,10 +81,5 @@ public class CmdAssignTeams implements ICommand {
         }
 
         event.replyEmbeds(teamEmbed.build()).queue();
-    }
-
-    @Override
-    public void executeWithPermission(SlashCommandInteractionEvent event) {
-        ICommand.super.executeWithPermission(event);
     }
 }

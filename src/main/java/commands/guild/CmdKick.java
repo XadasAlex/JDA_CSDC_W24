@@ -36,11 +36,6 @@ public class CmdKick implements ICommand {
     }
 
     @Override
-    public Set<Permission> getRequiredPermissions() {
-        return Set.of();
-    }
-
-    @Override
     public void execute(SlashCommandInteractionEvent event) {
         OptionMapping memberOption = event.getOption("member");
 
@@ -62,15 +57,5 @@ public class CmdKick implements ICommand {
                     "Couldn't kick user: " + member.getEffectiveName());
             event.replyEmbeds(embed.build()).queue();
         }
-    }
-
-    @Override
-    public void executeWithPermission(SlashCommandInteractionEvent event) {
-        ICommand.super.executeWithPermission(event);
-    }
-
-    @Override
-    public boolean hasPermission(SlashCommandInteractionEvent event) {
-        return false;
     }
 }

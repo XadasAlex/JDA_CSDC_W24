@@ -15,13 +15,4 @@ public interface ICommandBase {
     String getDescription();
 
     List<OptionData> getOptions();
-
-    Set<Permission> getRequiredPermissions();
-
-    default boolean hasPermission(SlashCommandInteractionEvent event) {
-        Set<Permission> requiredPermissions = getRequiredPermissions();
-        Set<Permission> userPermissions = new HashSet<>(Objects.requireNonNull(event.getMember()).getPermissions());
-
-        return userPermissions.containsAll(requiredPermissions);
-    }
 }

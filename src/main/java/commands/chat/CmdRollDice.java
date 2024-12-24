@@ -32,16 +32,6 @@ public class CmdRollDice implements ICommand {
         );
     }
 
-    @Override
-    public Set<Permission> getRequiredPermissions() {
-        return Set.of();
-    }
-
-    @Override
-    public boolean hasPermission(SlashCommandInteractionEvent event) {
-        return false;
-    }
-
     private static int random(int lower, int upper) {
         Random random = new Random();
         if (upper < lower) {
@@ -86,10 +76,5 @@ public class CmdRollDice implements ICommand {
 
         event.replyEmbeds(randomEmbed.build()).queue();
 
-    }
-
-    @Override
-    public void executeWithPermission(SlashCommandInteractionEvent event) {
-        ICommand.super.executeWithPermission(event);
     }
 }

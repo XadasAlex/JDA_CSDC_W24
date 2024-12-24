@@ -32,16 +32,6 @@ public class CmdGpt implements ICommand {
     }
 
     @Override
-    public Set<Permission> getRequiredPermissions() {
-        return Set.of();
-    }
-
-    @Override
-    public boolean hasPermission(SlashCommandInteractionEvent event) {
-        return false;
-    }
-
-    @Override
     public void execute(SlashCommandInteractionEvent event) {
         OptionMapping input = event.getOption("input");
         if (input != null) {
@@ -49,10 +39,5 @@ public class CmdGpt implements ICommand {
             // event.getChannel().sendMessage(String.format("%s asked GPT: %s", event.getMember().getEffectiveName(), gptMessage)).queue();
             MessageCommands.gptResponse(event, gptMessage);
         }
-    }
-
-    @Override
-    public void executeWithPermission(SlashCommandInteractionEvent event) {
-        ICommand.super.executeWithPermission(event);
     }
 }

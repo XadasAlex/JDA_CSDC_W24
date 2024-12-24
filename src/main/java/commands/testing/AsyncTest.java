@@ -15,10 +15,7 @@ public class AsyncTest implements ICommandAsync {
         return null;
     }
 
-    @Override
-    public CompletableFuture<Void> executeWithPermission(SlashCommandInteractionEvent event) {
-        return ICommandAsync.super.executeWithPermission(event);
-    }
+
 
     @Override
     public String getName() {
@@ -35,10 +32,6 @@ public class AsyncTest implements ICommandAsync {
         return List.of();
     }
 
-    @Override
-    public Set<Permission> getRequiredPermissions() {
-        return Set.of(Permission.MESSAGE_SEND);
-    }
 
     @Override
     public CompletableFuture<Void> executeAsync(SlashCommandInteractionEvent event) {

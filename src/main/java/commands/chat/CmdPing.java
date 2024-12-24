@@ -14,11 +14,6 @@ public class CmdPing implements ICommand {
         return "ping";
     }
 
-    @Override
-    public boolean hasPermission(SlashCommandInteractionEvent event) {
-        return false;
-    }
-
     public static String getDisplayName() {
         return "Ping";
     }
@@ -34,17 +29,8 @@ public class CmdPing implements ICommand {
     }
 
     @Override
-    public Set<Permission> getRequiredPermissions() {
-        return Set.of();
-    }
-
-    @Override
     public void execute(SlashCommandInteractionEvent event) {
         event.reply("PONG!").queue();
     }
 
-    @Override
-    public void executeWithPermission(SlashCommandInteractionEvent event) {
-        ICommand.super.executeWithPermission(event);
-    }
 }

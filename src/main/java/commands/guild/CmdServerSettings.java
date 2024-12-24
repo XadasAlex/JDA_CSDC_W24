@@ -25,10 +25,7 @@ public class CmdServerSettings implements ICommand {
         return List.of();
     }
 
-    @Override
-    public Set<Permission> getRequiredPermissions() {
-        return Set.of();
-    }
+
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
@@ -38,15 +35,7 @@ public class CmdServerSettings implements ICommand {
 
     }
 
-    @Override
-    public void executeWithPermission(SlashCommandInteractionEvent event) {
-        ICommand.super.executeWithPermission(event);
-    }
 
-    @Override
-    public boolean hasPermission(SlashCommandInteractionEvent event) {
-        return false;
-    }
 
     private ActionRow createSettingsActionRow() {
 /*        return StringSelectMenu.create(getName())

@@ -26,15 +26,7 @@ public class EntityDDTest implements ICommand {
         return List.of();
     }
 
-    @Override
-    public Set<Permission> getRequiredPermissions() {
-        return Set.of();
-    }
 
-    @Override
-    public boolean hasPermission(SlashCommandInteractionEvent event) {
-        return ICommand.super.hasPermission(event);
-    }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
@@ -47,8 +39,5 @@ public class EntityDDTest implements ICommand {
         }
     }
 
-    @Override
-    public void executeWithPermission(SlashCommandInteractionEvent event) {
-        ICommand.super.executeWithPermission(event);
-    }
+
 }

@@ -40,15 +40,6 @@ public class MergeChannels implements ICommand {
         );
     }
 
-    @Override
-    public Set<Permission> getRequiredPermissions() {
-        return Set.of();
-    }
-
-    @Override
-    public boolean hasPermission(SlashCommandInteractionEvent event) {
-        return false;
-    }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
@@ -68,8 +59,4 @@ public class MergeChannels implements ICommand {
         }
     }
 
-    @Override
-    public void executeWithPermission(SlashCommandInteractionEvent event) {
-        ICommand.super.executeWithPermission(event);
-    }
 }
