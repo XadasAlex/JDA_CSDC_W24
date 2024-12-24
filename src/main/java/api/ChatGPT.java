@@ -36,9 +36,6 @@ public class ChatGPT{
     public String getChatGPTResponse(String prompt) {
         if (API_KEY == null) return null;
 
-        String ඞ = "ඞ";
-        int len = ඞ.length();
-
         try {
             String apiUrl = "https://api.openai.com/v1/chat/completions";
 
