@@ -1,10 +1,9 @@
 package commands.chat;
 
 import commands.ICommand;
-import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Role;
+import utils.CommandIcons;
+import utils.Embedder;
 import utils.Helper;
-import utils.MessageSender;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -66,20 +65,18 @@ public class CmdAssignTeams implements ICommand {
             teamIndex = (teamIndex + 1) % teamCount;
         }
 
-        EmbedBuilder teamEmbed = MessageSender.
-                createEmbedBlueprint(event, "Shuffled Players into teams", "Teams",
-                        String.format("Created %s Team(s) for %s Players", teamCount, taggedPlayers.size()));
+        EmbedBuilder embed = Embedder.createBaseEmbed(event.getMember(), CommandIcons.COMMUNITY_ICON_URL, getName(), "Shuffled Players into teams", String.format("Created %s Team(s) for %s Players", teamCount, taggedPlayers.size()));
         teamIndex = 1;
         for (List<Member> team : teams) {
-            teamEmbed.addField(String.format("Team %d: ", teamIndex), String.format("%d Players", team.size()), true);
+            embed.addField(String.format("Team %d: ", teamIndex), String.format("%d Players", team.size()), true);
             int playerIndex = 1;
             for (Member player : team) {
-                teamEmbed.addField("(" + playerIndex + "):", player.getEffectiveName(), true);
+                embed.addField("(" + playerIndex + "):", player.getEffectiveName(), true);
                 playerIndex++;
             }
             teamIndex++;
         }
 
-        event.replyEmbeds(teamEmbed.build()).queue();
+        event.replyEmbeds(embed.build()).queue();
     }
 }

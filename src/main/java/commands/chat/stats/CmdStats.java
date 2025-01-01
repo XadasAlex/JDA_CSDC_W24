@@ -1,17 +1,16 @@
-package commands.chat;
+package commands.chat.stats;
 
 import commands.ICommand;
-import listeners.StatListener;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import stats.MemberStats;
+import utils.CommandIcons;
+import utils.Embedder;
 import utils.Helper;
-import utils.MessageSender;
 
 import java.util.List;
 import java.util.Objects;
@@ -23,11 +22,14 @@ public class CmdStats implements ICommand {
 
         OptionMapping taggedMember = event.getOption("member");
         Member member;
+
         if (taggedMember == null) {
             member = event.getMember();
         } else {
             member = taggedMember.getAsMember();
         }
+
+        if (member == null) return;
 
         if (!MemberStats.allowedStats(member.getGuild().getId(), member.getId())) {
             event.reply("You first need to allow me to track your user-stats, use: /allow-stats true").queue();
@@ -40,7 +42,12 @@ public class CmdStats implements ICommand {
             event.replyEmbeds(statsEmbed.build()).queue();
 
         } else {
-            EmbedBuilder errorEmbed = MessageSender.createErrorEmbed("An Error occurred while handling cmd: stats ", String.format("Error fetching stats for member: %s", member.getEffectiveName()), event.getMember());
+            EmbedBuilder errorEmbed = Embedder.createErrorMessage(
+                    event.getMember(),
+                    getName(),
+                    String.format("Error fetching stats for member: %s",
+                    member.getEffectiveName()));
+
             event.replyEmbeds(errorEmbed.build()).queue();
         }
 
@@ -55,15 +62,13 @@ public class CmdStats implements ICommand {
 
         if (stats == null) return null;
 
-        EmbedBuilder statsEmbed = MessageSender
-                .createBaseEmbed(event.getMember(),
-                        String.format("Stats for user: %s", member.getEffectiveName()),
-                        "description"
-                );
-
-        int exp = stats.getExp();
-
-        statsEmbed.addField("Experience collected:", String.format("%dexp", exp), false);
+        EmbedBuilder statsEmbed = Embedder.createBaseEmbed(
+                event.getMember(),
+                CommandIcons.STATS_ICON_URL,
+                getName(),
+                String.format("Stats for user: %s", member.getEffectiveName()),
+                "description"
+        );
 
         int selfReactions = stats.getSelfReactionCount();
 
@@ -91,14 +96,23 @@ public class CmdStats implements ICommand {
                 String.format("You spent %s in channels across this server.", totalTimeFormatted),
                 false);
 
-        String lastTimeJoinedString = Helper.getTimeAgo(stats.getLastTimeJoined());
+        long lastTimeJoined = stats.getLastTimeJoined();
+        String lastTimeJoinedString;
+
+        if (lastTimeJoined <= 0) {
+            lastTimeJoinedString = "N/A";
+
+        } else {
+            lastTimeJoinedString = Helper.getTimeAgo(lastTimeJoined);
+
+        }
 
         statsEmbed.addField("Last time joined a voice-channel", lastTimeJoinedString, false);
-
 
         int messagesSent = stats.getMessagesSent();
         long charactersSent = stats.getCharactersSent();
         int averageCharacters;
+
         if (messagesSent < 1) {
             averageCharacters = 0;
 
@@ -125,6 +139,16 @@ public class CmdStats implements ICommand {
                 ),
                 false);
 
+        int exp = stats.getExp();
+
+        statsEmbed.addField("Experience collected:", String.format("%s\u2728", exp), false);
+
+        String currentRank = stats.getCurrentRank();
+        int expUntilNextRank = stats.getExpUntilNextRank();
+        String nextRank = stats.getNextRank();
+        //List<HashMap<Integer, String>> ranks = stats.getRanks();
+
+        statsEmbed.addField(String.format("Current Rank: %s", currentRank), String.format("%d exp until next Rank: %s", expUntilNextRank, nextRank), false);
 
         return statsEmbed;
     }
