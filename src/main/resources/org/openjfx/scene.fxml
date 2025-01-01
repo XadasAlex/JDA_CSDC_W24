@@ -5,15 +5,119 @@
 
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.control.Button?>
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
-           prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="org.openjfx.FXMLController">
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<?import javafx.scene.control.ToggleButton?>
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml/1"
+      spacing="0"
+      prefWidth="600" prefHeight="400"
+      fx:controller="org.openjfx.FXMLController">
+
     <children>
-        <Label fx:id="statusL" layoutX="20" layoutY="20" text="Status:" />
-        <Label fx:id="serverListL" layoutX="20" layoutY="50" text="Server List:" />
-        <Label fx:id="sessionL" layoutX="20" layoutY="80" text="Logged In:" />
-        <ImageView fx:id="profileIV" layoutX="20" layoutY="120" fitHeight="100" fitWidth="100" />
-        <Button fx:id="startBTN" text="Start Bot" layoutX="150" layoutY="20" onAction="#startBot" />
-        <!--<Label fx:id="serverListIdL" text="Ids: " StackPane.alignment="BOTTOM_LEFT" styleClass="label"/>-->
+        <!-- Left side with Buttons to switch sub-menus-->
+        <VBox fx:id="leftBox"
+              style="-fx-background-color: #f0f0f0;"
+              prefWidth="200">
+            <Label text="Menü" style="-fx-font-size: 16;" />
+            <Button text="Allgemein" onAction="#showAllgemein"/>
+            <Button text="Sprache" onAction="#showSprache"/>
+            <!-- Toggle Button für das Dropdown-Menü -->
+            <ToggleButton fx:id="featuresToggle" text="Features" onAction="#toggleFeaturesMenu" />
+
+            <!-- Dropdown-Inhalte (anfangs unsichtbar) -->
+            <VBox fx:id="featuresMenu" visible="false" managed="false" spacing="5" style="-fx-padding: 10;">
+            <Button text="Option 1" />
+                <Button text="Option 2" />
+                <Button text="Option 3"  />
+            </VBox>
+            <Region VBox.vgrow="ALWAYS" />
+            <Button text="About" onAction="#showAbout"/>
+            <Button fx:id="startBTN" text="Start Bot" layoutX="50" layoutY="20" onAction="#startBot" />
+
+        </VBox>
+        <BorderPane fx:id="rightPane"
+                    HBox.hgrow="ALWAYS">
+            <!--Hauptinhalt rechts -->
+            <center>
+                <StackPane fx:id="centerPane">
+                    <VBox fx:id="firstPane" visible ="true">
+                        <Label text="Dein Discord bot Token:"/>
+                        <TextField fx:id="botToken"
+                                   promptText="Bot Token:"
+                                   onAction="#getBotToken" />
+                    </VBox>
+
+                    <GridPane fx:id="allgemeinPane" visible="false"
+                              alignment="TOP_LEFT"
+                              hgap="10" vgap="10">
+                        <rowConstraints>
+                            <RowConstraints percentHeight="20"/>
+                            <RowConstraints percentHeight="20"/>
+                            <RowConstraints percentHeight="20"/>
+                            <RowConstraints percentHeight="20"/>
+                            <RowConstraints percentHeight="20"/>
+                        </rowConstraints>
+                        <!-- Erste Zeile links: Foto -->
+                        <ImageView fx:id="profileIV" layoutX="20" layoutY="120" fitHeight="100" fitWidth="100" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                        <!-- Logged in als: name des Bots-->
+                        <Label fx:id="sessionL" layoutX="20" layoutY="80" text="Logged In:" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                        <!-- Auswahl (Status) -->
+                        <ComboBox fx:id="statusCombo" GridPane.rowIndex="0" GridPane.columnIndex="2">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="Online" />
+                                    <String fx:value="Idle" />
+                                    <String fx:value="Do Not Disturb" />
+                                    <String fx:value="Invisible" />
+                                </FXCollections>
+                            </items>
+                        </ComboBox>
+                        <!-- Kommt noch-->
+                        <Label fx:id="statusL" layoutX="120" layoutY="120" text="Status:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                        <Label fx:id="serverListL" layoutX="20" layoutY="50" text="Server List:" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Status:" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+                    </GridPane>
+
+                    <!-- Sprache-pane braucht noch absprache-->
+                    <VBox fx:id="sprachePane" visible="false">
+                        <Label text="Sprachen amk"/>
+                    </VBox>
+
+                    <!-- Feature-pane -->
+                    <VBox fx:id="featuresPane" visible="false">
+                        <Label text="Chat Gpt Api key:"/>
+                        <TextField fx:id="gptApikey"
+                                   promptText="Chat Gpt Api Key:"
+                                   onAction="#getGptApikey" />
+                        <Label text="Dein Discord bot Token:"/>
+                        <TextField fx:id="botToken"
+                                   promptText="Bot Token:"
+                                   onAction="#getBotToken" />
+                    </VBox>
+                    <VBox fx:id="aboutPane" visible="false">
+                        <Label text="its all about the benjamins Baby"/>
+                    </VBox>
+                </StackPane>
+            </center>
+            <!-- BOTTOM-Area, only on the right/ bottom side (For names usecases etc.) -->
+            <bottom>
+                <HBox spacing="10" style="-fx-background-color: #e0e0e0;" alignment="CENTER">
+                    <children>
+                        <Label text="Footer / Jung brutal Gutaussehend"/>
+                    </children>
+                </HBox>
+            </bottom>
+        </BorderPane>
     </children>
-</StackPane>
+</HBox>
