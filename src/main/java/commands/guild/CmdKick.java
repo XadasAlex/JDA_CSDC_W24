@@ -1,19 +1,21 @@
 package commands.guild;
 
 import commands.ICommand;
-import net.dv8tion.jda.api.Permission;
-import utils.GuildCommands;
-import utils.MessageSender;
+import launcher.Bot;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.GuildVoiceState;
+import net.dv8tion.jda.api.exceptions.PermissionException;
+import utils.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.List;
-import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CmdKick implements ICommand {
     @Override
@@ -39,23 +41,75 @@ public class CmdKick implements ICommand {
     public void execute(SlashCommandInteractionEvent event) {
         OptionMapping memberOption = event.getOption("member");
 
-        assert memberOption != null;
+        if (memberOption == null) {
+            EmbedBuilder embed = Embedder.createInvalidSyntaxEmbed(event.getMember(), "kick");
+            event.replyEmbeds(embed.build()).queue(Helper::deleteAfter60);
+            return;
+        }
 
-        User user = memberOption.getAsUser();
-        Member member = event.getGuild().getMemberById(user.getId());
+        Member memberToKick = memberOption.getAsMember();
+        Guild guild = event.getGuild();
 
-        if (GuildCommands.kick(event.getGuild(), member)) {
-            EmbedBuilder embed = MessageSender.createEmbedBlueprint(event, "Kicked User",
-                    getDescription(),
-                    "Successfully kicked user: " + member.getEffectiveName());
+        if (memberToKick != null && guild != null) {
+            GuildVoiceState voice = memberToKick.getVoiceState();
+
+            if (voice != null && voice.inAudioChannel()) {
+                try {
+                    guild.moveVoiceMember(memberToKick, null).queue();
+                } catch (PermissionException e) {
+                    // Handle permission issue, e.g., bot doesn't have the required permissions
+                    System.out.println("Bot lacks the necessary permissions to move the member: " + e.getMessage());
+                    event.reply("I don't have the required permissions to move this member.").queue();
+                } catch (IllegalArgumentException e) {
+                    // Handle invalid arguments, e.g., member not in the guild or invalid parameters
+                    System.out.println("Invalid arguments provided: " + e.getMessage());
+                    event.reply("The provided member is not valid or in the guild.").queue();
+                } catch (IllegalStateException e) {
+                    // Handle illegal state (e.g., bot not in the same guild)
+                    System.out.println("Illegal state: " + e.getMessage());
+                    event.reply("I cannot move the member due to an internal issue.").queue();
+                } catch (Exception e) {
+                    // Generic exception handling for any unexpected errors
+                    System.out.println("An error occurred while moving the member: " + e.getMessage());
+                    event.reply("An error occurred while moving the member. Please try again.").queue();
+                }
+
+
+            }
+
+
+
+        } else {
+            EmbedBuilder embed = Embedder.createInvalidSyntaxEmbed(event.getMember(), getName());
+
+        }
+
+
+
+
+/*
+        if (GuildCommands.kick(event.getGuild(), memberToKick)) {
+            EmbedBuilder embed = Embedder.createBaseEmbed(
+                    event.getMember(),
+                    CommandIcons.ADMIN_ICON,
+                    "Command: /Kick",
+                    "Successfully Executed",
+                    String.format("Kicked member: %s", memberToKick.getEffectiveName())
+
+            );
+
 
             event.replyEmbeds(embed.build()).queue();
 
         } else {
-            EmbedBuilder embed = MessageSender.createEmbedBlueprint(event, "Kicking User Failed!",
-                    getDescription(),
-                    "Couldn't kick user: " + member.getEffectiveName());
-            event.replyEmbeds(embed.build()).queue();
+            EmbedBuilder embed = Embedder.createBaseErrorEmbed(event.getMember(), "kick");
+            embed.setDescription(
+                    String.format("Couldn't kick %s, either because they aren't currently in a voice channel or tagging them failed.",
+                            memberToKick.getEffectiveName())
+            );
+            event.replyEmbeds(embed.build()).queue(Helper::deleteAfter60);
         }
+
+ */
     }
 }
