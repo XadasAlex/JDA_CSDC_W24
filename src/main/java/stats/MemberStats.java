@@ -261,4 +261,16 @@ public class MemberStats {
     public void incrementBotInteractions() {
         setBotInteractions(getBotInteractions() + 1);
     }
+
+    public String getCurrentRank() {
+        return "test-rank";
+    }
+
+    public String getNextRank() {
+        return "test2-rank";
+    }
+
+    public int getExpUntilNextRank() {
+        return 100;
+    }
 }
