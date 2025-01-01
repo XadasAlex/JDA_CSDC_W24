@@ -1,0 +1,43 @@
+# Ignore Gradle build files
+.gradle/
+build/
+
+# Ignore IntelliJ IDEA project-specific files
+.idea/
+
+# Ignore Gradle wrapper logs and settings
+.gradle/
+*.log
+*.lock
+
+# Ignore Java compiled files
+*.class
+
+# Ignore dependency libraries
+*.jar
+
+# Ignore temporary files
+*.tmp
+*.swp
+*.swo
+
+# Ignore generated files
+out/
+bin/
+
+# Ignore system-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore log files
+*.log
+
+# If using JetBrains IDEs
+.idea/
+*.iml
+
+# Ignore build outputs
+build/
+.gradle/
+*.class
+*.lock
