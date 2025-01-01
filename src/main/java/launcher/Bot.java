@@ -2,6 +2,10 @@ package launcher;
 
 import api.ChatGPT;
 
+import commands.chat.stats.CmdAllowStats;
+import commands.chat.stats.CmdLeaderBoard;
+import commands.chat.stats.CmdStats;
+import commands.guild.CmdGuildInfo;
 import listeners.CommandManagerListener;
 import listeners.ReactionListener;
 
@@ -11,17 +15,14 @@ import commands.testing.ButtonTest;
 import commands.testing.DropDownTest;
 import commands.testing.EntityDDTest;
 
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import listeners.StatListener;
 
 import java.awt.*;
-import java.io.File;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,6 +55,10 @@ public class Bot {
         return Bot.InstanceHolder.instance;
     }
 
+    public static void main(String[] args) {
+        Bot.getInstance();
+    }
+
     private Bot() {
         /* music
         LavalinkClient client = new LavalinkClient(696275723924799529L);
@@ -78,7 +83,9 @@ public class Bot {
                 new CmdAllowStats(),
                 new CmdHelper(),
                 new CmdLeaderBoard(),
-                new CmdStats()
+                new CmdStats(),
+                new CmdGuildInfo(),
+                new CmdBotSelfInviteLink()
         );
         // get init variables
         EnumSet<GatewayIntent> INTENTS = createIntents();
