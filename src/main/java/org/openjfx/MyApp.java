@@ -18,6 +18,10 @@ public class MyApp extends Application {
         stage.setTitle("JavaFX and Gradle");
         stage.setScene(scene);
 
+        //Mindestgröße
+        stage.setMinWidth(900);
+        stage.setMinHeight(700);
+
         stage.show();
     }
 
