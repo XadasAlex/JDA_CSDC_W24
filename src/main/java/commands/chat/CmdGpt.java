@@ -1,5 +1,6 @@
 package commands.chat;
 
+import api.ChatGPT;
 import commands.ICommand;
 import net.dv8tion.jda.api.Permission;
 import utils.MessageCommands;
@@ -28,16 +29,25 @@ public class CmdGpt implements ICommand {
 
     @Override
     public List<OptionData> getOptions() {
-        return List.of(new OptionData(OptionType.STRING, "input", "your request to chatgpt", true));
+        return List.of(
+                new OptionData(OptionType.STRING, "input", "your request to chatgpt", true),
+                new OptionData(OptionType.BOOLEAN, "wienerisch", "soll der trottel dir auf wienerisch antworten?")
+        );
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         OptionMapping input = event.getOption("input");
+        OptionMapping vie = event.getOption("wienerisch");
+        boolean wienerisch = false;
+
+        if (vie != null) {
+            wienerisch = vie.getAsBoolean();
+        }
+
         if (input != null) {
             String gptMessage = input.getAsString();
-            // event.getChannel().sendMessage(String.format("%s asked GPT: %s", event.getMember().getEffectiveName(), gptMessage)).queue();
-            MessageCommands.gptResponse(event, gptMessage);
+            ChatGPT.gptReply(event, gptMessage, wienerisch);
         }
     }
 }

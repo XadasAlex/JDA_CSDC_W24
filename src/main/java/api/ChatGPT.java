@@ -4,9 +4,16 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import utils.CommandIcons;
+import utils.Embedder;
 
 public class ChatGPT{
     final String API_KEY;
@@ -72,5 +79,43 @@ public class ChatGPT{
             e.printStackTrace();
             return "Error: Unable to get response from ChatGPT.";
         }
+    }
+
+    public static void gptReply(SlashCommandInteractionEvent event, String gptMessage, boolean wienerisch) {
+        ChatGPT gpt = ChatGPT.getInstance();
+        String response;
+
+        if (wienerisch) {
+            response = gpt.getChatGPTResponse(gptMessage.concat(" . antworte auf typisch wienerisch."));
+
+        } else {
+            response = gpt.getChatGPTResponse(gptMessage);
+
+        }
+
+        String embedContent = String.format("*%s*\n\n", gptMessage.toUpperCase()).concat(response);
+        List<EmbedBuilder> embedsToSend = new ArrayList<>();
+
+        int maxEmbedDescriptionLen = 4096;
+
+        for (int i = 0; i < (int) (embedContent.length() / (double) maxEmbedDescriptionLen) + 1; i++) {
+            int end = Math.min(embedContent.length(), maxEmbedDescriptionLen * (i + 1));
+
+            String content = embedContent.substring(maxEmbedDescriptionLen * i, end);
+
+            EmbedBuilder gptEmbed = Embedder.createBaseEmbed(event.getMember(),
+                    CommandIcons.CHAT_ICON_URL,
+                    "Chat-GPT",
+                    "Response to your input",
+                    content);
+            gptEmbed.setThumbnail(CommandIcons.CHAT_GPT_ICON);
+
+            embedsToSend.add(gptEmbed);
+        }
+
+        for (EmbedBuilder gptEmbed : embedsToSend) {
+            event.replyEmbeds(gptEmbed.build()).queue();
+        }
+
     }
 }
