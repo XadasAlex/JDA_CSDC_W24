@@ -2,15 +2,12 @@ package commands.chat;
 
 import api.ChatGPT;
 import commands.ICommand;
-import net.dv8tion.jda.api.Permission;
-import utils.MessageCommands;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.List;
-import java.util.Set;
 
 public class CmdGpt implements ICommand {
     @Override
