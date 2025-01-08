@@ -17,6 +17,7 @@
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
 <?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ListView?>
 <HBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml/1"
       spacing="0"
@@ -36,10 +37,24 @@
 
             <!-- Dropdown-Inhalte (anfangs unsichtbar) -->
             <VBox fx:id="featuresMenu" visible="false" managed="false" spacing="5" style="-fx-padding: 10;">
-            <Button text="Option 1" />
-                <Button text="Option 2" />
+                <ToggleButton fx:id="statsToggle" text="Stats" onAction="#toggleStatsmenu"/>
+                <VBox fx:id="statsMenu" visible="false" managed="false" spacing="5">
+                    <Label text="Guilds:"/>
+                    <ListView fx:id="guildListView" />
+
+
+                </VBox>
+
+                <Button text="Option 1" />
+                <Button text="uhu"/>
                 <Button text="Option 3"  />
+
+
+
             </VBox>
+
+
+
             <Region VBox.vgrow="ALWAYS" />
             <Button text="About" onAction="#showAbout"/>
             <Button fx:id="startBTN" text="Start Bot" layoutX="50" layoutY="20" onAction="#startBot" />
