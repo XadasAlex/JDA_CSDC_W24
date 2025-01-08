@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.openjfx.LoginController"
+      spacing="10"
+      alignment="CENTER"
+      style="-fx-padding: 20;">
+
+    <Label text="Benutzername:"/>
+    <TextField fx:id="usernameField" promptText="Benutzer"/>
+
+    <Label text="Kennwort:"/>
+    <PasswordField fx:id="passwordField" promptText="Passwort"/>
+
+    <!-- Das Label wird bei Fehlern rot und anfangs unsichtbar -->
+    <Label fx:id="errorLabel"
+           textFill="RED"
+           visible="false"
+           text="Benutzer/Kennwort falsch"/>
+
+    <Button text="Login"
+            onAction="#handleLogin"/>
+</VBox>

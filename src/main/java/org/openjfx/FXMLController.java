@@ -11,15 +11,20 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import net.dv8tion.jda.api.JDA;
 import launcher.Bot;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class FXMLController implements Initializable {
 
@@ -31,6 +36,10 @@ public class FXMLController implements Initializable {
     private String profileImageURL = "";
     private boolean running = false;
 
+    private static final int MAX_VISIBLE_ROWS = 10;
+    private static final double EXTRA_PADDING = 2.0;
+
+    private List<Pane> allPanes;
     //sortiere ich noch
     @FXML
     private Label statusL;
@@ -63,6 +72,13 @@ public class FXMLController implements Initializable {
     private ToggleButton featuresToggle;
     @FXML
     private VBox featuresMenu;
+    @FXML
+    private ToggleButton statsToggle;
+    @FXML
+    private VBox statsMenu;
+    @FXML
+    private ListView<String> guildListView;
+
 
     @FXML
     private void startBot() {
@@ -83,6 +99,7 @@ public class FXMLController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // Do not initialize the bot here, as it will be done after the button click.
         // We only initialize UI components, not bot components.
+        allPanes = Arrays.asList(firstPane, allgemeinPane, sprachePane, featuresPane, aboutPane);
     }
 
     private void setupTimeline() {
@@ -114,15 +131,21 @@ public class FXMLController implements Initializable {
         tl.play();
     }
 
+    //method for setting one pane visible and to the front and all others invisible
+    private void showPane(Pane paneToShow) {
+        for (Pane pane : allPanes) {
+            boolean isTarget = (pane == paneToShow);
+            pane.setVisible(isTarget);
+            if (isTarget) {
+                pane.toFront();
+            }
+        }
+    }
+
     @FXML
     private void showAllgemein() {
-        firstPane.setVisible(false);
-        allgemeinPane.setVisible(true);
-        sprachePane.setVisible(false);
-        featuresPane.setVisible(false);
-        aboutPane.setVisible(false);
-        allgemeinPane.toFront();
-        //Hier dann was es in echt is setzen
+        showPane(allgemeinPane);
+
         statusCombo.setValue("Online");
         statusCombo.setOnAction(event -> {
             String selectedStatus = statusCombo.getValue();
@@ -132,40 +155,26 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void showSprache() {
-        firstPane.setVisible(false);
-        allgemeinPane.setVisible(false);
-        sprachePane.setVisible(true);
-        featuresPane.setVisible(false);
-        aboutPane.setVisible(false);
-        sprachePane.toFront();
+        showPane(sprachePane);
+        // Hier ggf. weitere Aktionen
     }
 
     @FXML
     private void showFeatures() {
-        firstPane.setVisible(false);
-        allgemeinPane.setVisible(false);
-        sprachePane.setVisible(false);
-        featuresPane.setVisible(true);
-        aboutPane.setVisible(false);
-        featuresPane.toFront();
+        showPane(featuresPane);
         gptApikey.setText("gespeicherter Key später schon angeben");
     }
 
-    //About section
     @FXML
     private void showAbout() {
-        aboutPane.setVisible(true);
-        firstPane.setVisible(false);
-        allgemeinPane.setVisible(false);
-        sprachePane.setVisible(false);
-        featuresPane.setVisible(false);
-        aboutPane.toFront();
+        showPane(aboutPane);
     }
 
     //Dropdown menu für Features, commands...
     @FXML
     public void toggleFeaturesMenu() {
-        showFeatures();
+        showPane(featuresPane);
+
         boolean isExpanded = featuresToggle.isSelected();
         featuresMenu.setVisible(isExpanded);
         featuresMenu.setManaged(isExpanded);
@@ -184,5 +193,57 @@ public class FXMLController implements Initializable {
     public void getBotToken() {
         String userInput = botToken.getText();
         System.out.println("User typed: " + userInput);
+    }
+
+    public static List<String> getAllGuildIds() {
+        // Pfad zum "guilds"-Ordner
+        File guildsRoot = new File("src/main/resources/guilds");
+
+        if (!guildsRoot.exists() || !guildsRoot.isDirectory()) {
+            return List.of();
+        }
+        // Liste aller Unterordner, die numerisch aussehen (optional Filter)
+        File[] guildFolders = guildsRoot.listFiles(f -> f.isDirectory());
+        if (guildFolders == null) {
+            return List.of();
+        }
+
+        // Namen der Ordner sind Guild-IDs
+        return Arrays.stream(guildFolders)
+                .map(File::getName)
+                .collect(Collectors.toList());
+    }
+
+    public void initStatsGuilds() {
+        List<String> guildIds = getAllGuildIds();
+        guildListView.getItems().setAll(guildIds);
+        // Nun die Höhe anpassen
+        adjustListViewHeight(guildListView);
+    }
+
+
+    public void toggleStatsmenu() {
+
+        boolean isExpanded = statsToggle.isSelected();
+        statsMenu.setVisible(isExpanded);
+        statsMenu.setManaged(isExpanded);
+        if (isExpanded) {
+            initStatsGuilds();
+        }
+    }
+
+    private void adjustListViewHeight(ListView<?> listView) {
+        // Zeilenhöhe pro Eintrag
+        listView.setFixedCellSize(24.0);
+        // Anzahl der Einträge holen
+        int itemCount = listView.getItems().size();
+        // Maximale Zeilen die angezeigt werden
+        int visibleRows = Math.min(itemCount, MAX_VISIBLE_ROWS);
+        //Neue Höhe berechnen
+        double newHeight = visibleRows * listView.getFixedCellSize() + EXTRA_PADDING;
+        // setze Grenzen
+        listView.setPrefHeight(newHeight);
+        listView.setMinHeight(Region.USE_PREF_SIZE);
+        listView.setMaxHeight(Region.USE_PREF_SIZE);
     }
 }
