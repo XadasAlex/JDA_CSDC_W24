@@ -33,8 +33,7 @@ public class LoginController {
             myApp.showMainScene();
         } else {
             // Fehlermeldung sichtbar machen
-
-            //errorLabel.setVisible(true);
+            errorLabel.setVisible(true);
 
             //für jetzt immer true, später ändern?
             myApp.showMainScene();
@@ -43,6 +42,6 @@ public class LoginController {
 
     private boolean checkCredentials(String user, String pass) {
         // In einer echten App anders
-        return "user".equals(user) && "geheim".equals(pass);
+        return "admin".equals(user) && "geheim".equals(pass);
     }
 }

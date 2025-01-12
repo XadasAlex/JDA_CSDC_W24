@@ -9,10 +9,10 @@
       style="-fx-padding: 20;">
 
     <Label text="Benutzername:"/>
-    <TextField fx:id="usernameField" promptText="Benutzer"/>
+    <TextField fx:id="usernameField" promptText="Benutzer" onAction="#handleLogin"/>
 
     <Label text="Kennwort:"/>
-    <PasswordField fx:id="passwordField" promptText="Passwort"/>
+    <PasswordField fx:id="passwordField" promptText="Passwort" onAction="#handleLogin"/>
 
     <!-- Das Label wird bei Fehlern rot und anfangs unsichtbar -->
     <Label fx:id="errorLabel"

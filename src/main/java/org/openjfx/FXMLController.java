@@ -3,11 +3,16 @@ package org.openjfx;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -15,12 +20,15 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import javafx.util.converter.IntegerStringConverter;
 import net.dv8tion.jda.api.JDA;
 import launcher.Bot;
+import stats.MemberStats;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -38,6 +46,8 @@ public class FXMLController implements Initializable {
 
     private static final int MAX_VISIBLE_ROWS = 10;
     private static final double EXTRA_PADDING = 2.0;
+
+    private boolean isRankingTableInitialized = false;
 
     private List<Pane> allPanes;
     //sortiere ich noch
@@ -78,6 +88,36 @@ public class FXMLController implements Initializable {
     private VBox statsMenu;
     @FXML
     private ListView<String> guildListView;
+    @FXML
+    private TableView<MemberStats> rankingTableView;
+
+    //Stats list
+    @FXML
+    private TableColumn<MemberStats, String> memberIdColumn;
+    @FXML
+    private TableColumn<MemberStats, Integer> expColumn;
+    @FXML
+    private TableColumn<MemberStats, Integer> messagesSentColumn;
+    @FXML
+    private TableColumn<MemberStats, Integer> otherReactionCountColumn;
+    @FXML
+    private TableColumn<MemberStats, Integer> selfReactionCountColumn;
+    @FXML
+    private TableColumn<MemberStats, Integer> botInteractionsColumn;
+    @FXML
+    private TableColumn<MemberStats, Long> totalTimeColumn;
+    @FXML
+    private TableColumn<MemberStats, Long> lastTimeJoinedColumn;
+    @FXML
+    private TableColumn<MemberStats, Long> charactersSentColumn;
+    @FXML
+    private TableColumn<MemberStats, Boolean> inVoiceColumn;
+
+    @FXML
+    private VBox rankingPane;
+    @FXML
+    private Label guildTitle;
+
 
 
     @FXML
@@ -99,7 +139,47 @@ public class FXMLController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // Do not initialize the bot here, as it will be done after the button click.
         // We only initialize UI components, not bot components.
-        allPanes = Arrays.asList(firstPane, allgemeinPane, sprachePane, featuresPane, aboutPane);
+        allPanes = Arrays.asList(firstPane, allgemeinPane, sprachePane, featuresPane, aboutPane, rankingPane);
+
+        // Listener für Guild-Auswahl in der ListView
+        guildListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) { // Wenn eine Guild-ID ausgewählt wird
+                showRankingForGuild(newValue); // Guild-Rangliste anzeigen
+            } else {
+                resetRankingPane(); // Ranglisten-Pane ausblenden
+            }
+        });
+
+        guildListView.setCellFactory(listView -> new ListCell<>() {
+            @Override
+            protected void updateItem(String guildId, boolean empty) {
+                super.updateItem(guildId, empty);
+                if (empty || guildId == null) {
+                    setText(null);
+                } else {
+                    // Wenn möglich, hol den Namen aus JDA
+                    if (jda != null) {
+                        var guild = jda.getGuildById(guildId);
+                        if (guild != null) {
+                            setText(guild.getName());
+                        } else {
+                            setText(guildId);
+                        }
+                    } else {
+                        setText(guildId);
+                    }
+                }
+            }
+        });
+
+        // Listener für Auswahl
+        guildListView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                showRankingForGuild(newVal); // Das "newVal" ist die Guild-ID
+            } else {
+                resetRankingPane();
+            }
+        });
     }
 
     private void setupTimeline() {
@@ -160,12 +240,6 @@ public class FXMLController implements Initializable {
     }
 
     @FXML
-    private void showFeatures() {
-        showPane(featuresPane);
-        gptApikey.setText("gespeicherter Key später schon angeben");
-    }
-
-    @FXML
     private void showAbout() {
         showPane(aboutPane);
     }
@@ -216,11 +290,14 @@ public class FXMLController implements Initializable {
 
     public void initStatsGuilds() {
         List<String> guildIds = getAllGuildIds();
-        guildListView.getItems().setAll(guildIds);
-        // Nun die Höhe anpassen
-        adjustListViewHeight(guildListView);
-    }
 
+        // Wir wollen in jedem Fall IDs eintragen,
+        // denn nur mit ID können wir später jda.getGuildById(...) aufrufen.
+        guildListView.getItems().setAll(guildIds);
+        adjustListViewHeight(guildListView);
+
+        guildListView.refresh();
+    }
 
     public void toggleStatsmenu() {
 
@@ -245,5 +322,80 @@ public class FXMLController implements Initializable {
         listView.setPrefHeight(newHeight);
         listView.setMinHeight(Region.USE_PREF_SIZE);
         listView.setMaxHeight(Region.USE_PREF_SIZE);
+    }
+
+    private void initializeRankingTable() {
+        if (isRankingTableInitialized) return; // Verhindert doppelte Initialisierung
+
+        // Konfiguriere die Spalten
+        memberIdColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMemberId()));
+        expColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getExp()).asObject());
+        messagesSentColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getMessagesSent()).asObject());
+        otherReactionCountColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getOtherReactionCount()).asObject());
+        selfReactionCountColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getSelfReactionCount()).asObject());
+        botInteractionsColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getBotInteractions()).asObject());
+        totalTimeColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getTotalTime()));
+        lastTimeJoinedColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getLastTimeJoined()));
+        charactersSentColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getCharactersSent()));
+        inVoiceColumn.setCellValueFactory(cellData -> new SimpleBooleanProperty(cellData.getValue().isInVoice()).asObject());
+
+        // Bearbeitbare Spalten
+        expColumn.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        messagesSentColumn.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+
+        // Listener für Änderungen
+        expColumn.setOnEditCommit(event -> {
+            MemberStats member = event.getRowValue();
+            member.setExp(event.getNewValue());
+            member.updateSelf(); // Änderungen speichern
+        });
+
+        messagesSentColumn.setOnEditCommit(event -> {
+            MemberStats member = event.getRowValue();
+            member.setMessagesSent(event.getNewValue());
+            member.updateSelf(); // Änderungen speichern
+        });
+
+        rankingTableView.setEditable(true);
+
+        isRankingTableInitialized = true; // Initialisierung abgeschlossen
+    }
+
+    private void showRankingForGuild(String guildId) {
+        // Tabelle initialisieren (falls noch nicht erfolgt)
+
+        initializeRankingTable();
+
+        String name;
+        // Titel setzen
+        try {
+            name = jda.getGuildById(guildId).getName();
+        }
+        catch (Exception e) {
+            name = guildId;
+        }
+        guildTitle.setText("Ranking für Guild: " + name);
+
+        // Daten laden
+        List<MemberStats> topMembers = MemberStats.topMembers(guildId);
+
+        // Wenn keine Daten vorhanden sind
+        if (topMembers == null || topMembers.isEmpty()) {
+            rankingTableView.getItems().clear();
+            rankingPane.setVisible(true);
+            return;
+        }
+
+        // Daten in die Tabelle laden
+        rankingTableView.getItems().setAll(topMembers);
+
+        // Pane sichtbar machen
+        showPane(rankingPane);
+    }
+
+    private void resetRankingPane() {
+        rankingTableView.getItems().clear(); // Tabelle leeren
+        guildTitle.setText("Guild Ranking"); // Titel zurücksetzen
+        rankingPane.setVisible(false); // Pane ausblenden
     }
 }
