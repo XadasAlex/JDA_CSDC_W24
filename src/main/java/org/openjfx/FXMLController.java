@@ -122,6 +122,7 @@ public class FXMLController implements Initializable {
     @FXML
     private TableColumn<MemberStats, Boolean> inVoiceColumn;
 
+
     @FXML
     private VBox rankingPane;
     @FXML
@@ -166,6 +167,7 @@ public class FXMLController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // Do not initialize the bot here, as it will be done after the button click.
         // We only initialize UI components, not bot components.
+        this.resources = rb;
         allPanes = Arrays.asList(firstPane, allgemeinPane, sprachePane, featuresPane, aboutPane, rankingPane);
 
         // Listener für Guild-Auswahl in der ListView

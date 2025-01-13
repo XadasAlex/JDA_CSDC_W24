@@ -15,7 +15,7 @@ public class MyApp extends Application {
     private Stage primaryStage;
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         this.primaryStage = stage;
         showLogin();
     }
