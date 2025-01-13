@@ -19,6 +19,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TableColumn?>
+
 <HBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml/1"
       spacing="0"
@@ -30,17 +31,17 @@
           style="-fx-background-color: #f0f0f0;"
           minWidth="200"
           prefWidth="200">
-        <Label text="Menü" style="-fx-font-size: 16;"/>
-        <Button text="Allgemein" onAction="#showAllgemein"/>
-        <Button text="Sprache" onAction="#showSprache"/>
+        <Label text="%menu.menu" style="-fx-font-size: 16;"/>
+        <Button text="%menu.general" onAction="#showAllgemein"/>
+        <Button text="%menu.language" onAction="#showSprache"/>
         <!-- Toggle Button für das Dropdown-Menü -->
-        <ToggleButton fx:id="featuresToggle" text="Features" onAction="#toggleFeaturesMenu"/>
+        <ToggleButton fx:id="featuresToggle" text="%menu.features" onAction="#toggleFeaturesMenu"/>
 
         <!-- Dropdown-Inhalte (anfangs unsichtbar) -->
         <VBox fx:id="featuresMenu" visible="false" managed="false" spacing="5" style="-fx-padding: 10;">
-            <ToggleButton fx:id="statsToggle" text="Stats" onAction="#toggleStatsmenu"/>
+            <ToggleButton fx:id="statsToggle" text="%features.stats" onAction="#toggleStatsmenu"/>
             <VBox fx:id="statsMenu" visible="false" managed="false" spacing="5">
-                <Label text="Guilds:"/>
+                <Label text="%stats.yourguilds"/>
                 <ListView fx:id="guildListView"/>
             </VBox>
             <Button text="Option 1"/>
@@ -49,8 +50,8 @@
         </VBox>
 
         <Region VBox.vgrow="ALWAYS"/>
-        <Button text="About" onAction="#showAbout"/>
-        <Button fx:id="startBTN" text="Start Bot" layoutX="50" layoutY="20" onAction="#startBot"/>
+        <Button text="%menu.about" onAction="#showAbout"/>
+        <Button fx:id="startBTN" text="%bot.start" layoutX="50" layoutY="20" onAction="#startBot"/>
 
     </VBox>
     <BorderPane fx:id="rightPane"
@@ -59,9 +60,9 @@
         <center>
             <StackPane fx:id="centerPane">
                 <VBox fx:id="firstPane" visible="true">
-                    <Label text="Dein Discord bot Token:"/>
+                    <Label text="%features.yourBotToken"/>
                     <TextField fx:id="botTokenFirst"
-                               promptText="Bot Token:"
+                               promptText="%features.botTokenPrompt"
                                onAction="#getBotToken"/>
                 </VBox>
 
@@ -102,17 +103,18 @@
                 <!-- Sprache-pane braucht noch absprache-->
                 <VBox fx:id="sprachePane" visible="false">
                     <Label text="Sprachen"/>
+                    <ComboBox fx:id="localeComboBox" onAction="#changeLocale"/>
                 </VBox>
 
                 <!-- Feature-pane -->
                 <VBox fx:id="featuresPane" visible="false">
-                    <Label text="Chat Gpt Api key:"/>
+                    <Label text="%features.gptToken"/>
                     <TextField fx:id="gptApikey"
-                               promptText="Chat Gpt Api Key:"
+                               promptText="%features.gptTokenprompt"
                                onAction="#getGptApikey"/>
-                    <Label text="Dein Discord bot Token:"/>
+                    <Label text="%features.yourBotToken"/>
                     <TextField fx:id="botToken"
-                               promptText="Bot Token:"
+                               promptText="%features.botTokenPrompt"
                                onAction="#getBotToken"/>
                 </VBox>
                 <VBox fx:id="aboutPane" visible="false">
@@ -120,22 +122,22 @@
                 </VBox>
 
                 <VBox fx:id="rankingPane" visible="false" spacing="10" style="-fx-padding: 10;">
-                    <Label fx:id="guildTitle" text="Guild Ranking" style="-fx-font-size: 16;" />
+                    <Label fx:id="guildTitle" style="-fx-font-size: 16;" />
                     <TableView fx:id="rankingTableView" editable="true">
                         <columns>
                             <!-- Spalte für Member-ID -->
-                            <TableColumn fx:id="memberIdColumn" minWidth="125" text="Member ID" />
+                            <TableColumn fx:id="memberIdColumn" minWidth="125" text="%stats.memberID" />
                             <!-- Spalte für EXP -->
-                            <TableColumn fx:id="expColumn" text="EXP" />
+                            <TableColumn fx:id="expColumn" text="%stats.experience" />
                             <!-- Spalte für Messages Sent -->
-                            <TableColumn fx:id="messagesSentColumn" text="Messages Sent" />
-                            <TableColumn fx:id="otherReactionCountColumn" text="Other reactions"/>
-                            <TableColumn fx:id="selfReactionCountColumn" text="Self reactions"/>
-                            <TableColumn fx:id="botInteractionsColumn" text="Bot reactions"/>
-                            <TableColumn fx:id="totalTimeColumn" text="Total Time"/>
-                            <TableColumn fx:id="lastTimeJoinedColumn" text="last time joined"/>
-                            <TableColumn fx:id="charactersSentColumn" text="chars sent"/>
-                            <TableColumn fx:id="inVoiceColumn" text="in Voice"/>
+                            <TableColumn fx:id="messagesSentColumn" text="%stats.messagesSentCollumn" />
+                            <TableColumn fx:id="otherReactionCountColumn" text="%stats.otherReactionCountCollumn"/>
+                            <TableColumn fx:id="selfReactionCountColumn" text="%stats.selfreactionCountCollumn"/>
+                            <TableColumn fx:id="botInteractionsColumn" text="%stats.botInteractionsColumn"/>
+                            <TableColumn fx:id="totalTimeColumn" text="%stats.totalTime"/>
+                            <TableColumn fx:id="lastTimeJoinedColumn" text="%stats.lastTimeJoined"/>
+                            <TableColumn fx:id="charactersSentColumn" text="%stats.charactersSentColumn"/>
+                            <TableColumn fx:id="inVoiceColumn" text="%stats.inVoiceColumn"/>
                         </columns>
                     </TableView>
                 </VBox>
@@ -143,9 +145,9 @@
         </center>
         <!-- BOTTOM-Area, only on the right/ bottom side (For names usecases etc.) -->
         <bottom>
-            <HBox spacing="10" style="-fx-background-color: #e0e0e0;" alignment="CENTER">
+            <HBox spacing="10" style="-fx-background-color: #e0e0e0;" alignment="CENTER_RIGHT">
                 <children>
-                    <Label text="Footer / Jung brutal Gutaussehend"/>
+                    <Label text="%footer.footer"/>
                 </children>
             </HBox>
         </bottom>

@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
@@ -19,6 +20,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.converter.IntegerStringConverter;
 import net.dv8tion.jda.api.JDA;
@@ -33,6 +35,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class FXMLController implements Initializable {
 
@@ -43,6 +47,7 @@ public class FXMLController implements Initializable {
     private String loggedIn = "";
     private String profileImageURL = "";
     private boolean running = false;
+    private Stage primaryStage;
 
     private static final int MAX_VISIBLE_ROWS = 10;
     private static final double EXTRA_PADDING = 2.0;
@@ -50,6 +55,10 @@ public class FXMLController implements Initializable {
     private boolean isRankingTableInitialized = false;
 
     private List<Pane> allPanes;
+    @FXML
+    private ResourceBundle resources;
+    @FXML
+    private ComboBox<String> localeComboBox;
     //sortiere ich noch
     @FXML
     private Label statusL;
@@ -119,21 +128,39 @@ public class FXMLController implements Initializable {
     private Label guildTitle;
 
 
+    private MyApp myApp;
+
+    public void setMyApp(MyApp myApp) {
+        this.myApp = myApp;
+    }
 
     @FXML
     private void startBot() {
+        String translatedTitleon;
+        String translatedTitleoff;
+        translatedTitleon = resources.getString("bot.start");
+        translatedTitleoff = resources.getString("bot.stop");
+
         if (!running) {
             botInstance = Bot.getInstance();
             jda = botInstance.getJda();
             running = !running;
-            startBTN.setText("Shutdown Bot");
+            startBTN.setText(translatedTitleoff);
         } else {
             Bot.getInstance().getJda().shutdown();
-            startBTN.setText("Start Bot");
+            startBTN.setText(translatedTitleon);
         }
-
         setupTimeline();
     }
+
+    public void setResourceBundle(ResourceBundle resources) {
+        this.resources = resources;
+    }
+
+    private static final Locale[] SUPPORTED_LOCALES = {
+            Locale.of("en", "US"),
+            Locale.of("de", "AT")
+    };
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -236,7 +263,19 @@ public class FXMLController implements Initializable {
     @FXML
     private void showSprache() {
         showPane(sprachePane);
+
+        localeComboBox.getItems().addAll("English", "Deutsch");
+
+        localeComboBox.setOnAction(event -> changeLocale());
         // Hier ggf. weitere Aktionen
+    }
+    @FXML
+    private void changeLocale() {
+        String selectedLanguage = localeComboBox.getValue();
+        Locale selectedLocale = selectedLanguage.equals("English") ? Locale.of("en", "US") : Locale.of("de", "AT");
+
+        // Anwendung mit der neuen Locale neu laden
+        myApp.changeLocale(selectedLocale);
     }
 
     @FXML
@@ -374,7 +413,10 @@ public class FXMLController implements Initializable {
         catch (Exception e) {
             name = guildId;
         }
-        guildTitle.setText("Ranking für Guild: " + name);
+        // Lokalisierter Titel
+        String translatedTitle;
+        translatedTitle = resources.getString("stats.guildTitle");
+        guildTitle.setText(translatedTitle.replace("{0}", name));
 
         // Daten laden
         List<MemberStats> topMembers = MemberStats.topMembers(guildId);

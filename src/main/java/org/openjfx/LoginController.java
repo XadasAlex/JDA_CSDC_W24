@@ -5,6 +5,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
+import java.util.Locale;
+
 public class LoginController {
 
     @FXML
@@ -14,13 +16,14 @@ public class LoginController {
     @FXML
     private Label errorLabel;
 
+
     // Referenz auf MyApp, damit dort die Hauptszene aufgerufen werden kann
     private MyApp myApp;
 
-    // Wird von MyApp aufgerufen, nachdem der FXML-Loader den Controller erzeugt hat.
     public void setMyApp(MyApp myApp) {
         this.myApp = myApp;
     }
+
 
     @FXML
     private void handleLogin() {
@@ -30,13 +33,13 @@ public class LoginController {
         // Beispiel: simpler Hardcode-Test
         if (checkCredentials(user, pass)) {
             // Wenn OK -> Hauptszene anzeigen
-            myApp.showMainScene();
+            myApp.showMainScene(Locale.getDefault());
         } else {
             // Fehlermeldung sichtbar machen
             errorLabel.setVisible(true);
 
             //für jetzt immer true, später ändern?
-            myApp.showMainScene();
+            myApp.showMainScene(Locale.getDefault());
         }
     }
 
