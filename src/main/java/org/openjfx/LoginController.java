@@ -10,11 +10,11 @@ import java.util.Locale;
 public class LoginController {
 
     @FXML
-    private TextField usernameField;
+    private TextField tb_usernameField;
     @FXML
-    private PasswordField passwordField;
+    private PasswordField tb_passwordField;
     @FXML
-    private Label errorLabel;
+    private Label lb_errorLabel;
 
 
     // Referenz auf MyApp, damit dort die Hauptszene aufgerufen werden kann
@@ -26,8 +26,8 @@ public class LoginController {
 
     @FXML
     private void handleLogin() {
-        String user = usernameField.getText();
-        String pass = passwordField.getText();
+        String user = tb_usernameField.getText();
+        String pass = tb_passwordField.getText();
 
         // Beispiel: simpler Hardcode-Test
         if (checkCredentials(user, pass)) {
@@ -35,7 +35,7 @@ public class LoginController {
             myApp.showMainScene(Locale.getDefault());
         } else {
             // Fehlermeldung sichtbar machen
-            errorLabel.setVisible(true);
+            lb_errorLabel.setVisible(true);
 
             //für jetzt immer true, später ändern?
             myApp.showMainScene(Locale.getDefault());
