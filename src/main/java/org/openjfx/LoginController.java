@@ -24,7 +24,6 @@ public class LoginController {
         this.myApp = myApp;
     }
 
-
     @FXML
     private void handleLogin() {
         String user = tb_usernameField.getText();
