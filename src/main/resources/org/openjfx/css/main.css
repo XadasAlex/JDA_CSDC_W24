@@ -1,0 +1,141 @@
+.root{
+    -fx-background-color: #313338;
+}
+
+.label{
+    -fx-font-size: 12;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono";
+    -fx-text-fill: #B5BAC1;
+    -fx-alignment: top-left;
+    -fx-pref-width: 250;
+    -fx-padding: 10 0 5 0;
+}
+
+.button{
+    -fx-font-size: 12;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono";
+    -fx-text-fill: #B5BAC1;
+    -fx-pref-width: 250;
+    -fx-background-color: #2B2D31;
+    -fx-pref-width: 150;
+
+}
+
+.button:hover {
+    -fx-background-color: #313338;
+}
+
+.combo-box{
+    -fx-font-size: 12;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono";
+    -fx-text-fill: #B5BAC1;
+    -fx-pref-width: 250;
+    -fx-background-color: #2B2D31;
+    -fx-pref-width: 150;
+}
+
+.combo-box:hover{
+    -fx-background-color: #1F2124;
+}
+
+.combo-box .list-cell{
+    -fx-background-color: #2B2D31;
+    -fx-text-fill: #B5BAC1;
+
+}
+
+.combo-box .list-cell:hover{
+    -fx-background-color: #313338;
+    -fx-text-fill: #B5BAC1;
+}
+
+.text-field{
+    -fx-font-size: 12;
+    -fx-font-family: "JetBrains Mono";
+    -fx-text-fill: #DBDEE1;
+    -fx-pref-width: 250;
+    -fx-background-color: #1E1F22;
+    -fx-padding: 10;
+}
+
+.toggle-button{
+    -fx-font-size: 12;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono";
+    -fx-text-fill: #B5BAC1;
+    -fx-pref-width: 150;
+    -fx-background-color: #2B2D31;
+
+
+}
+
+.toggle-button:hover{
+    -fx-background-color: #313338;
+}
+
+#lb_footer{
+    -fx-alignment: center;
+    -fx-pref-height: 20;
+}
+
+#lb_menu{
+    -fx-font-size: 10;
+    -fx-background-color: #2B2D31;
+    -fx-padding: 10 0 0 10;
+
+}
+
+#startBTN{
+    -fx-font-size: 12;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono";
+    -fx-text-fill: WHITE;
+    -fx-background-color: #248045;
+}
+
+#startBTN:hover{
+    -fx-background-color: #32B360;
+}
+
+#hbox{
+    -fx-background-color: #313338;
+}
+
+#startBTN.clicked{
+    -fx-background-color: #DA373C;
+}
+
+#centerPane{
+    -fx-background-color: #313338;
+
+}
+
+#leftBox{
+    -fx-background-color: #2B2D31;
+}
+
+#firstPane{
+    -fx-background-color: #313338;
+}
+
+#sidePane{
+    -fx-background-color: #2B2D31;
+}
+
+#featuresMenu{
+    -fx-background-color: #2B2D31;
+}
+
+#featuresPane{
+    -fx-background-color: #313338;
+}
+
+#footer{
+    -fx-background-color: #2B2D31;
+    -fx-pref-height: 20;
+    -fx-padding: 0 0 0 0;
+
+}
