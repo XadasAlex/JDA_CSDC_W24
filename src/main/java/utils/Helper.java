@@ -49,6 +49,10 @@ public class Helper {
         return getBaseStatPath(guildId).concat(String.format("/%s.json", memberId));
     }
 
+    public static String getBaseDBPath() {
+        return getProjectPath().concat("/src/main/resources/DB");
+    }
+
     public static String createProgressBar(double percentage, int detail) {
         int filledSegments = (int) (percentage * detail / 100);
         int unfilledSegments = detail - filledSegments;

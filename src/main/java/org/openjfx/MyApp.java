@@ -5,9 +5,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.sqlite.JDBC;
+import utils.Helper;
 
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
 
 
 public class MyApp extends Application {
@@ -15,9 +20,42 @@ public class MyApp extends Application {
     private Stage primaryStage;
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws SQLException {
+        //Create Table sql statements for when the DB does not exist anymore
+        var createPlayersTable = "CREATE TABLE IF NOT EXISTS Players ("
+                + "	PlayerID INTEGER PRIMARY KEY);";
+
+        var createGamesTable = "CREATE TABLE IF NOT EXISTS Games ("
+                + "	GameID INTEGER PRIMARY KEY,"
+                + " PlayerOne INTEGER NOT NULL,"
+                + " PlayerOneWins INTEGER,"
+                + " PlayerTwoWins INTEGER,"
+                + " PlayerTwo INTEGER NOT NULL,"
+                + " FOREIGN KEY (PlayerOne) REFERENCES Players(PlayerID),"
+                + " FOREIGN KEY (PlayerTwo) REFERENCES Players(PlayerID));";
+
+        var createMovesTable = "CREATE TABLE IF NOT EXISTS Moves ("
+                + "	MoveID INTEGER PRIMARY KEY,"
+                + " Game INTEGER NOT NULL,"
+                + " Moves TEXT,"
+                + "	FOREIGN KEY (Game) REFERENCES Games(GameID));";
+
+
+        DriverManager.registerDriver(new JDBC());
+
+        //creation of the DB and execution of the create table statements
+        try (var conn = DriverManager.getConnection(String.format("jdbc:sqlite:%s/battleships.db", Helper.getBaseDBPath()))) {
+            if (conn != null) {
+                conn.createStatement().execute(createPlayersTable);
+                conn.createStatement().execute(createGamesTable);
+                conn.createStatement().execute(createMovesTable);
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
         this.primaryStage = stage;
         showLogin();
+
     }
 
     public void showLogin() {

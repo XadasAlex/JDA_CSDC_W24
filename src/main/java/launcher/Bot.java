@@ -2,6 +2,7 @@ package launcher;
 
 import api.ChatGPT;
 
+import commands.battleship.*;
 import commands.chat.stats.CmdAllowStats;
 import commands.chat.stats.CmdLeaderBoard;
 import commands.chat.stats.CmdStats;
@@ -85,7 +86,13 @@ public class Bot {
                 new CmdLeaderBoard(),
                 new CmdStats(),
                 new CmdGuildInfo(),
-                new CmdBotSelfInviteLink()
+                new CmdBotSelfInviteLink(),
+                new RegisterBattleships(),
+                new BattleshipStartGame(),
+                new SurrenderGame(),
+                new SetShips(),
+                new MakeMove(),
+                new AcceptBattleshipGame()
         );
         // get init variables
         EnumSet<GatewayIntent> INTENTS = createIntents();
