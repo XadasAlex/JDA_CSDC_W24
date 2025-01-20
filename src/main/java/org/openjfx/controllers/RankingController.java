@@ -1,6 +1,7 @@
 package org.openjfx.controllers;
 
 import javafx.application.Platform;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -23,7 +24,7 @@ public class RankingController {
     @FXML private TableColumn<MemberStats, Long> charactersSentColumn;
     @FXML private TableColumn<MemberStats, String> totalTimeColumn;
     @FXML private TableColumn<MemberStats, Boolean> inVoiceColumn;
-    @FXML private TableColumn<MemberStats, Long> lastTimeJoinedColumn;
+    @FXML private TableColumn<MemberStats, String> lastTimeJoinedColumn;
 
     private GuildService guildService;
     private JDA jda;
@@ -33,6 +34,12 @@ public class RankingController {
         this.jda = jda;
         guildService.loadGuildsIntoListView(guildListView);
         setupRankingTable();
+
+        guildListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                showRankingsForSelectedGuild(newValue);
+            }
+        });
     }
 
     private void setupRankingTable() {
@@ -48,15 +55,21 @@ public class RankingController {
             return new SimpleStringProperty(totalTimeString);
         }); // Gesamtzeit im Voice-Channel
         inVoiceColumn.setCellValueFactory(new PropertyValueFactory<>("inVoice")); // Ob der Nutzer gerade im Voice ist
-        lastTimeJoinedColumn.setCellValueFactory(new PropertyValueFactory<>("lastTimeJoinedFormatted")); // Letzter Voice-Beitritt formatiert
+        lastTimeJoinedColumn.setCellValueFactory(cellData -> {
+            MemberStats memberStats = cellData.getValue();
+            long lastTimeJoined = memberStats.getLastTimeJoined();
+            if (lastTimeJoined == 0) {
+                return new SimpleStringProperty("N/A");
+            }
+            return new SimpleStringProperty(Helper.getTimeAgo(lastTimeJoined));
+        }); // Letzter Voice-Beitritt formatiert
 
         // Optionale Anpassungen: Automatische Spaltenbreite
         rankingTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
     @FXML
-    private void showRankingsForSelectedGuild() {
-        String selectedGuild = guildListView.getSelectionModel().getSelectedItem();
+    private void showRankingsForSelectedGuild(String selectedGuild) {
         if (selectedGuild == null) {
             showAlert("No Guild Selected", "Please select a guild to view rankings.");
             return;

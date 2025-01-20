@@ -54,12 +54,17 @@ public class Helper {
         return getBaseStatPath(guildId).concat(String.format("/%s.json", memberId));
     }
 
+
+    public static String getBaseDBPath() {
+        return getProjectPath().concat("/src/main/resources/DB");
+    }
     public static String getResourcePath() {
         return getProjectPath().concat("/src/main/resources/");
     }
 
     public static String getGuildSettingsPath(String guildId) {
         return getResourcePath().concat(String.format("/guilds/%s/settings.json", guildId));
+
     }
 
     public static String createProgressBar(double percentage, int detail) {
@@ -280,5 +285,9 @@ public class Helper {
         Executors.newSingleThreadScheduledExecutor().schedule(() -> {
             message.delete().queue();
         }, seconds, TimeUnit.SECONDS);
+    }
+
+    public static boolean setEnvVar(String x, String y) {
+        return true;
     }
 }

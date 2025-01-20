@@ -18,6 +18,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CmdKick implements ICommand {
+    // todo: genauer anschauen funktioniert noch nicht
     @Override
     public String getName() {
         return "kick";
@@ -73,43 +74,12 @@ public class CmdKick implements ICommand {
                     System.out.println("An error occurred while moving the member: " + e.getMessage());
                     event.reply("An error occurred while moving the member. Please try again.").queue();
                 }
-
-
             }
-
-
 
         } else {
             EmbedBuilder embed = Embedder.createInvalidSyntaxEmbed(event.getMember(), getName());
-
-        }
-
-
-
-
-/*
-        if (GuildCommands.kick(event.getGuild(), memberToKick)) {
-            EmbedBuilder embed = Embedder.createBaseEmbed(
-                    event.getMember(),
-                    CommandIcons.ADMIN_ICON,
-                    "Command: /Kick",
-                    "Successfully Executed",
-                    String.format("Kicked member: %s", memberToKick.getEffectiveName())
-
-            );
-
-
             event.replyEmbeds(embed.build()).queue();
-
-        } else {
-            EmbedBuilder embed = Embedder.createBaseErrorEmbed(event.getMember(), "kick");
-            embed.setDescription(
-                    String.format("Couldn't kick %s, either because they aren't currently in a voice channel or tagging them failed.",
-                            memberToKick.getEffectiveName())
-            );
-            event.replyEmbeds(embed.build()).queue(Helper::deleteAfter60);
         }
 
- */
     }
 }

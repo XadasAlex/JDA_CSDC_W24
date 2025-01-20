@@ -62,7 +62,7 @@
     <!-- Server and Member List -->
     <VBox spacing="5">
         <Label text="Connected Servers:" style="-fx-font-size: 16;"/>
-        <TableView fx:id="serverTableView">
+        <TableView fx:id="serverTableView" prefHeight="150">
             <columns>
                 <!-- Server Name Column -->
                 <TableColumn fx:id="serverNameColumn" text="%general.servername"/>

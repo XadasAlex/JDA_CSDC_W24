@@ -8,7 +8,7 @@
       spacing="10" style="-fx-padding: 10;">
     <Label text="%ranking.select" style="-fx-font-size: 16;" />
     <ListView fx:id="guildListView" />
-    <Button text="%ranking.showRankings" onAction="#showRankingsForSelectedGuild" />
+    <Separator/>
     <TableView fx:id="rankingTableView">
         <columns>
             <TableColumn fx:id="memberNameColumn" text="%ranking.memberName" />

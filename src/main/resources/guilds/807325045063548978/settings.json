@@ -1,0 +1,9 @@
+{
+  "allowSpam": true,
+  "allowSwear": true,
+  "memberWelcomeMessage": false,
+  "memberLeaveMessage": false,
+  "dedicatedBotChannels": false,
+  "guildId": "807325045063548978",
+  "chatRestrictedMembers": []
+}

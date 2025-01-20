@@ -87,7 +87,6 @@ public class MasterController implements Initializable {
         }
     }
 
-
     @FXML
     private void showRanking() {
         try {

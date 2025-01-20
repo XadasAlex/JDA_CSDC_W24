@@ -1,19 +1,228 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.StackPane?>
-
-<?import javafx.scene.image.ImageView?>
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
-           prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="org.openjfx.FXMLController">
-    <children>
-        <Label fx:id="statusL" layoutX="20" layoutY="20" text="Status:" />
-        <Label fx:id="serverListL" layoutX="20" layoutY="50" text="Server List:" />
-        <Label fx:id="sessionL" layoutX="20" layoutY="80" text="Logged In:" />
-        <ImageView fx:id="profileIV" layoutX="20" layoutY="120" fitHeight="100" fitWidth="100" />
-        <Button fx:id="startBTN" text="Start Bot" layoutX="150" layoutY="20" onAction="#startBot" />
-        <!--<Label fx:id="serverListIdL" text="Ids: " StackPane.alignment="BOTTOM_LEFT" styleClass="label"/>-->
-    </children>
-</StackPane>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox fx:id="hbox" prefHeight="400" prefWidth="600" spacing="0" stylesheets="@css/main.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.FXMLController">
+    <BorderPane fx:id="rightPane" stylesheets="@css/main.css" HBox.hgrow="ALWAYS">
+        <!--Hauptinhalt rechts -->
+        <center>
+            <StackPane fx:id="centerPane">
+                <VBox fx:id="firstPane" fillWidth="false" visible="true">
+                    <Label text="%features.yourBotToken">
+                  <VBox.margin>
+                     <Insets left="20.0" />
+                  </VBox.margin>
+               </Label>
+                    <TextField fx:id="botTokenFirst" onAction="#getBotToken" promptText="%features.botTokenPrompt">
+                  <VBox.margin>
+                     <Insets left="20.0" />
+                  </VBox.margin>
+               </TextField>
+                </VBox>
+
+                <GridPane fx:id="allgemeinPane" alignment="TOP_LEFT" hgap="10" vgap="10" visible="false">
+                    <rowConstraints>
+                        <RowConstraints percentHeight="20" />
+                        <RowConstraints percentHeight="20" />
+                        <RowConstraints percentHeight="20" />
+                        <RowConstraints percentHeight="20" />
+                        <RowConstraints percentHeight="20" />
+                    </rowConstraints>
+                    <!-- Erste Zeile links: Foto -->
+                    <ImageView fx:id="profileIV" fitHeight="100" fitWidth="100" layoutX="20" layoutY="120" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                    <!-- Logged in als: name des Bots-->
+                    <Label fx:id="sessionL" layoutX="20" layoutY="80" text="Logged In:" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <!-- Auswahl (Status) -->
+                    <ComboBox fx:id="statusCombo" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="Online" />
+                                <String fx:value="Idle" />
+                                <String fx:value="Do Not Disturb" />
+                                <String fx:value="Invisible" />
+                            </FXCollections>
+                        </items>
+                  <GridPane.margin>
+                     <Insets right="20.0" />
+                  </GridPane.margin>
+                    </ComboBox>
+                    <!-- Kommt noch-->
+                    <Label fx:id="statusL" layoutX="120" layoutY="120" text="Status:" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                  <GridPane.margin>
+                     <Insets left="20.0" />
+                  </GridPane.margin></Label>
+                    <Label fx:id="serverListL" layoutX="20" layoutY="50" text="Server List:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+               <columnConstraints>
+                  <ColumnConstraints />
+                  <ColumnConstraints />
+                  <ColumnConstraints />
+               </columnConstraints>
+                </GridPane>
+
+                <!-- Sprache-pane braucht noch absprache-->
+                <VBox fx:id="sprachePane" visible="false">
+                    <Label text="Sprachen">
+                  <VBox.margin>
+                     <Insets left="20.0" />
+                  </VBox.margin></Label>
+                    <ComboBox fx:id="localeComboBox" onAction="#changeLocale">
+                  <VBox.margin>
+                     <Insets left="20.0" />
+                  </VBox.margin></ComboBox>
+                </VBox>
+
+                <!-- Feature-pane -->
+                <VBox fx:id="featuresPane" fillWidth="false" visible="false">
+                    <Label text="%features.gptToken">
+                  <VBox.margin>
+                     <Insets left="20.0" />
+                  </VBox.margin></Label>
+                    <TextField fx:id="gptApikey" onAction="#getGptApikey" promptText="%features.gptTokenprompt">
+                  <VBox.margin>
+                     <Insets left="20.0" />
+                  </VBox.margin></TextField>
+                    <Label text="%features.yourBotToken">
+                  <VBox.margin>
+                     <Insets left="20.0" />
+                  </VBox.margin></Label>
+                    <TextField fx:id="botToken" onAction="#getBotToken" promptText="%features.botTokenPrompt">
+                  <VBox.margin>
+                     <Insets left="20.0" />
+                  </VBox.margin></TextField>
+                </VBox>
+                <VBox fx:id="aboutPane" visible="false">
+                    <Label text="It's all about the Benjamins, baby">
+                  <VBox.margin>
+                     <Insets left="20.0" />
+                  </VBox.margin></Label>
+                </VBox>
+
+                <VBox fx:id="rankingPane" spacing="10" style="-fx-padding: 10;" visible="false">
+                    <Label fx:id="guildTitle" style="-fx-font-size: 16;" />
+                    <TableView fx:id="rankingTableView" editable="true">
+                        <columns>
+                            <!-- Spalte für Member-ID -->
+                            <TableColumn fx:id="memberIdColumn" minWidth="125" text="%stats.memberID" />
+                            <!-- Spalte für EXP -->
+                            <TableColumn fx:id="expColumn" text="%stats.experience" />
+                            <!-- Spalte für Messages Sent -->
+                            <TableColumn fx:id="messagesSentColumn" text="%stats.messagesSentCollumn" />
+                            <TableColumn fx:id="otherReactionCountColumn" text="%stats.otherReactionCountCollumn" />
+                            <TableColumn fx:id="selfReactionCountColumn" text="%stats.selfreactionCountCollumn" />
+                            <TableColumn fx:id="botInteractionsColumn" text="%stats.botInteractionsColumn" />
+                            <TableColumn fx:id="totalTimeColumn" text="%stats.totalTime" />
+                            <TableColumn fx:id="lastTimeJoinedColumn" text="%stats.lastTimeJoined" />
+                            <TableColumn fx:id="charactersSentColumn" text="%stats.charactersSentColumn" />
+                            <TableColumn fx:id="inVoiceColumn" text="%stats.inVoiceColumn" />
+                        </columns>
+                    </TableView>
+                </VBox>
+            </StackPane>
+        </center>
+        <!-- BOTTOM-Area, only on the right/ bottom side (For names usecases etc.) -->
+        <bottom>
+            <HBox fx:id="footer" alignment="CENTER" fillHeight="false" minHeight="-Infinity" stylesheets="@css/main.css" BorderPane.alignment="CENTER">
+                <children>
+                    <Label fx:id="lb_footer" prefHeight="200.0" prefWidth="383.0" stylesheets="@css/main.css" text="AA-Batterien © 2025">
+                  <HBox.margin>
+                     <Insets />
+                  </HBox.margin>
+               </Label>
+                </children>
+            <BorderPane.margin>
+               <Insets />
+            </BorderPane.margin>
+            </HBox>
+        </bottom>
+      <left>
+      
+                <!-- Left side with Buttons to switch sub-menus-->
+          <VBox fx:id="leftBox" fillWidth="false" minWidth="200" prefWidth="200.0" stylesheets="@css/main.css" BorderPane.alignment="CENTER">
+              <Label fx:id="lb_menu" stylesheets="@css/main.css" text="%menu.menu" />
+              <Button onAction="#showAllgemein" text="%menu.general">
+               <VBox.margin>
+                  <Insets left="25.0" />
+               </VBox.margin>
+            </Button>
+              <Button onAction="#showSprache" text="%menu.language">
+               <VBox.margin>
+                  <Insets left="25.0" />
+               </VBox.margin>
+            </Button>
+              <!-- Toggle Button für das Dropdown-Menü -->
+              <ToggleButton fx:id="featuresToggle" onAction="#toggleFeaturesMenu" stylesheets="@css/main.css" text="%menu.features">
+               <VBox.margin>
+                  <Insets left="25.0" />
+               </VBox.margin>
+            </ToggleButton>
+      
+                    <!-- Dropdown-Inhalte (anfangs unsichtbar) -->
+              <VBox fx:id="featuresMenu" fillWidth="false" managed="false" spacing="5" style="-fx-padding: 10;" visible="false">
+                  <ToggleButton fx:id="statsToggle" onAction="#toggleStatsmenu" stylesheets="@css/main.css" text="%features.stats">
+                  <VBox.margin>
+                     <Insets left="20.0" />
+                  </VBox.margin></ToggleButton>
+                  <VBox fx:id="statsMenu" fillWidth="false" managed="false" spacing="5" visible="false">
+                      <Label text="%stats.yourguilds">
+                     <VBox.margin>
+                        <Insets left="25.0" />
+                     </VBox.margin>
+                  </Label>
+                      <ListView fx:id="guildListView" />
+                  </VBox>
+                  <Button text="Option 1">
+                  <VBox.margin>
+                     <Insets left="20.0" />
+                  </VBox.margin>
+               </Button>
+                  <Button text="uhu">
+                  <VBox.margin>
+                     <Insets left="20.0" />
+                  </VBox.margin>
+               </Button>
+                  <Button text="Option 3">
+                  <VBox.margin>
+                     <Insets left="20.0" />
+                  </VBox.margin>
+               </Button>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+              </VBox>
+      
+                    <Region fx:id="sidePane" VBox.vgrow="ALWAYS" />
+              <Button onAction="#showAbout" text="%menu.about">
+               <VBox.margin>
+                  <Insets left="25.0" />
+               </VBox.margin>
+            </Button>
+              <Button fx:id="startBTN" layoutX="50" layoutY="20" onAction="#startBot" text="%bot.start">
+               <VBox.margin>
+                  <Insets left="25.0" />
+               </VBox.margin>
+            </Button>
+      
+                </VBox>
+      </left>
+    </BorderPane>
+</HBox>
+

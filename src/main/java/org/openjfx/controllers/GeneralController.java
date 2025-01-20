@@ -12,13 +12,14 @@ import launcher.Bot;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
 import utils.GuildBaseInfo;
+import utils.Helper;
 
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class GeneralController implements Initializable {
-    private Bot botInstance = null;
+    private Bot botInstance;
     private boolean ready = false;
     private JDA jda;
 
@@ -61,6 +62,17 @@ public class GeneralController implements Initializable {
         botTokenLabel.setVisible(isKeyEntered("DISCORD_BOT_TOKEN"));
         apiKeyLabel.setVisible(isKeyEntered("OPENAI_API_KEY"));
         setupServerInfoTable();
+
+        // Überprüfe, ob der Bot bereits läuft, und lade ggf. Daten
+        if (Bot.getInstance().isRunning()) {
+            botInstance = Bot.getInstance();
+            jda = botInstance.getJda();
+            ready = true;
+            reloadData();
+            startButton.setText("Shutdown Bot");
+        } else {
+            resetStatus();
+        }
     }
 
     private boolean isKeyEntered(String envKey) {
@@ -69,8 +81,15 @@ public class GeneralController implements Initializable {
     }
 
     public void saveSettings(ActionEvent actionEvent) {
-        System.out.println(botTokenTextField.getText());
-        System.out.println(apiKeyTextField.getText());
+        if (!botTokenTextField.getText().isBlank()) {
+            boolean success = Helper.setEnvVar("DISCORD_BOT_TOKEN", botTokenTextField.getText());
+            if (!success) botTokenLabel.setText("Failed setting the value provided!");
+        }
+
+        if (!apiKeyTextField.getText().isBlank()) {
+            boolean success = Helper.setEnvVar("OPENAI_API_KEY", apiKeyTextField.getText());
+            if (!success) apiKeyLabel.setText("Failed setting the value provided!");
+        }
     }
 
     @FXML
@@ -82,24 +101,29 @@ public class GeneralController implements Initializable {
         }
     }
 
-    private void startBotInstance() {
+    private synchronized void startBotInstance() {
+        if (jda != null && jda.getStatus() != JDA.Status.SHUTDOWN) {
+            showError("Bot Already Running", "The bot is already running. Please shut it down first.");
+            return;
+        }
+
         toggleLoading(true);
         startButton.setDisable(true);
 
         new Thread(() -> {
             try {
                 botInstance = Bot.getInstance();
+                botInstance.start(); // Neue Methode, um den Bot gezielt zu starten
                 jda = botInstance.getJda();
-                jda.awaitReady();
 
                 Platform.runLater(() -> {
                     ready = true;
                     startButton.setText("Shutdown Bot");
-                    updateStatus();
+                    reloadData();
                     toggleLoading(false);
                     startButton.setDisable(false);
                 });
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 Platform.runLater(() -> {
                     showError("Error Starting Bot", "Failed to start the bot: " + e.getMessage());
                     toggleLoading(false);
@@ -114,12 +138,7 @@ public class GeneralController implements Initializable {
         startButton.setDisable(true);
 
         new Thread(() -> {
-            if (jda != null) {
-                jda.shutdown();
-                botInstance = null;
-                jda = null;
-            }
-
+            botInstance.shutdown(); // Neue Methode in der Bot-Klasse, um gezielt den Bot zu stoppen
             Platform.runLater(() -> {
                 ready = false;
                 startButton.setText("Start Bot");
@@ -130,16 +149,21 @@ public class GeneralController implements Initializable {
         }).start();
     }
 
-    private void updateStatus() {
-        if (jda != null) {
+    private void reloadData() {
+        if (jda != null && botInstance.isRunning()) {
             Platform.runLater(() -> {
+                // Update bot information
                 botNameLabel.setText(jda.getSelfUser().getName());
                 botStatusLabel.setText("Online");
                 botNameLabel.setVisible(true);
                 botStatusLabel.setVisible(true);
                 profileImageView.setImage(new Image(jda.getSelfUser().getEffectiveAvatarUrl()));
+
+                // Load server information
                 loadServerInfo();
             });
+        } else {
+            resetStatus(); // Reset the UI if the bot is not running
         }
     }
 

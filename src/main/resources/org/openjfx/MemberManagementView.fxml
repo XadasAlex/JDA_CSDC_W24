@@ -7,15 +7,15 @@
       fx:controller="org.openjfx.controllers.MemberManagementController"
       spacing="10" style="-fx-padding: 10;">
     <Label fx:id="memberTitle" text="Select a Guild for Member Management" style="-fx-font-size: 16;"/>
-    <ListView fx:id="guildListView"/>
-    <TableView fx:id="chatTableView" managed="false" visible="false" xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx">
+    <ListView fx:id="guildListView" prefHeight="150"/>
+    <TableView fx:id="chatTableView" managed="false" visible="false" prefHeight="350" xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx">
         <columns>
             <TableColumn fx:id="timestampColumn" text="%management.timestamp" />
             <TableColumn fx:id="contentColumn" text="%management.message" />
             <TableColumn fx:id="channelColumn" text="%management.channel" />
         </columns>
     </TableView>
-    <Button text="%management.showMembers" onAction="#showMembers"/>
+    <Separator/>
     <Label text="%management.memberInGuild" style="-fx-font-size: 14;"/>
     <TableView fx:id="memberTableView">
         <columns>

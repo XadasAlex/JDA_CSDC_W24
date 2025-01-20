@@ -2,6 +2,7 @@ package launcher;
 
 import api.ChatGPT;
 
+import commands.battleship.*;
 import commands.chat.stats.CmdAllowStats;
 import commands.chat.stats.CmdLeaderBoard;
 import commands.chat.stats.CmdStats;
@@ -18,8 +19,6 @@ import commands.testing.ButtonTest;
 import commands.testing.DropDownTest;
 import commands.testing.EntityDDTest;
 
-import net.dv8tion.jda.api.entities.Guild;
-
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -29,86 +28,116 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 public class Bot {
-    // bot instances
-    private final JDABuilder bot;
-    private final JDA jda;
-    private final ChatGPT gpt;
-    // bot cosmetic
-    private final String avatarUrl;
+    private JDABuilder bot;
+    private JDA jda;
+    private ChatGPT gpt;
+
+    private final String avatarUrl = "https://example.com/default-avatar.png"; // Placeholder
     private final Color defaultColor = new Color(115, 169, 186);
     private final Color errorColor = new Color(255, 51, 51);
+
+    private boolean running = false; // Neuer Status-Tracker
     private HashMap<String, GuildSettings> guildSettingsHashMap;
-    // music
 
-    /*
-    private final MusicHandler;
-    private final AudioPlayerManager playerManager;
-    private ConcurrentMap<String, AudioPlayerSendHandler> audioSendHandlers;
-    private ConcurrentMap<String, TrackScheduler> trackSchedulers;
-    */
-
-    // lazy load singleton - don't change access modifier to public
     private static final class InstanceHolder {
         private static final Bot instance = new Bot();
     }
 
-    // lazy load singleton
     public static Bot getInstance() {
-        return Bot.InstanceHolder.instance;
-    }
-
-    public static void main(String[] args) {
-        Bot.getInstance();
+        return InstanceHolder.instance;
     }
 
     private Bot() {
-        /* music
-        LavalinkClient client = new LavalinkClient(696275723924799529L);
-        this.playerManager = new DefaultAudioPlayerManager();
-        this.musicHandler = new MusicHandler(playerManager, this);
-        this.audioSendHandlers = new ConcurrentHashMap<>();
-        this.trackSchedulers = new ConcurrentHashMap<>();
-        */
-        // init commands
+        // Intents und GPT-Instanz vorbereiten
+        EnumSet<GatewayIntent> INTENTS = createIntents();
+        this.gpt = ChatGPT.getInstance();
+
         CommandManagerListener commandManagerListener = new CommandManagerListener(
                 new CmdPing(),
                 new CmdGpt(),
-                new CmdKick(),
-                new CmdGichtus(),
-                new CmdEmbed(),
+                //new CmdKick(),
+                //new CmdEmbed(),
                 new CmdRollDice(),
-                new CmdAssignTeams(),
-                new ButtonTest(),
-                new DropDownTest(),
-                new EntityDDTest(),
+                //new CmdAssignTeams(),
+                //new ButtonTest(),
+                //new DropDownTest(),
+                //new EntityDDTest(),
                 new CmdPoll(),
                 new CmdAllowStats(),
-                new CmdHelper(),
+                //new CmdHelper(),
                 new CmdLeaderBoard(),
                 new CmdStats(),
                 new CmdGuildInfo(),
                 new CmdBotSelfInviteLink(),
-                new CmdAnnoy(),
+                new RegisterBattleships(),
+                new BattleshipStartGame(),
+                new SurrenderGame(),
+                new SetShips(),
+                new MakeMove(),
+                new AcceptBattleshipGame(),
+                //new CmdAnnoy(),
                 new CmdSettingsChatRestricted()
         );
-        // get init variables
-        EnumSet<GatewayIntent> INTENTS = createIntents();
-        // JDA init variables
+
+        // JDABuilder vorbereiten, aber nicht starten
         String TOKEN = System.getenv("DISCORD_BOT_TOKEN");
-        // create instances
-        this.gpt = ChatGPT.getInstance();
         this.bot = JDABuilder
                 .createDefault(TOKEN)
                 .enableIntents(INTENTS)
                 .enableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE, CacheFlag.ONLINE_STATUS)
                 .addEventListeners(new ChatListener(), new StatListener(), commandManagerListener, new ReadyListener());
+    }
 
-        // set jda instance for later use
-        this.jda = bot.build();
-        this.avatarUrl = jda.getSelfUser().getAvatarUrl();
-        //initSlashCommands(jda.getGuilds());
+    public synchronized void start() {
+        if (running) {
+            System.out.println("Bot is already running.");
+            return;
+        }
+
+        try {
+            this.jda = bot.build();
+            this.jda.awaitReady();
+            this.running = true;
+            System.out.println("Bot started successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            this.running = false;
+        }
+    }
+
+    public synchronized void shutdown() {
+        if (!running) {
+            System.out.println("Bot is not running.");
+            return;
+        }
+
+        if (jda != null) {
+            jda.shutdown();
+            jda = null;
+        }
+        this.running = false;
+        System.out.println("Bot has been shut down.");
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public JDA getJda() {
+        return jda;
+    }
+
+    public Color getDefaultColor() {
+        return defaultColor;
+    }
+
+    public Color getErrorColor() {
+        return errorColor;
+    }
+
+    public ChatGPT getGpt() {
+        return gpt;
     }
 
     public static EnumSet<GatewayIntent> createIntents() {
@@ -126,29 +155,5 @@ public class Bot {
 
     public void setGuildSettingsHashMap(HashMap<String, GuildSettings> guildSettingsHashMap) {
         this.guildSettingsHashMap = guildSettingsHashMap;
-    }
-
-    public JDA getJda() {
-        return jda;
-    }
-
-    public Color getDefaultColor() {
-        return defaultColor;
-    }
-
-    public Color getErrorColor() {
-        return errorColor;
-    }
-
-    public List<String> getServerListName() {
-        return this.getJda().getGuilds().stream().map(Guild::getName).collect(Collectors.toList());
-    }
-
-    public ChatGPT getGpt() {
-        return gpt;
-    }
-
-    public String getAvatarUrl() {
-        return avatarUrl;
     }
 }
