@@ -1,0 +1,73 @@
+.root{
+    -fx-background-color: #313338; /* Discord color main background theme */
+}
+
+.label{
+    -fx-font-size: 12;  /* General font size over all labels */
+    -fx-font-weight: bold; /* General font style over all labels */
+    -fx-font-family: "JetBrains Mono"; /* General font over all labels */
+    -fx-text-fill: #B5BAC1; /* General font color over all labels */
+    -fx-padding: 5 0 0 5;   /* General font position over all labels */
+}
+
+.text-field{
+    -fx-font-size: 11; /* General font size over all text-fields */
+    -fx-font-family: "JetBrains Mono"; /* General font over all text-fields */
+    -fx-text-fill: #DBDEE1; /* General font color over all text-fields */
+    -fx-background-color: #1E1F22; /* General background color over all text-fields */
+}
+
+.button{
+    -fx-font-size: 12; /* General font size over all buttons */
+    -fx-font-weight: bold; /* General font style over all buttons */
+    -fx-font-family: "JetBrains Mono"; /* General font over all buttons */
+    -fx-text-fill: #DBDEE1; /* General font color over all buttons */
+    -fx-background-color: #5865F2; /* General background color over all buttons */
+    -fx-padding: 5 5 5 5;   /* General padding around button to text 5px each*/
+
+}
+
+.button:hover {
+    -fx-background-color: #454FBD; /* General button hover color when cursor is above button */
+}
+
+.table-view{
+    -fx-background-color: #313338; /* General table-view background color to match .root */
+}
+
+.list-view{
+    -fx-background-color: #2B2D31; /* General background color for all liest-view elements */
+}
+
+
+/* Custom designed elements */
+
+#generalView{
+    -fx-background-color: #313338; /* Background color for GeneralView.fxml */
+}
+
+#startButton{
+    -fx-background-color: #248045; /* Custom color for "Start Bot" button on GeneralView.fxml */
+}
+
+#startButton:hover{
+    -fx-background-color: #268A4A; /* Custom color for "Start Bot" button on GeneralView.fxml */
+}
+
+#navigationMenu{
+    -fx-background-color: #2B2D31; /* Custom Background for navigation menu in MasterView.fxml */
+}
+
+#menuButtons{
+    -fx-background-color: #2B2D31; /* Custom button color for menu buttons in GeneralView.fxml*/
+    -fx-alignment: CENTER_LEFT; /* Align text to the left */
+    -fx-padding: 10 50 10 10; /* Aligning button size Top: 10px Right: 50px Bottom 10px Left: 10px */
+    -fx-min-width: 100; /* Adjusting button sizes to be the same over all menu buttons */
+    -fx-min-height: 10;
+    -fx-max-height: 100;
+    -fx-max-width: 180;
+}
+
+#menuButtons:hover {
+    -fx-background-color: #313338; /* Custom button hover color for menu buttons in GeneralView.fxml*/
+}
