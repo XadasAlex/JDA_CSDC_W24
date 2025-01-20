@@ -27,6 +27,7 @@ public class StatListener extends ListenerAdapter {
         if (stats == null) return;
 
         stats.incrementBotInteractions();
+        stats.setLastTimeMessageSent(Helper.currentTimeSeconds());
         stats.updateSelf();
     }
 
@@ -45,6 +46,7 @@ public class StatListener extends ListenerAdapter {
         String content = event.getMessage().getContentDisplay();
         long charactersSent = stats.getCharactersSent();
         stats.setCharactersSent(charactersSent + content.length());
+        stats.setLastTimeMessageSent(Helper.currentTimeSeconds());
 
         stats.updateSelf();
     }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.openjfx.controllers.RankingController"
+      spacing="10" style="-fx-padding: 10;">
+    <Label text="Select a Guild for Ranking" style="-fx-font-size: 16;" />
+    <ListView fx:id="guildListView" />
+    <Button text="Show Rankings" onAction="#showRankingsForSelectedGuild" />
+    <TableView fx:id="rankingTableView">
+        <columns>
+            <TableColumn fx:id="memberNameColumn" text="Member Name" />
+            <TableColumn fx:id="expColumn" text="Experience" />
+            <TableColumn fx:id="messagesSentColumn" text="Messages Sent" />
+            <TableColumn fx:id="charactersSentColumn" text="Characters Sent" />
+            <TableColumn fx:id="totalTimeColumn" text="Total Time (Voice)" />
+            <TableColumn fx:id="inVoiceColumn" text="In Voice" />
+            <TableColumn fx:id="lastTimeJoinedColumn" text="Last Joined (Voice)" />
+        </columns>
+    </TableView>
+</VBox>
+
+

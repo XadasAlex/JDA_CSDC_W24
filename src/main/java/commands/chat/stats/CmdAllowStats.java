@@ -45,7 +45,8 @@ public class CmdAllowStats implements ICommand {
         Guild guild = event.getGuild();
         Member member = event.getMember();
 
-        if (guild == null || member == null) return;
+        assert guild != null;
+        assert member != null;
 
         boolean inVoice = false;
         boolean allow = allowOption.getAsBoolean();
@@ -67,7 +68,7 @@ public class CmdAllowStats implements ICommand {
 
         try {
             if (allow) {
-                message = handleAllow(statPath, memberStatPath, guildId, memberId, inVoice);
+                message = handleAllow(statPath, memberStatPath, guild, member, inVoice);
             } else {
                 message = handleDisallow(memberStatPath);
             }
@@ -83,7 +84,10 @@ public class CmdAllowStats implements ICommand {
         if (error) {
             embed = Embedder.createErrorMessage(event.getMember(), getName(), message);
         } else {
-            embed = Embedder.createBaseEmbed(event.getMember(), CommandIcons.STATS_ICON_URL, getName(), String.format("Member stat tracking for: %s", member.getEffectiveName()), message);
+            embed = Embedder.createBaseEmbed(event.getMember(),
+                    CommandIcons.STATS_ICON_URL,
+                    getName(),
+                    String.format("Member stat tracking for: %s", member.getEffectiveName()), message);
         }
 
         event.replyEmbeds(embed.build()).queue();
@@ -102,7 +106,7 @@ public class CmdAllowStats implements ICommand {
         }
     }
 
-    private String handleAllow(File statPath, File memberStatPath, String guildId, String memberId, boolean inVoice) throws IOException {
+    private String handleAllow(File statPath, File memberStatPath, Guild guild, Member member, boolean inVoice) throws IOException {
         if (!statPath.exists() && !statPath.mkdirs()) {
             throw new IOException("Error creating stat folder for the guild");
         }
@@ -112,7 +116,7 @@ public class CmdAllowStats implements ICommand {
         }
 
         if (memberStatPath.createNewFile()) {
-            new MemberStats(guildId, memberId, inVoice).updateSelf();
+            new MemberStats(guild, member, inVoice).updateSelf();
             return "Added you to the tracked users for member-stats";
         } else {
             throw new IOException("Error adding you to the tracked users for member-stats");

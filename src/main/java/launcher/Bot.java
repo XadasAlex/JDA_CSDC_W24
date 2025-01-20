@@ -5,9 +5,12 @@ import api.ChatGPT;
 import commands.chat.stats.CmdAllowStats;
 import commands.chat.stats.CmdLeaderBoard;
 import commands.chat.stats.CmdStats;
+import commands.guild.CmdAnnoy;
 import commands.guild.CmdGuildInfo;
-import listeners.CommandManagerListener;
-import listeners.ReactionListener;
+import commands.guild.CmdSettingsChatRestricted;
+import listeners.*;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import utils.GuildSettings;
 
 import commands.chat.*;
 import commands.guild.CmdKick;
@@ -20,7 +23,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import listeners.StatListener;
 
 import java.awt.*;
 import java.util.*;
@@ -37,7 +39,9 @@ public class Bot {
     private final String avatarUrl;
     private final Color defaultColor = new Color(115, 169, 186);
     private final Color errorColor = new Color(255, 51, 51);
+    private HashMap<String, GuildSettings> guildSettingsHashMap;
     // music
+
     /*
     private final MusicHandler;
     private final AudioPlayerManager playerManager;
@@ -85,7 +89,9 @@ public class Bot {
                 new CmdLeaderBoard(),
                 new CmdStats(),
                 new CmdGuildInfo(),
-                new CmdBotSelfInviteLink()
+                new CmdBotSelfInviteLink(),
+                new CmdAnnoy(),
+                new CmdSettingsChatRestricted()
         );
         // get init variables
         EnumSet<GatewayIntent> INTENTS = createIntents();
@@ -96,7 +102,8 @@ public class Bot {
         this.bot = JDABuilder
                 .createDefault(TOKEN)
                 .enableIntents(INTENTS)
-                .addEventListeners(new ReactionListener(), new StatListener(), commandManagerListener);
+                .enableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE, CacheFlag.ONLINE_STATUS)
+                .addEventListeners(new ChatListener(), new StatListener(), commandManagerListener, new ReadyListener());
 
         // set jda instance for later use
         this.jda = bot.build();
@@ -108,8 +115,17 @@ public class Bot {
         return EnumSet.of(
                 GatewayIntent.GUILD_MEMBERS,
                 GatewayIntent.GUILD_MESSAGES,
-                GatewayIntent.MESSAGE_CONTENT
+                GatewayIntent.MESSAGE_CONTENT,
+                GatewayIntent.GUILD_PRESENCES
         );
+    }
+
+    public HashMap<String, GuildSettings> getGuildSettingsHashMap() {
+        return guildSettingsHashMap;
+    }
+
+    public void setGuildSettingsHashMap(HashMap<String, GuildSettings> guildSettingsHashMap) {
+        this.guildSettingsHashMap = guildSettingsHashMap;
     }
 
     public JDA getJda() {
@@ -135,31 +151,4 @@ public class Bot {
     public String getAvatarUrl() {
         return avatarUrl;
     }
-
-
-    /*
-    public MusicHandler getMusicHandler() {
-        return musicHandler;
-    }
-
-
-    public TrackScheduler getTrackScheduler(String guildId) {
-        return trackSchedulers.computeIfAbsent(guildId, id -> createNewTrackScheduler(id));
-    }
-
-    public AudioSendHandler getAudioSendHandler(String guildId) {
-        return audioSendHandlers.computeIfAbsent(guildId, id -> {
-            TrackScheduler scheduler = getTrackScheduler(id);
-            return new AudioPlayerSendHandler(scheduler.getPlayer());
-        });
-    }
-
-    private TrackScheduler createNewTrackScheduler(String guildId) {
-        AudioPlayer player = playerManager.createPlayer();
-        TrackScheduler scheduler = new TrackScheduler(player, playerManager);
-        player.addListener(scheduler);
-        trackSchedulers.put(guildId, scheduler);
-        return scheduler;
-    }
-    */
 }

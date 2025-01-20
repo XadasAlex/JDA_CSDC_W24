@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.openjfx.controllers.MemberManagementController"
+      spacing="10" style="-fx-padding: 10;">
+    <Label fx:id="memberTitle" text="Select a Guild for Member Management" style="-fx-font-size: 16;"/>
+    <ListView fx:id="guildListView"/>
+    <TableView fx:id="chatTableView" managed="false" visible="false" xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx">
+        <columns>
+            <TableColumn fx:id="timestampColumn" text="Timestamp" />
+            <TableColumn fx:id="contentColumn" text="Message" />
+            <TableColumn fx:id="channelColumn" text="Channel" />
+        </columns>
+    </TableView>
+    <Button text="Show Members" onAction="#showMembers"/>
+    <Label text="Members in Guild:" style="-fx-font-size: 14;"/>
+    <TableView fx:id="memberTableView">
+        <columns>
+            <TableColumn fx:id="memberName" text="Name"/>
+            <TableColumn fx:id="memberNickname" text="Nickname"/>
+            <TableColumn fx:id="memberDiscriminator" text="Discriminator"/>
+            <TableColumn fx:id="memberId" text="Id"/>
+        </columns>
+    </TableView>
+    <Button text="Confirm Member Selection" onAction="#confirmMemberSelection"/>
+    <VBox fx:id="memberManagementPane" spacing="10" visible="false" managed="false">
+        <Label fx:id="selectedMemberLabel" text="Selected Member:"/>
+        <HBox>
+            <Button text="Send Message" onAction="#sendMessageToMember"/>
+            <Button text="Change Nickname" onAction="#changeNickname"/>
+            <Button fx:id="toggleChatGuildButton" text="Show Chat" onAction="#toggleGuildList"/>
+        </HBox>
+        <HBox>
+            <Button text="Kick Member" onAction="#kickMember"/>
+            <Button text="Disconnect Member" onAction="#disconnect"/>
+        </HBox>
+    </VBox>
+</VBox>
+

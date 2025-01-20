@@ -2,6 +2,8 @@ package stats;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import utils.Helper;
 
 import java.io.File;
@@ -21,12 +23,18 @@ public class MemberStats {
     private int botInteractions;
     private long totalTime;
     private long lastTimeJoined;
+    private long lastTimeMessageSent;
     private long charactersSent;
     private boolean inVoice;
     private final String guildId;
     private final String memberId;
+    private final String memberName;
+    private final String guildName;
 
-    public MemberStats(String guildId, String memberId, boolean inVoice) {
+    public MemberStats(Guild guild, Member member, boolean inVoice) {
+        assert guild != null;
+        assert member != null;
+
         messagesSent = 0;
         otherReactionCount = 0;
         selfReactionCount = 0;
@@ -35,33 +43,10 @@ public class MemberStats {
         exp = 0;
         botInteractions = 0;
         lastTimeJoined = inVoice ? Helper.currentTimeSeconds() : 0;
-        this.guildId = guildId;
-        this.memberId = memberId;
-        this.inVoice = inVoice;
-    }
-
-    public MemberStats(int messagesSent,
-                       int otherReactionCount,
-                       int selfReactionCount,
-                       int exp,
-                       int botInteractions,
-                       long totalTime,
-                       long lastTimeJoined,
-                       long charactersSent,
-                       String guildId,
-                       String memberId,
-                       boolean inVoice) {
-
-        this.messagesSent = messagesSent;
-        this.otherReactionCount = otherReactionCount;
-        this.selfReactionCount = selfReactionCount;
-        this.exp = exp;
-        this.botInteractions = botInteractions;
-        this.totalTime = totalTime;
-        this.lastTimeJoined = lastTimeJoined;
-        this.charactersSent = charactersSent;
-        this.guildId = guildId;
-        this.memberId = memberId;
+        this.guildId = guild.getId();
+        this.guildName = guild.getName();
+        this.memberId = member.getId();
+        this.memberName = member.getEffectiveName();
         this.inVoice = inVoice;
     }
 
@@ -71,7 +56,7 @@ public class MemberStats {
                 memberId
         );
 
-        return new File(path).exists();
+        return (new File(path).exists());
     }
 
     public static MemberStats getMemberStats(String guildId, String memberId) {
@@ -174,6 +159,22 @@ public class MemberStats {
                 (int) (totalTime / 60);
     }
 
+    public void setLastTimeMessageSent(long lastTimeMessageSent) {
+        this.lastTimeMessageSent = lastTimeMessageSent;
+    }
+
+    public long getLastTimeMessageSent() {
+        return lastTimeMessageSent;
+    }
+
+    public String getMemberName() {
+        return memberName;
+    }
+
+    public String getGuildName() {
+        return guildName;
+    }
+
     public void leftVoice() {
         inVoice = false;
     }
@@ -188,6 +189,11 @@ public class MemberStats {
 
     public long getLastTimeJoined() {
         return lastTimeJoined;
+    }
+
+    public String getLastTimeJoinedFormatted() {
+        long lastTimeJoined = getLastTimeJoined();
+        return Helper.getTimeAgo(lastTimeJoined);
     }
 
     public int getMessagesSent() {

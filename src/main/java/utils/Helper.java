@@ -14,12 +14,17 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -47,6 +52,14 @@ public class Helper {
 
     public static String getMemberStatPath(String guildId, String memberId) {
         return getBaseStatPath(guildId).concat(String.format("/%s.json", memberId));
+    }
+
+    public static String getResourcePath() {
+        return getProjectPath().concat("/src/main/resources/");
+    }
+
+    public static String getGuildSettingsPath(String guildId) {
+        return getResourcePath().concat(String.format("/guilds/%s/settings.json", guildId));
     }
 
     public static String createProgressBar(double percentage, int detail) {
@@ -160,6 +173,35 @@ public class Helper {
         return (d.getSeconds() + h.getSeconds());
     }
 
+    public static String formatTimestamp(OffsetDateTime offsetDateTime) {
+        // Konvertiere OffsetDateTime zu LocalDateTime
+        LocalDateTime localDateTime = offsetDateTime.toLocalDateTime();
+
+        // Definiere das gewünschte Format
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss dd.MM.yyyy");
+
+        // Formatiere den Timestamp
+        return localDateTime.format(formatter);
+    }
+
+    private static void setEnvironmentVariable(String key, String value) {
+        try {
+            // Get the environment variables map
+            Map<String, String> env = System.getenv();
+
+            // Use reflection to get the field of the map
+            Field field = env.getClass().getDeclaredField("m");
+            field.setAccessible(true);
+
+            // Modify the map to set the new variable
+            @SuppressWarnings("unchecked")
+            Map<String, String> modifiableEnv = (Map<String, String>) field.get(env);
+            modifiableEnv.put(key, value);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to set environment variable", e);
+        }
+    }
+
     public static String getProjectPath() {
         return new File("").getAbsolutePath();
     }
@@ -212,6 +254,7 @@ public class Helper {
     }
 
     public static void deleteAfter30(InteractionHook message) {
+        Message msg = (Message) message;
         deleteAfter(message, 30);
     }
 
@@ -230,6 +273,12 @@ public class Helper {
     public static void deleteAfter(InteractionHook message, int seconds) {
         Executors.newSingleThreadScheduledExecutor().schedule(() -> {
             message.deleteOriginal().queue();
+        }, seconds, TimeUnit.SECONDS);
+    }
+
+    public static void deleteAfter(Message message, int seconds) {
+        Executors.newSingleThreadScheduledExecutor().schedule(() -> {
+            message.delete().queue();
         }, seconds, TimeUnit.SECONDS);
     }
 }
