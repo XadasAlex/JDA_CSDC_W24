@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CmdAnnoy implements ICommand {
+    // todo: what happens when user is not in a channel
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         OptionMapping memberOption = event.getOption("member");

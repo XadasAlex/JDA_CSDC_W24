@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.VBox?>
-
-<VBox spacing="10" style="-fx-padding: 10;" stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.controllers.RankingController">
-    <Label style="-fx-font-size: 16;" text="Select a Guild for Ranking" />
-    <ListView fx:id="guildListView" />
-    <Button onAction="#showRankingsForSelectedGuild" text="Show Rankings" />
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.openjfx.controllers.RankingController"
+      spacing="10" style="-fx-padding: 10;">
+    <Label text="Select a Guild for Ranking" style="-fx-font-size: 16;" />
+    <ListView fx:id="guildListView" prefHeight="150"/>
+    <Separator/>
     <TableView fx:id="rankingTableView">
         <columns>
             <TableColumn fx:id="memberNameColumn" text="Member Name" />
@@ -23,3 +21,5 @@
         </columns>
     </TableView>
 </VBox>
+
+

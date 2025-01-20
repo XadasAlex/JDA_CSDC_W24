@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class CmdLeaderBoard implements ICommand {
+
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         EmbedBuilder leaderBoardEmbed = createLeaderBoardEmbed(event);

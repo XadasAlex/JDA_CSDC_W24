@@ -34,6 +34,12 @@ public class RankingController {
         this.jda = jda;
         guildService.loadGuildsIntoListView(guildListView);
         setupRankingTable();
+
+        guildListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                showRankingsForSelectedGuild(newValue);
+            }
+        });
     }
 
     private void setupRankingTable() {
@@ -63,8 +69,7 @@ public class RankingController {
     }
 
     @FXML
-    private void showRankingsForSelectedGuild() {
-        String selectedGuild = guildListView.getSelectionModel().getSelectedItem();
+    private void showRankingsForSelectedGuild(String selectedGuild) {
         if (selectedGuild == null) {
             showAlert("No Guild Selected", "Please select a guild to view rankings.");
             return;

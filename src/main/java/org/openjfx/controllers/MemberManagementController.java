@@ -38,7 +38,13 @@ public class MemberManagementController {
         this.jda = jda;
         guildService = new GuildService(jda);
         guildService.loadGuildsIntoListView(guildListView); // Gilden in die Liste laden
-        setupMemberTable(); // Tabelle vorbereiten
+        setupMemberTable();
+
+        guildListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                showMembers(newValue);
+            }
+        });
     }
 
     public void toggleGuildList() {
@@ -76,8 +82,7 @@ public class MemberManagementController {
     }
 
     @FXML
-    public void showMembers(ActionEvent actionEvent) {
-        String selectedGuild = guildListView.getSelectionModel().getSelectedItem();
+    public void showMembers(String selectedGuild) {
         if (selectedGuild == null) {
             showAlert("No Guild Selected", "Please select a guild to view its members.");
             return;

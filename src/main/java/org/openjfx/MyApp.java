@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.sqlite.JDBC;
 import utils.Helper;
-import org.openjfx.controllers.GeneralController;
+import javafx.stage.StageStyle;
 import org.openjfx.controllers.LoginController;
 import org.openjfx.controllers.MasterController;
 

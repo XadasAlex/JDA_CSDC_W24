@@ -22,7 +22,6 @@ public class MasterController implements Initializable {
         showGeneral();
     }
 
-
     @FXML
     private void showGeneral() {
         loadView("/org/openjfx/GeneralView.fxml");
@@ -69,7 +68,6 @@ public class MasterController implements Initializable {
             e.printStackTrace();
         }
     }
-
 
 
     private void loadView(String fxmlFile) {

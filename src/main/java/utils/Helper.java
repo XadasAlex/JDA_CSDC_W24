@@ -286,4 +286,8 @@ public class Helper {
             message.delete().queue();
         }, seconds, TimeUnit.SECONDS);
     }
+
+    public static boolean setEnvVar(String x, String y) {
+        return true;
+    }
 }
