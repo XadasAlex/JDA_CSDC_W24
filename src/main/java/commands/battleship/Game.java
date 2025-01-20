@@ -2,10 +2,12 @@ package commands.battleship;
 
 import kotlin.Pair;
 import kotlin.Triple;
+import launcher.Bot;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class Game {
     public String p1;
@@ -24,12 +26,16 @@ public class Game {
 
     private boolean turnPlayer;             //true = p1's turn false = p2's turn
 
-    private Map<Integer,Integer> shipSizes = Map.ofEntries(
+    /*private Map<Integer,Integer> shipSizes = Map.ofEntries(
             Map.entry(1,2),
             Map.entry(2,3),
             Map.entry(3,3),
             Map.entry(4,2),
             Map.entry(5,1)
+    );*/
+
+    private Map<Integer,Integer> shipSizes = Map.ofEntries(
+            Map.entry(1,2)
     );
 
     public Game(String p1, String p2,Integer boardSize) {
@@ -47,12 +53,21 @@ public class Game {
         if(!p1SetShips&&!p2SetShips)
             return -2;
 
-        var parts = move.toCharArray();
-        if(parts.length>2)
+        if(turnPlayer && !(player.getUser().getId().equals(p1))){
+            return -3;
+        }
+
+        if(!turnPlayer && !(player.getUser().getId().equals(p2))){
+            return -3;
+        }
+
+        if(move.length()<2 || move.length()>4)
             return -1;          //-1 = error
 
-        int x = parts[0]-97;
-        int y = parts[1];
+        var parts = move.split(" ");
+
+        int x = Integer.parseInt(parts[0]);
+        int y = Integer.parseInt(parts[1]);
 
         boolean hit = false;
 
@@ -82,11 +97,13 @@ public class Game {
     public boolean setShips (Triple<Pair<Integer, Integer>, Integer, Integer>[] ships, SlashCommandInteractionEvent player){
 
         Map<Integer,Integer> seenSizes = new HashMap<>();
+
         for(Triple<Pair<Integer, Integer>, Integer, Integer> ship : ships){
+
             if(!seenSizes.containsKey(ship.component3()))
                 seenSizes.put(ship.component3(), 1);
             else
-                shipSizes.put(ship.component3(), seenSizes.get(ship.component3()) + 1);
+                seenSizes.put(ship.component3(), seenSizes.get(ship.component3()) + 1);
         }
 
         if(!seenSizes.equals(shipSizes)) {
@@ -97,6 +114,10 @@ public class Game {
             var h = populateBoard(ships, p1Ships);
             if(h){
                 p1SetShips = true;
+                if(p1SetShips&&p2SetShips){
+                    turnPlayer = new Random().nextBoolean();
+                    player.getChannel().sendMessage("Both Players registered their ships. The first person to make a move is: " + Bot.getInstance().getJda().getUserById(turnPlayer ? p1 : p2).getName()).queue();
+                }
                 return true;
             }else
                 return false;

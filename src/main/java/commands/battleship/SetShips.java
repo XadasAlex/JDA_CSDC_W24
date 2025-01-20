@@ -17,29 +17,41 @@ public class SetShips implements ICommand {
             event.reply("You currently dont have any active games!").setEphemeral(true).queue();
             return;
         }
+        var hook = event.getHook();
+        event.deferReply().setEphemeral(true).queue();
 
         var shipPositions = event.getOption("ship-positions").getAsString();
 
         var parts = shipPositions.split(" ");
 
-        List<Triple<Pair<Integer, Integer>, Integer, Integer>> ships = new ArrayList<>();
+        Triple<Pair<Integer, Integer>, Integer, Integer>[] ships = new Triple[parts.length];
+        int counter = 0;
 
-        for(var part : parts) {
-            var h = part.toCharArray();
-            Integer orient = switch (h[2]) {
-                case 'N' -> 1;
-                case 'E' -> 2;
-                case 'S' -> 3;
-                case 'W' -> 4;
-                default -> null;
-            };
-            ships.add(new Triple<>(new Pair<>(Integer.parseInt(String.valueOf(h[0])), Integer.parseInt(String.valueOf(h[1]))), orient, Integer.parseInt(String.valueOf(h[3]))));
+        try {
+
+            for (var part : parts) {
+                var h = part.split("-");
+
+
+                Integer orient = switch (h[2].toCharArray()[0]) {
+                    case 'N' -> 1;
+                    case 'E' -> 2;
+                    case 'S' -> 3;
+                    case 'W' -> 4;
+                    default -> null;
+                };
+                ships[counter] = new Triple<>(new Pair<>(Integer.parseInt(String.valueOf(h[0])), Integer.parseInt(String.valueOf(h[1]))), orient, Integer.parseInt(String.valueOf(h[3])));
+                counter++;
+            }
+        }catch (Exception e) {
+            hook.sendMessage("Something went wrong while setting your ships Your previous ships were: " + shipPositions).setEphemeral(true).queue();
+            return;
         }
 
-        if(BattleshipStartGame.activeGames.get(event.getUser().getId()).setShips(null,event)){
-            event.reply("You have successfully set all your ships!").setEphemeral(true).queue();
+        if(BattleshipStartGame.activeGames.get(event.getUser().getId()).setShips( ships,event)){
+            hook.sendMessage("You have successfully set all your ships!").setEphemeral(true).queue();
         }else {
-            event.reply("Something went wrong with setting your ships please ensure that your ships are not out of bounds and you have the correct amount of ships. Your previous ships were: " + shipPositions).setEphemeral(true).queue();
+            hook.sendMessage("Something went wrong with setting your ships. Your previous ships were: " + shipPositions).setEphemeral(true).queue();
         }
     }
 
@@ -56,7 +68,7 @@ public class SetShips implements ICommand {
     @Override
     public List<OptionData> getOptions() {
         return List.of(
-                new OptionData(OptionType.STRING, "ship-positions", "The Positions of your ships in the format xyOrientation(NESW)Length seperated by spaces for each ship", true)
+                new OptionData(OptionType.STRING, "ship-positions", "Format x-y-Orientation(NESW)-Length seperated by spaces for each ship", true)
         );
     }
 }

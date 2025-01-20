@@ -17,6 +17,9 @@ public class MakeMove implements ICommand {
         event.deferReply().queue();
 
         switch (BattleshipStartGame.activeGames.get(event.getUser().getId()).MakeMove(event.getOption("move").getAsString(),event)){
+            case (-3):
+                hook.sendMessage("Not your move!").queue();
+                break;
             case (-2):
                 hook.sendMessage("Someone did not yet set his ships please make sure both of you used /set-ships to set your ships.").queue();
                 break;
@@ -71,7 +74,7 @@ public class MakeMove implements ICommand {
     @Override
     public List<OptionData> getOptions() {
         return List.of(
-                new OptionData(OptionType.STRING,"move","The move you wish to perform in your Battleships game",true)
+                new OptionData(OptionType.STRING,"move","The move you wish to perform in your Battleships game. Format double digits",true)
         );
     }
 }
