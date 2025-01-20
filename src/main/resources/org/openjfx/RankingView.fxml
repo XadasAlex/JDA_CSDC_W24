@@ -6,18 +6,18 @@
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.openjfx.controllers.RankingController"
       spacing="10" style="-fx-padding: 10;">
-    <Label text="Select a Guild for Ranking" style="-fx-font-size: 16;" />
+    <Label text="%ranking.select" style="-fx-font-size: 16;" />
     <ListView fx:id="guildListView" />
-    <Button text="Show Rankings" onAction="#showRankingsForSelectedGuild" />
+    <Button text="%ranking.showRankings" onAction="#showRankingsForSelectedGuild" />
     <TableView fx:id="rankingTableView">
         <columns>
-            <TableColumn fx:id="memberNameColumn" text="Member Name" />
-            <TableColumn fx:id="expColumn" text="Experience" />
-            <TableColumn fx:id="messagesSentColumn" text="Messages Sent" />
-            <TableColumn fx:id="charactersSentColumn" text="Characters Sent" />
-            <TableColumn fx:id="totalTimeColumn" text="Total Time (Voice)" />
-            <TableColumn fx:id="inVoiceColumn" text="In Voice" />
-            <TableColumn fx:id="lastTimeJoinedColumn" text="Last Joined (Voice)" />
+            <TableColumn fx:id="memberNameColumn" text="%ranking.memberName" />
+            <TableColumn fx:id="expColumn" text="%ranking.exp" />
+            <TableColumn fx:id="messagesSentColumn" text="%ranking.messagesSent" />
+            <TableColumn fx:id="charactersSentColumn" text="%ranking.charsSent" />
+            <TableColumn fx:id="totalTimeColumn" text="%ranking.totalTime" />
+            <TableColumn fx:id="inVoiceColumn" text="%ranking.inVoice" />
+            <TableColumn fx:id="lastTimeJoinedColumn" text="%ranking.lastTimeJoined" />
         </columns>
     </TableView>
 </VBox>

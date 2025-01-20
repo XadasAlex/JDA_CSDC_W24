@@ -10,13 +10,13 @@
     <ListView fx:id="guildListView" prefHeight="150" />
     <Separator/>
     <VBox spacing="5">
-        <Label fx:id="guildSettingsSelected" text="Guild Settings" style="-fx-font-size: 14;" />
-        <ToggleButton fx:id="allowSpamToggle" text="Allow Spam" prefWidth="200" onAction="#toggleColor"/>
-        <ToggleButton fx:id="allowSwearToggle" text="Allow Swear Words" prefWidth="200" onAction="#toggleColor"/>
-        <ToggleButton fx:id="welcomeMessageToggle" text="Welcome Messages" prefWidth="200" onAction="#toggleColor"/>
-        <ToggleButton fx:id="leaveMessageToggle" text="Leave Messages" prefWidth="200" onAction="#toggleColor"/>
-        <ToggleButton fx:id="dedicatedBotChannelsToggle" text="Dedicated Bot Channels" prefWidth="200" onAction="#toggleColor"/>
+        <Label fx:id="guildSettingsSelected" text="%guildSettings.settingsSelected" style="-fx-font-size: 14;" />
+        <ToggleButton fx:id="allowSpamToggle" text="%guildSettings.allowSpam" prefWidth="200" onAction="#toggleColor"/>
+        <ToggleButton fx:id="allowSwearToggle" text="%guildSettings.allowSwear" prefWidth="200" onAction="#toggleColor"/>
+        <ToggleButton fx:id="welcomeMessageToggle" text="%guildSettings.welcomeMessage" prefWidth="200" onAction="#toggleColor"/>
+        <ToggleButton fx:id="leaveMessageToggle" text="%guildSettings.leavemessages" prefWidth="200" onAction="#toggleColor"/>
+        <ToggleButton fx:id="dedicatedBotChannelsToggle" text="%guildSettings.dedicatetBotChannel" prefWidth="200" onAction="#toggleColor"/>
         <Separator/>
-        <Button fx:id="saveSettingsButton" text="Save Settings" onAction="#saveSettings" />
+        <Button fx:id="saveSettingsButton" text="%guildSettings.saveSettings" onAction="#saveSettings" />
     </VBox>
 </VBox>

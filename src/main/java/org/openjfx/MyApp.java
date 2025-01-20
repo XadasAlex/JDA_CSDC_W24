@@ -15,6 +15,7 @@ import java.util.ResourceBundle;
 public class MyApp extends Application {
     private final int WIDTH = 800;
     private final int HEIGHT = 800;
+    private Locale currentLocale = Locale.getDefault();
 
     private Stage primaryStage;
 
@@ -49,7 +50,12 @@ public class MyApp extends Application {
         }
     }
 
+    public Locale getCurrentLocale() {
+        return currentLocale;
+    }
+
     public void changeLocale(Locale locale) {
+        this.currentLocale = locale;
         showMainScene(locale);
     }
 
@@ -59,16 +65,22 @@ public class MyApp extends Application {
                 locale = Locale.getDefault();
             }
             ResourceBundle bundle = ResourceBundle.getBundle("locale.messages", locale);
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/openjfx/MasterView.fxml"));
+            loader.setResources(bundle);
+
             Parent root = loader.load();
 
             MasterController controller = loader.getController();
+            controller.setMyApp(this);
+
 
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("./css/main.css").toExternalForm());
             primaryStage.setTitle("Discord-Bot");
             primaryStage.setScene(scene);
             primaryStage.show();
+
             // Mindestgröße
             primaryStage.setMinWidth(900);
             primaryStage.setMinHeight(700);

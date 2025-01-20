@@ -10,32 +10,32 @@
     <ListView fx:id="guildListView"/>
     <TableView fx:id="chatTableView" managed="false" visible="false" xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx">
         <columns>
-            <TableColumn fx:id="timestampColumn" text="Timestamp" />
-            <TableColumn fx:id="contentColumn" text="Message" />
-            <TableColumn fx:id="channelColumn" text="Channel" />
+            <TableColumn fx:id="timestampColumn" text="%management.timestamp" />
+            <TableColumn fx:id="contentColumn" text="%management.message" />
+            <TableColumn fx:id="channelColumn" text="%management.channel" />
         </columns>
     </TableView>
-    <Button text="Show Members" onAction="#showMembers"/>
-    <Label text="Members in Guild:" style="-fx-font-size: 14;"/>
+    <Button text="%management.showMembers" onAction="#showMembers"/>
+    <Label text="%management.memberInGuild" style="-fx-font-size: 14;"/>
     <TableView fx:id="memberTableView">
         <columns>
-            <TableColumn fx:id="memberName" text="Name"/>
-            <TableColumn fx:id="memberNickname" text="Nickname"/>
-            <TableColumn fx:id="memberDiscriminator" text="Discriminator"/>
-            <TableColumn fx:id="memberId" text="Id"/>
+            <TableColumn fx:id="memberName" text="%management.memberTableView.name"/>
+            <TableColumn fx:id="memberNickname" text="%management.memberTableView.nickname"/>
+            <TableColumn fx:id="memberDiscriminator" text="%management.memberTableView.discriminator"/>
+            <TableColumn fx:id="memberId" text="%management.memberTableView.id"/>
         </columns>
     </TableView>
-    <Button text="Confirm Member Selection" onAction="#confirmMemberSelection"/>
+    <Button text="%management.confirmMemberSelection" onAction="#confirmMemberSelection"/>
     <VBox fx:id="memberManagementPane" spacing="10" visible="false" managed="false">
-        <Label fx:id="selectedMemberLabel" text="Selected Member:"/>
+        <Label fx:id="selectedMemberLabel" text="%management.selectedMemberLabel"/>
         <HBox>
-            <Button text="Send Message" onAction="#sendMessageToMember"/>
-            <Button text="Change Nickname" onAction="#changeNickname"/>
-            <Button fx:id="toggleChatGuildButton" text="Show Chat" onAction="#toggleGuildList"/>
+            <Button text="%management.selected.sendMessage" onAction="#sendMessageToMember"/>
+            <Button text="%management.selected.changeNick" onAction="#changeNickname"/>
+            <Button fx:id="toggleChatGuildButton" text="%management.selected.toggleChatGuild" onAction="#toggleGuildList"/>
         </HBox>
         <HBox>
-            <Button text="Kick Member" onAction="#kickMember"/>
-            <Button text="Disconnect Member" onAction="#disconnect"/>
+            <Button text="%management.selected.kick" onAction="#kickMember"/>
+            <Button text="%management.selected.disconnect" onAction="#disconnect"/>
         </HBox>
     </VBox>
 </VBox>

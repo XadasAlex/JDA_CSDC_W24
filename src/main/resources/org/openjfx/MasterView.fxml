@@ -9,13 +9,14 @@
 
     <left>
         <VBox fx:id="navigationMenu" style="-fx-background-color: #f0f0f0;" spacing="10" prefWidth="200">
-            <Label text="Navigation" style="-fx-font-size: 16;" />
-            <Button text="General" onAction="#showGeneral" />
+            <Label text="%menu.navigation" style="-fx-font-size: 16;" />
+            <Button text="%menu.general" onAction="#showGeneral" />
             <!-- <Button text="Language" onAction="#showLanguage" />
             <Button text="Features" onAction="#showFeatures" /> -->
-            <Button text="Ranking" onAction="#showRanking" />
-            <Button text="Members" onAction="#showMemberManagement" />
-            <Button text="Server Settings" onAction="#showServerSettings"/>
+            <Button text="%menu.ranking" onAction="#showRanking" />
+            <Button text="%menu.members" onAction="#showMemberManagement" />
+            <Button text="%menu.serverSettings" onAction="#showServerSettings"/>
+            <Button text="%menu.language" onAction="#showLanguage"/>
         </VBox>
     </left>
 

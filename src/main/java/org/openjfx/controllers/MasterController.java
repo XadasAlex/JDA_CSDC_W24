@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import launcher.Bot;
+import org.openjfx.MyApp;
 
 import java.io.IOException;
 import java.net.URL;
@@ -16,10 +17,32 @@ public class MasterController implements Initializable {
     @FXML
     private StackPane contentPane;
 
+    private ResourceBundle bundle;
+
+    private MyApp myApp;
+
+    public void setMyApp(MyApp myApp) {
+        this.myApp = myApp;
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        this.bundle = resources;
         // Automatisch die allgemeine Ansicht laden
         showGeneral();
+
+    }
+
+    private void loadView(String fxmlFile) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
+            loader.setResources(bundle);  // Das ResourceBundle übergeben
+            Pane view = loader.load();
+
+            contentPane.getChildren().setAll(view);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -30,34 +53,46 @@ public class MasterController implements Initializable {
 
     @FXML
     private void showLanguage() {
-        loadView("/org/openjfx/LanguageView.fxml");
-    }
-
-    @FXML
-    private void showFeatures() {
-        loadView("/org/openjfx/FeaturesView.fxml");
-    }
-
-    @FXML
-    private void showMemberManagement() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/openjfx/MemberManagementView.fxml"));
-            Pane rankingPane = loader.load();
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/org/openjfx/LanguageView.fxml")
+            );
+            loader.setResources(bundle); // Lokalisierungs-Bundle setzen
+            Pane languagePane = loader.load();
 
-            // Zugriff auf den Controller
-            MemberManagementController controller = loader.getController();
-            controller.initializeData(Bot.getInstance().getJda());
+            LanguageController languageCtrl = loader.getController();
+            languageCtrl.setMyApp(myApp); // MyApp setzen
 
-            contentPane.getChildren().setAll(rankingPane);
+            contentPane.getChildren().setAll(languagePane);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+
+    @FXML
+    private void showMemberManagement() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/openjfx/MemberManagementView.fxml"));
+            loader.setResources(bundle);  // Lokalisierungs-Bundle setzen
+            Pane memberManagementPane = loader.load();
+
+            // Zugriff auf den Controller
+            MemberManagementController controller = loader.getController();
+            controller.initializeData(Bot.getInstance().getJda());
+
+            contentPane.getChildren().setAll(memberManagementPane);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     @FXML
     private void showRanking() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/openjfx/RankingView.fxml"));
+            loader.setResources(bundle);  // Lokalisierungs-Bundle setzen
             Pane rankingPane = loader.load();
 
             // Zugriff auf den Controller
@@ -71,20 +106,10 @@ public class MasterController implements Initializable {
     }
 
 
-
-    private void loadView(String fxmlFile) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
-            Pane view = loader.load();
-            contentPane.getChildren().setAll(view); // Dynamisches Ersetzen des Inhalts
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void showServerSettings(ActionEvent actionEvent) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/openjfx/GuildSettings.fxml"));
+            loader.setResources(bundle);  // Lokalisierungs-Bundle setzen
             Pane settingsPane = loader.load();
 
             GuildSettingsController controller = loader.getController();
