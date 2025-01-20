@@ -1,75 +1,85 @@
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.TextField?>
+<?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.ProgressIndicator?>
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.openjfx.controllers.GeneralController"
-      alignment="TOP_CENTER" spacing="10">
-    <Label text="General Settings" style="-fx-font-size: 20;"/>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="generalView" alignment="TOP_CENTER" spacing="10" stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.controllers.GeneralController">
+    <Label style="-fx-font-size: 20;" text="General Settings" />
     <HBox>
-        <Label text="Tokens and Keys"/>
+        <Label text="Tokens and Keys">
+         <HBox.margin>
+            <Insets left="10.0" />
+         </HBox.margin></Label>
     </HBox>
     <HBox spacing="10.0">
-        <PasswordField fx:id="botTokenTextField" promptText="Enter Bot Token"/>
-        <Label fx:id="botTokenLabel" visible="false" text="Loaded key from env."/>
+        <PasswordField fx:id="botTokenTextField" promptText="Enter Bot Token">
+         <HBox.margin>
+            <Insets left="10.0" />
+         </HBox.margin></PasswordField>
+        <Label fx:id="botTokenLabel" text="Loaded key from env." visible="false" />
     </HBox>
     <HBox spacing="10.0">
-        <PasswordField fx:id="apiKeyTextField" promptText="Enter OpenAI API-Key"/>
-        <Label fx:id="apiKeyLabel" visible="false" text="Loaded key from env."/>
+        <PasswordField fx:id="apiKeyTextField" promptText="Enter OpenAI API-Key">
+         <HBox.margin>
+            <Insets left="10.0" />
+         </HBox.margin></PasswordField>
+        <Label fx:id="apiKeyLabel" text="Loaded key from env." visible="false" />
     </HBox>
     <HBox>
-        <Button text="Save" onAction="#saveSettings"/>
+        <Button onAction="#saveSettings" text="Save">
+         <HBox.margin>
+            <Insets left="10.0" />
+         </HBox.margin></Button>
 
     </HBox>
     <HBox alignment="CENTER" spacing="10.0">
-        <Label text="Bot Status" style="-fx-font-size: 20"/>
-        <ProgressIndicator fx:id="loadingSpinner" visible="false" progress="-1" prefWidth="25.0" prefHeight="25.0"/>
+        <Label style="-fx-font-size: 20" text="Bot Status" />
+        <ProgressIndicator fx:id="loadingSpinner" prefHeight="25.0" prefWidth="25.0" progress="-1" visible="false" />
     </HBox>
     <!-- Profile and Status Info -->
     <HBox spacing="10">
         <!-- Profile Picture -->
-        <ImageView fx:id="profileImageView" fitWidth="100" fitHeight="100"
-                   style="-fx-effect: dropshadow(gaussian, gray, 10, 0.5, 0, 0);"/>
+        <ImageView fx:id="profileImageView" fitHeight="100" fitWidth="100" style="-fx-effect: dropshadow(gaussian, gray, 10, 0.5, 0, 0);" />
         <!-- Status Information -->
         <VBox alignment="CENTER_LEFT" spacing="5">
             <!-- Name with Start Button -->
             <HBox alignment="CENTER_LEFT" spacing="10">
-                <Label text="Name:" style="-fx-font-weight: bold;"/>
-                <Label fx:id="botNameLabel" text="Loading..." visible="false" style="-fx-font-size: 14;"/>
+                <Label style="-fx-font-weight: bold;" text="Name:" />
+                <Label fx:id="botNameLabel" style="-fx-font-size: 14;" text="Loading..." visible="false" />
             </HBox>
 
             <HBox alignment="CENTER_LEFT" spacing="10">
-                <Label text="Status:" style="-fx-font-weight: bold;"/>
-                <Label fx:id="botStatusLabel" text="Loading..." visible="false" style="-fx-font-size: 14;"/>
+                <Label style="-fx-font-weight: bold;" text="Status:" />
+                <Label fx:id="botStatusLabel" style="-fx-font-size: 14;" text="Loading..." visible="false" />
             </HBox>
 
-            <Button fx:id="startButton" text="Start Bot" onAction="#startBot"/>
+            <Button fx:id="startButton" onAction="#startBot" text="Start Bot" />
         </VBox>
     </HBox>
 
     <!-- Separator -->
-    <Separator/>
+    <Separator />
 
     <!-- Server and Member List -->
     <VBox spacing="5">
-        <Label text="Connected Servers:" style="-fx-font-size: 16;"/>
+        <Label style="-fx-font-size: 16;" text="Connected Servers:" />
         <TableView fx:id="serverTableView">
             <columns>
                 <!-- Server Name Column -->
-                <TableColumn fx:id="serverNameColumn" text="Server Name"/>
+                <TableColumn fx:id="serverNameColumn" text="Server Name" />
                 <!-- Total Members Column -->
-                <TableColumn fx:id="totalMembersColumn" text="Total Members"/>
+                <TableColumn fx:id="totalMembersColumn" text="Total Members" />
                 <!-- Online Members Column -->
-                <TableColumn fx:id="onlineMembersColumn" text="Online Members"/>
+                <TableColumn fx:id="onlineMembersColumn" text="Online Members" />
             </columns>
         </TableView>
     </VBox>

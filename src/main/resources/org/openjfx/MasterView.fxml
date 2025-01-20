@@ -1,21 +1,38 @@
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.control.Label?>
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.openjfx.controllers.MasterController">
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="navigationMenuPane" stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.controllers.MasterController">
 
     <left>
-        <VBox fx:id="navigationMenu" style="-fx-background-color: #f0f0f0;" spacing="10" prefWidth="200">
-            <Label text="Navigation" style="-fx-font-size: 16;" />
-            <Button text="General" onAction="#showGeneral" />
+        <VBox fx:id="navigationMenu" prefWidth="200" spacing="10" stylesheets="@css/general.css">
+            <Label style="-fx-font-size: 16;" text="Navigation" />
+            <Button fx:id="menuButtons" maxWidth="-Infinity" onAction="#showGeneral" text="General">
+            <VBox.margin>
+               <Insets left="10.0" />
+            </VBox.margin>
+            <padding>
+               <Insets right="10.0" />
+            </padding></Button>
             <!-- <Button text="Language" onAction="#showLanguage" />
             <Button text="Features" onAction="#showFeatures" /> -->
-            <Button text="Ranking" onAction="#showRanking" />
-            <Button text="Members" onAction="#showMemberManagement" />
-            <Button text="Server Settings" onAction="#showServerSettings"/>
+            <Button fx:id="menuButtons" onAction="#showRanking" text="Ranking">
+            <VBox.margin>
+               <Insets left="10.0" />
+            </VBox.margin></Button>
+            <Button fx:id="menuButtons" onAction="#showMemberManagement" text="Members">
+            <VBox.margin>
+               <Insets left="10.0" />
+            </VBox.margin></Button>
+            <Button fx:id="menuButtons" onAction="#showServerSettings" text="Server Settings">
+            <VBox.margin>
+               <Insets left="10.0" />
+            </VBox.margin></Button>
         </VBox>
     </left>
 
