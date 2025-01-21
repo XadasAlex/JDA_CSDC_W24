@@ -31,7 +31,7 @@ public class LoginController {
             // Fehlermeldung sichtbar machen
             lb_errorLabel.setVisible(true);
             //für jetzt immer true, später ändern?
-            myApp.showMainScene(Locale.getDefault());
+            // myApp.showMainScene(Locale.getDefault());
         }
     }
     private boolean checkCredentials(String user, String pass) {
