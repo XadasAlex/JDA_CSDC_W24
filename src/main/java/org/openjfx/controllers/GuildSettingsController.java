@@ -77,8 +77,8 @@ public class GuildSettingsController {
         welcomeMessageToggle.setStyle(settings.isMemberWelcomeMessage() ? trueColor : falseColor);
         leaveMessageToggle.setSelected(settings.isMemberLeaveMessage());
         leaveMessageToggle.setStyle(settings.isMemberLeaveMessage() ? trueColor : falseColor);
-        dedicatedBotChannelsToggle.setSelected(settings.isDedicatedBotChannels());
-        dedicatedBotChannelsToggle.setStyle(settings.isDedicatedBotChannels() ? trueColor : falseColor);
+        // dedicatedBotChannelsToggle.setSelected(settings.isDedicatedBotChannels());
+        // dedicatedBotChannelsToggle.setStyle(settings.isDedicatedBotChannels() ? trueColor : falseColor);
 
         // Enable save button after settings are loaded
         saveSettingsButton.setDisable(false);
