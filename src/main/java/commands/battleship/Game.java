@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Random;
 
 public class Game {
+    public String GameID;
+
     public String p1;
     public String p2;
 
@@ -85,7 +87,9 @@ public class Game {
                 hit = true;
         }
 
-        Moves+=move;
+        Moves+=(move+"-");
+
+        turnPlayer = !turnPlayer;
 
         if(checkIfWon(player.getUser().getId().equals(p1)))
             return 2;
@@ -176,8 +180,8 @@ public class Game {
         if(shotPlayer){
             for (int i = 0; i<p1Ships.length; i++){
                 for (int j = 0; j<p1Ships.length; j++){
-                    if(p1Ships[i][j]){
-                        if(!p2Shots[i][j])
+                    if(p2Ships[i][j]){
+                        if(!p1Shots[i][j])
                             return false;
                     }
 
@@ -187,8 +191,8 @@ public class Game {
         }else {
             for (int i = 0; i<p2Ships.length; i++){
                 for (int j = 0; j<p2Ships.length; j++){
-                    if(p2Ships[i][j]){
-                        if(!p1Shots[i][j])
+                    if(p1Ships[i][j]){
+                        if(!p2Shots[i][j])
                             return false;
                     }
                 }

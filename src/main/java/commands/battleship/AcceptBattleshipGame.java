@@ -21,13 +21,18 @@ public class AcceptBattleshipGame implements ICommand {
 
         var p = BattleshipStartGame.unacceptedGames.get(event.getUser().getId());
 
-        var stat = "Insert into Games values ((select max(GameID)+1 from Games),?,0,0,?);";
+        var getGameIDStat = "select max(GameID)+1 from Games;";
+        var stat = "Insert into Games values (?,?,0,0,?);";
         try (var conn = DriverManager.getConnection(String.format("jdbc:sqlite:%s/battleships.db", Helper.getBaseDBPath()))) {
             if (conn != null) {
+                var h = conn.createStatement().executeQuery(getGameIDStat);
                 var st = conn.prepareStatement(stat);
-                st.setString(2, event.getUser().getId());
-                st.setString(1, p.component1());
+                st.setString(1,h.getString(1));
+                st.setString(3, event.getUser().getId());
+                st.setString(2, p.component1());
                 st.executeUpdate();
+
+                p.component2().GameID = h.getString(1);
 
                 BattleshipStartGame.activeGames.put(event.getUser().getId(), p.component2());
                 BattleshipStartGame.activeGames.put(p.component1(), p.component2());

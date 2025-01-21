@@ -19,10 +19,10 @@ public class MakeMove implements ICommand {
         switch (BattleshipStartGame.activeGames.get(event.getUser().getId()).MakeMove(event.getOption("move").getAsString(),event)){
             case (-3):
                 hook.sendMessage("Not your move!").queue();
-                break;
+                return;
             case (-2):
                 hook.sendMessage("Someone did not yet set his ships please make sure both of you used /set-ships to set your ships.").queue();
-                break;
+                return;
             case (-1):
                 hook.sendMessage("Sorry this is an Illegal move!").queue();
                 return;
@@ -31,11 +31,23 @@ public class MakeMove implements ICommand {
                 return;
             case 1:
                 hook.sendMessage("You hit a ship").queue();
-                break;
+                return;
             case 2:
                 hook.sendMessage("Congratulations "+event.getUser().getName()+" you won the game").queue();
+                String stmt = "INSERT into Moves values ((select max(MoveID)+1 from Moves), ?, ?);";
+
+                try (var conn = DriverManager.getConnection(String.format("jdbc:sqlite:%s/battleships.db", Helper.getBaseDBPath()))) {
+                    if (conn != null) {
+                        var h = conn.prepareStatement(stmt);
+                        h.setString(1, BattleshipStartGame.activeGames.get(event.getUser().getId()).GameID);
+                        h.setString(2, BattleshipStartGame.activeGames.get(event.getUser().getId()).Moves);
+                        h.executeUpdate();
+                    }
+                } catch (SQLException e) {
+                    System.err.println(e.getMessage());
+                }
                 removeFromGames(event);
-                break;
+                return;
         }
     }
     
