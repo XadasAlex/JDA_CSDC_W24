@@ -14,7 +14,7 @@ public class JoinLeaveListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-        GuildSettings gs = Bot.getInstance().getGuildSettingsHashMap().get(event.getGuild().getId());
+        GuildSettings gs = GuildSettings.load(event.getGuild().getId());
 
         if (!gs.isMemberWelcomeMessage()) return;
 
@@ -35,7 +35,7 @@ public class JoinLeaveListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
-        GuildSettings gs = Bot.getInstance().getGuildSettingsHashMap().get(event.getGuild().getId());
+        GuildSettings gs = GuildSettings.load(event.getGuild().getId());
 
         if (!gs.isMemberLeaveMessage()) return;
 

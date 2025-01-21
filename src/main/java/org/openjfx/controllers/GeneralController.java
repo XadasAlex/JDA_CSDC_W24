@@ -61,10 +61,10 @@ public class GeneralController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        apiKeyLabel.setText(isKeyEntered("DISCORD_BOT_TOKEN") ?
+        botTokenLabel.setText(isKeyEntered("DISCORD_BOT_TOKEN") ?
                 resourceBundle.getString("general.botLabel") :
                 resourceBundle.getString("general.botPrompt"));
-        botTokenLabel.setText(isKeyEntered("OPENAI_API_KEY") ?
+        apiKeyLabel.setText(isKeyEntered("OPENAI_API_KEY") ?
                 resourceBundle.getString("general.gptLabel") :
                 resourceBundle.getString("general.gptPrompt"));
 
@@ -94,7 +94,11 @@ public class GeneralController implements Initializable {
 
     private boolean isKeyEntered(String envKey) {
         String value = System.getenv(envKey);
-        return value != null && !value.isEmpty();
+        if (value == null || value.isEmpty()) {
+            System.err.println("Environment variable " + envKey + " is not set or empty.");
+            return false;
+        }
+        return true;
     }
 
     @FXML

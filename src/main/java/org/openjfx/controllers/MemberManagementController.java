@@ -43,6 +43,7 @@ public class MemberManagementController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.bundle = resources; // ResourceBundle speichern
+
     }
 
     public void initializeData(JDA jda) {
@@ -212,6 +213,7 @@ public class MemberManagementController implements Initializable {
 
     @FXML
     private void kickMember() {
+        /*
         if (selectedMember == null) {
             showAlert("alert.noMemberSelected", "alert.noMemberSelectedContent");
             return;
@@ -228,6 +230,7 @@ public class MemberManagementController implements Initializable {
                 showAlert("alert.memberKicked", bundle.getString("alert.memberKickedContent"));
             }
         });
+         */
     }
 
     @FXML

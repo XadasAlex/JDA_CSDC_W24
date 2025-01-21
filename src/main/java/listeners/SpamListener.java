@@ -21,13 +21,13 @@ public class SpamListener extends ListenerAdapter {
         // Ignore bot or webhook messages
         if (event.isWebhookMessage() || event.getAuthor().isBot()) return;
 
-        GuildSettings gs = Bot.getInstance().getGuildSettingsHashMap().get(event.getGuild().getId());
-        if (gs.isAllowSpam()) return;
+        GuildSettings gs = GuildSettings.load(event.getGuild().getId());
+
+        if (gs == null || gs.isAllowSpam()) return;
 
         Member member = event.getMember();
         if (member == null) return;
 
-        // Cleanup expired cooldowns before checking
         cleanupExpiredCooldowns(member.getGuild().getId());
 
         if (isMemberOnCooldown(member)) {

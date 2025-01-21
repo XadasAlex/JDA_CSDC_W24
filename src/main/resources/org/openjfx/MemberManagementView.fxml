@@ -34,13 +34,13 @@
     </TableView>
     <VBox fx:id="memberManagementPane" spacing="10" visible="false">
         <Label fx:id="selectedMemberLabel" text="%management.selectedMemberLabel" />
-        <HBox>
+        <HBox spacing="10">
             <Button onAction="#sendMessageToMember" text="%management.selected.sendMessage" />
             <Button onAction="#changeNickname" text="%management.selected.changeNick" />
-            <Button fx:id="toggleChatGuildButton" onAction="#toggleGuildList" text="%management.selected.toggleChatGuild" />
         </HBox>
-        <HBox>
-            <Button onAction="#kickMember" text="%management.selected.kick" />
+        <HBox spacing="10">
+            <!-- <Button onAction="#kickMember" text="%management.selected.kick" /> -->
+            <Button fx:id="toggleChatGuildButton" onAction="#toggleGuildList" text="%management.selected.toggleChatGuild" />
             <Button onAction="#disconnect" text="%management.selected.disconnect" />
         </HBox>
     </VBox>
