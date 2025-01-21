@@ -115,7 +115,7 @@ public class MemberManagementController implements Initializable {
         new Thread(() -> {
             guild.loadMembers().onSuccess(members -> {
                 Platform.runLater(() -> {
-                    memberTableView.getItems().setAll(members);
+                    memberTableView.getItems().setAll(members.stream().filter(x -> !x.getUser().isBot()).toList());
                 });
             }).onError(error -> {
                 Platform.runLater(() -> {
