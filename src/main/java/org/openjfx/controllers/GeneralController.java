@@ -1,5 +1,8 @@
 package org.openjfx.controllers;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
@@ -8,9 +11,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.util.Duration;
 import launcher.Bot;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.exceptions.InvalidTokenException;
 import utils.GuildBaseInfo;
 import utils.Helper;
 
@@ -23,11 +28,6 @@ public class GeneralController implements Initializable {
     private boolean ready = false;
     private JDA jda;
 
-    // Input fields
-    @FXML
-    private PasswordField botTokenTextField;
-    @FXML
-    private PasswordField apiKeyTextField;
     @FXML
     private Label botTokenLabel;
     @FXML
@@ -40,6 +40,8 @@ public class GeneralController implements Initializable {
     private Label botNameLabel;
     @FXML
     private Label botStatusLabel;
+    @FXML
+    public Label uptimeLabel;
     @FXML
     private TableView<GuildBaseInfo> serverTableView;
     @FXML
@@ -59,8 +61,13 @@ public class GeneralController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        botTokenLabel.setVisible(isKeyEntered("DISCORD_BOT_TOKEN"));
-        apiKeyLabel.setVisible(isKeyEntered("OPENAI_API_KEY"));
+        apiKeyLabel.setText(isKeyEntered("DISCORD_BOT_TOKEN") ?
+                resourceBundle.getString("general.botLabel") :
+                resourceBundle.getString("general.botPrompt"));
+        botTokenLabel.setText(isKeyEntered("OPENAI_API_KEY") ?
+                resourceBundle.getString("general.gptLabel") :
+                resourceBundle.getString("general.gptPrompt"));
+
         setupServerInfoTable();
 
         // Überprüfe, ob der Bot bereits läuft, und lade ggf. Daten
@@ -75,59 +82,71 @@ public class GeneralController implements Initializable {
         }
     }
 
+    private void setupUptimeUpdater() {
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(1), event -> {
+                    uptimeLabel.setText(Helper.getUptime());
+                })
+        );
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
+    }
+
     private boolean isKeyEntered(String envKey) {
         String value = System.getenv(envKey);
         return value != null && !value.isEmpty();
     }
 
-    public void saveSettings(ActionEvent actionEvent) {
-        if (!botTokenTextField.getText().isBlank()) {
-            boolean success = Helper.setEnvVar("DISCORD_BOT_TOKEN", botTokenTextField.getText());
-            if (!success) botTokenLabel.setText("Failed setting the value provided!");
-        }
-
-        if (!apiKeyTextField.getText().isBlank()) {
-            boolean success = Helper.setEnvVar("OPENAI_API_KEY", apiKeyTextField.getText());
-            if (!success) apiKeyLabel.setText("Failed setting the value provided!");
-        }
-    }
-
     @FXML
     public void startBot(ActionEvent actionEvent) {
         if (ready) {
+            // Bot stoppen
+            startButton.setDisable(true); // Button blockieren
             shutdownBot();
         } else {
+            // Bot starten
+            startButton.setDisable(true); // Button blockieren
             startBotInstance();
         }
     }
 
     private synchronized void startBotInstance() {
         if (jda != null && jda.getStatus() != JDA.Status.SHUTDOWN) {
-            showError("Bot Already Running", "The bot is already running. Please shut it down first.");
+            Platform.runLater(() -> {
+                showError("Bot Already Running", "The bot is already running. Please shut it down first.");
+                startButton.setDisable(false); // Button freigeben
+            });
             return;
         }
 
         toggleLoading(true);
-        startButton.setDisable(true);
 
         new Thread(() -> {
             try {
-                botInstance = Bot.getInstance();
-                botInstance.start(); // Neue Methode, um den Bot gezielt zu starten
-                jda = botInstance.getJda();
+                try {
+                    botInstance = Bot.getInstance();
+                    botInstance.start();
+                    jda = botInstance.getJda();
 
-                Platform.runLater(() -> {
-                    ready = true;
-                    startButton.setText("Shutdown Bot");
-                    reloadData();
-                    toggleLoading(false);
-                    startButton.setDisable(false);
-                });
+                    Platform.runLater(() -> {
+                        ready = true;
+                        startButton.setText("Shutdown Bot");
+                        reloadData();
+                        toggleLoading(false);
+                        startButton.setDisable(false); // Button freigeben
+                    });
+                } catch (InvalidTokenException e) {
+                    Platform.runLater(() -> {
+                        toggleLoading(false);
+                        startButton.setDisable(false); // Button freigeben
+                        showError("Invalid Bot Token", "The provided bot token is invalid. Please check your configuration.");
+                    });
+                }
             } catch (Exception e) {
                 Platform.runLater(() -> {
-                    showError("Error Starting Bot", "Failed to start the bot: " + e.getMessage());
                     toggleLoading(false);
-                    startButton.setDisable(false);
+                    startButton.setDisable(false); // Button freigeben
+                    showError("Error Starting Bot", "Failed to start the bot: " + e.getMessage());
                 });
             }
         }).start();
@@ -138,13 +157,14 @@ public class GeneralController implements Initializable {
         startButton.setDisable(true);
 
         new Thread(() -> {
-            botInstance.shutdown(); // Neue Methode in der Bot-Klasse, um gezielt den Bot zu stoppen
+            botInstance.shutdown();
+
             Platform.runLater(() -> {
                 ready = false;
                 startButton.setText("Start Bot");
                 resetStatus();
                 toggleLoading(false);
-                startButton.setDisable(false);
+                startButton.setDisable(false); // Button freigeben
             });
         }).start();
     }
@@ -153,13 +173,14 @@ public class GeneralController implements Initializable {
         if (jda != null && botInstance.isRunning()) {
             Platform.runLater(() -> {
                 // Update bot information
+                setupUptimeUpdater();
+
                 botNameLabel.setText(jda.getSelfUser().getName());
                 botStatusLabel.setText("Online");
                 botNameLabel.setVisible(true);
                 botStatusLabel.setVisible(true);
                 profileImageView.setImage(new Image(jda.getSelfUser().getEffectiveAvatarUrl()));
 
-                // Load server information
                 loadServerInfo();
             });
         } else {
