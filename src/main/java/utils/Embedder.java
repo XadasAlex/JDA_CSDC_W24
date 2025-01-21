@@ -68,4 +68,17 @@ public class Embedder {
 
         return embed;
     }
+
+    public static EmbedBuilder createSwearWordEmbed(String iconUrl) {
+        EmbedBuilder embed = new EmbedBuilder();
+
+        embed.setAuthor("Swearing is not allowed on this server!", null, iconUrl);
+        embed.setTitle("Watch Your Words, Please!");
+        embed.setDescription("Your message contained inappropriate language. Please edit your communication to align with our community guidelines.");
+        embed.setFooter(String.format("Requested by: %s", Bot.getInstance().getJda().getSelfUser().getName()));
+        embed.setTimestamp(Instant.now());
+        embed.setColor(Bot.getInstance().getDefaultColor());
+
+        return embed;
+    }
 }

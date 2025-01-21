@@ -6,7 +6,6 @@ import commands.battleship.*;
 import commands.chat.stats.CmdAllowStats;
 import commands.chat.stats.CmdLeaderBoard;
 import commands.chat.stats.CmdStats;
-import commands.guild.CmdAnnoy;
 import commands.guild.CmdGuildInfo;
 import commands.guild.CmdSettingsChatRestricted;
 import listeners.*;
@@ -14,19 +13,14 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import utils.GuildSettings;
 
 import commands.chat.*;
-import commands.guild.CmdKick;
-import commands.testing.ButtonTest;
-import commands.testing.DropDownTest;
-import commands.testing.EntityDDTest;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import java.awt.*;
+import java.time.Instant;
 import java.util.*;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class Bot {
     private JDABuilder bot;
@@ -36,9 +30,13 @@ public class Bot {
     private final String avatarUrl = "https://example.com/default-avatar.png"; // Placeholder
     private final Color defaultColor = new Color(115, 169, 186);
     private final Color errorColor = new Color(255, 51, 51);
-
+    private Instant startTime = null;
     private boolean running = false; // Neuer Status-Tracker
     private HashMap<String, GuildSettings> guildSettingsHashMap;
+
+    public Instant getStartTime() {
+        return startTime;
+    }
 
     private static final class InstanceHolder {
         private static final Bot instance = new Bot();
@@ -96,7 +94,7 @@ public class Bot {
                 );
     }
 
-    public synchronized void start() {
+    public synchronized void start() throws InterruptedException {
         if (running) {
             System.out.println("Bot is already running.");
             return;
@@ -106,10 +104,11 @@ public class Bot {
             this.jda = bot.build();
             this.jda.awaitReady();
             this.running = true;
+            this.startTime = Instant.now();
             System.out.println("Bot started successfully.");
         } catch (Exception e) {
-            e.printStackTrace();
             this.running = false;
+            throw e;
         }
     }
 
@@ -120,10 +119,11 @@ public class Bot {
         }
 
         if (jda != null) {
-            jda.shutdown();
+            jda.shutdownNow();
             jda = null;
         }
         this.running = false;
+        this.startTime = null;
         System.out.println("Bot has been shut down.");
     }
 

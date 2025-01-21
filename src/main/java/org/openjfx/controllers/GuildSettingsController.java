@@ -32,8 +32,8 @@ public class GuildSettingsController {
     private ToggleButton welcomeMessageToggle;
     @FXML
     private ToggleButton leaveMessageToggle;
-    @FXML
-    private ToggleButton dedicatedBotChannelsToggle;
+    //@FXML
+    //private ToggleButton dedicatedBotChannelsToggle;
 
     @FXML
     private Button saveSettingsButton;
@@ -96,7 +96,7 @@ public class GuildSettingsController {
         currentSettings.setAllowSwear(allowSwearToggle.isSelected());
         currentSettings.setMemberWelcomeMessage(welcomeMessageToggle.isSelected());
         currentSettings.setMemberLeaveMessage(leaveMessageToggle.isSelected());
-        currentSettings.setDedicatedBotChannels(dedicatedBotChannelsToggle.isSelected());
+        //currentSettings.setDedicatedBotChannels(dedicatedBotChannelsToggle.isSelected());
 
         // Save updated settings to file
         currentSettings.update();

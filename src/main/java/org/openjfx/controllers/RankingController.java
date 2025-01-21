@@ -66,7 +66,7 @@ public class RankingController implements Initializable {
             MemberStats memberStats = cellData.getValue();
             long lastTimeJoined = memberStats.getLastTimeJoined();
             if (lastTimeJoined == 0) {
-                return new SimpleStringProperty(bundle.getString("ranking.noData"));
+                return new SimpleStringProperty("N/A");
             }
             return new SimpleStringProperty(Helper.getTimeAgo(lastTimeJoined));
         });

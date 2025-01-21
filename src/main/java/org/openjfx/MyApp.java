@@ -6,6 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import launcher.Bot;
 import org.sqlite.JDBC;
 import utils.Helper;
 import org.openjfx.controllers.LoginController;
@@ -14,7 +16,6 @@ import org.openjfx.controllers.MasterController;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 
@@ -83,11 +84,16 @@ public class MyApp extends Application {
             primaryStage.getIcons().add(new Image("https://cdn.pixabay.com/photo/2015/12/22/04/00/edit-1103598_1280.png"));
             primaryStage.setScene(scene);
             primaryStage.show();
+            primaryStage.setOnCloseRequest(event -> handleWindowClose(event));
             primaryStage.setMinWidth(400);
             primaryStage.setMinHeight(300);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void handleWindowClose(WindowEvent event) {
+        Bot.getInstance().shutdown();
     }
 
     public Locale getCurrentLocale() {
