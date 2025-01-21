@@ -1,5 +1,6 @@
 package utils;
 
+import launcher.Bot;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -16,6 +17,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -268,6 +272,27 @@ public class Helper {
         Message msg = (Message) message;
         deleteAfter(message, 30);
     }
+
+    public static String getUptime() {
+        Instant startTime = Bot.getInstance().getStartTime();
+
+        if (startTime == null) return "00:00:00";
+        Instant now = Instant.now();
+        Duration uptime = Duration.between(startTime, now);
+
+        long hours = uptime.toHours();
+        long minutes = uptime.toMinutes() % 60;
+        long seconds = uptime.getSeconds() % 60;
+
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
+    public static List<String> loadSwearWordsFromFile() throws IOException {
+        String pathString = Helper.getResourcePath().concat("/swearwords/de.txt");
+        Path path = Paths.get(pathString);
+        return Files.readAllLines(path, StandardCharsets.UTF_8);
+    }
+
 
     public static void deleteAfter60(InteractionHook message) {
         deleteAfter(message, 60);
