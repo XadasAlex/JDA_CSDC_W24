@@ -8,6 +8,7 @@
     -fx-font-family: "JetBrains Mono"; /* General font over all labels */
     -fx-text-fill: #B5BAC1; /* General font color over all labels */
     -fx-padding: 5 0 0 5;   /* General font position over all labels */
+    -fx-pref-width: 250;
 }
 
 .text-field{
@@ -31,12 +32,66 @@
     -fx-background-color: #454FBD; /* General button hover color when cursor is above button */
 }
 
+.toggle-button{
+    -fx-pref-width: 200; /* General width (200px) for all toggle button  */
+}
+
+.separator{
+    -fx-background-color: #B5BAC1;
+}
+
+.combo-box{
+    -fx-font-size: 12;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono";
+    -fx-text-fill: #B5BAC1;
+    -fx-pref-width: 250;
+    -fx-background-color: #2B2D31;
+}
+
 .table-view{
-    -fx-background-color: #313338; /* General table-view background color to match .root */
+    -fx-background-color: TRANSPARENT; /* General table-view background color to match .root */
+}
+
+.table-view .column-header-background{
+    -fx-background-color: TRANSPARENT;
+}
+
+.table-view .column-header {
+    -fx-background-color: TRANSPARENT;
+}
+
+.table-view .table-row-cell:selected .table-cell{
+    -fx-background-color: #313338;
+    -fx-text-fill: #B5BAC1;
+}
+
+.table-view .table-row-cell{
+    -fx-background-color: #2B2D31;
+    -fx-text-fill: #B5BAC1;
+}
+
+.table-view .table-row-cell:selected{
+    -fx-background-color: #313338;
+}
+
+.table-view .table-cell{
+    -fx-background-color: #2B2D31;
+    -fx-text-fill: #B5BAC1;
 }
 
 .list-view{
     -fx-background-color: #2B2D31; /* General background color for all liest-view elements */
+}
+
+.list-cell{
+    -fx-background-color: #2B2D31;
+    -fx-font-family: "JetBrains Mono";
+    -fx-text-fill: #B5BAC1;
+}
+
+.list-cell:selected{
+    -fx-background-color: #313338;
 }
 
 
@@ -70,4 +125,8 @@
 
 #menuButtons:hover {
     -fx-background-color: #313338; /* Custom button hover color for menu buttons in GeneralView.fxml*/
+}
+
+#memberSelection{
+    -fx-pref-width: 300; /* Custom width for button memberSelection in MemberManagementView.fxml */
 }

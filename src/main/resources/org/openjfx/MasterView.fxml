@@ -1,22 +1,23 @@
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.control.Label?>
+<?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.Button?>
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.openjfx.controllers.MasterController">
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.controllers.MasterController">
 
     <left>
-        <VBox fx:id="navigationMenu" style="-fx-background-color: #f0f0f0;" spacing="10" prefWidth="200">
-            <Label text="%menu.navigation" style="-fx-font-size: 16;" />
-            <Button text="%menu.general" onAction="#showGeneral" prefWidth="150"/>
+        <VBox fx:id="navigationMenu" prefWidth="200" spacing="10" style="-fx-padding: 10;" stylesheets="@css/general.css">
+            <Label style="-fx-font-size: 16;" text="%menu.navigation" />
+            <Button fx:id="menuButtons" onAction="#showGeneral" prefWidth="150" text="%menu.general" />
             <!-- <Button text="Language" onAction="#showLanguage" />
             <Button text="Features" onAction="#showFeatures" /> -->
-            <Button text="%menu.ranking" onAction="#showRanking" prefWidth="150"/>
-            <Button text="%menu.members" onAction="#showMemberManagement" prefWidth="150" />
-            <Button text="%menu.serverSettings" onAction="#showServerSettings" prefWidth="150"/>
-            <Button text="%menu.language" onAction="#showLanguage" prefWidth="150"/>
+            <Button fx:id="menuButtons" onAction="#showRanking" prefWidth="150" text="%menu.ranking" />
+            <Button fx:id="menuButtons" onAction="#showMemberManagement" prefWidth="150" text="%menu.members" />
+            <Button fx:id="menuButtons" onAction="#showServerSettings" prefWidth="150" text="%menu.serverSettings" />
+            <Button fx:id="menuButtons" onAction="#showLanguage" prefWidth="150" text="%menu.language" />
         </VBox>
     </left>
 

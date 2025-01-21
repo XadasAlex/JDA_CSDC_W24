@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.openjfx.controllers.LanguageController"
-            prefHeight="400.0" prefWidth="600.0">
-    <Label text="Sprachen"/>
-    <ComboBox fx:id="localeComboBox" onAction="#changeLocale"/>
-</AnchorPane>
+<VBox prefHeight="200.0" prefWidth="100.0" style="-fx-padding: 10;" stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.controllers.LanguageController">
+   <children>
+      <Label text="Sprachen">
+         <VBox.margin>
+            <Insets bottom="5.0" />
+         </VBox.margin></Label>
+      <ComboBox fx:id="localeComboBox" onAction="#changeLocale" />
+   </children>
+</VBox>

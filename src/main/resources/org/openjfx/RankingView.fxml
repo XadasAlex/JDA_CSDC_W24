@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.openjfx.controllers.RankingController"
-      spacing="10" style="-fx-padding: 10;">
-    <Label text="%ranking.select" style="-fx-font-size: 16;" />
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="10" style="-fx-padding: 10;" stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.controllers.RankingController">
+    <Label style="-fx-font-size: 16; -fx-pref-width: 350;" text="%ranking.select" />
     <ListView fx:id="guildListView" />
-    <Separator/>
+    <Separator prefHeight="0.0" prefWidth="562.0" />
     <TableView fx:id="rankingTableView">
         <columns>
             <TableColumn fx:id="memberNameColumn" text="%ranking.memberName" />
@@ -19,7 +21,8 @@
             <TableColumn fx:id="inVoiceColumn" text="%ranking.inVoice" />
             <TableColumn fx:id="lastTimeJoinedColumn" text="%ranking.lastTimeJoined" />
         </columns>
+      <columnResizePolicy>
+         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+      </columnResizePolicy>
     </TableView>
 </VBox>
-
-
