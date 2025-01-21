@@ -4,16 +4,17 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.sqlite.JDBC;
 import utils.Helper;
-import javafx.stage.StageStyle;
 import org.openjfx.controllers.LoginController;
 import org.openjfx.controllers.MasterController;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 
@@ -48,7 +49,7 @@ public class MyApp extends Application {
 
         DriverManager.registerDriver(new JDBC());
 
-        //creation of the DB and execution of the create table statements
+        //creation of the DB and execution of the creation table statements
         try (var conn = DriverManager.getConnection(String.format("jdbc:sqlite:%s/battleships.db", Helper.getBaseDBPath()))) {
             if (conn != null) {
                 conn.createStatement().execute(createPlayersTable);
@@ -79,6 +80,7 @@ public class MyApp extends Application {
             String css = this.getClass().getResource("./css/login.css").toExternalForm();
             scene.getStylesheets().add(css);
             primaryStage.setTitle("Login");
+            primaryStage.getIcons().add(new Image("https://cdn.pixabay.com/photo/2015/12/22/04/00/edit-1103598_1280.png"));
             primaryStage.setScene(scene);
             primaryStage.show();
             primaryStage.setMinWidth(400);

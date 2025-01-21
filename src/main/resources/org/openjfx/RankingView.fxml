@@ -9,7 +9,7 @@
 
 <VBox spacing="10" style="-fx-padding: 10;" stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.controllers.RankingController">
     <Label style="-fx-font-size: 16; -fx-pref-width: 350;" text="%ranking.select" />
-    <ListView fx:id="guildListView" />
+    <ListView fx:id="guildListView" prefHeight="150"/>
     <Separator prefHeight="0.0" prefWidth="562.0" />
     <TableView fx:id="rankingTableView">
         <columns>

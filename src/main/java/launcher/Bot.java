@@ -86,7 +86,14 @@ public class Bot {
                 .createDefault(TOKEN)
                 .enableIntents(INTENTS)
                 .enableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE, CacheFlag.ONLINE_STATUS)
-                .addEventListeners(new ChatListener(), new StatListener(), commandManagerListener, new ReadyListener());
+                .addEventListeners(
+                        new ChatListener(),
+                        new StatListener(),
+                        commandManagerListener,
+                        new ReadyListener(),
+                        new JoinLeaveListener(),
+                        new SpamListener()
+                );
     }
 
     public synchronized void start() {

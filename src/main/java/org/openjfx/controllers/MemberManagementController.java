@@ -9,6 +9,8 @@ import javafx.scene.layout.VBox;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.exceptions.HierarchyException;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import org.openjfx.services.GuildService;
 import utils.ChatMessage;
 
@@ -52,6 +54,12 @@ public class MemberManagementController implements Initializable {
         guildListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 showMembers(newValue);
+            }
+        });
+
+        memberTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                confirmMemberSelection(newValue);
             }
         });
     }
@@ -169,10 +177,38 @@ public class MemberManagementController implements Initializable {
         dialog.setContentText(bundle.getString("dialog.changeNicknamePrompt"));
 
         dialog.showAndWait().ifPresent(newNickname -> {
-            selectedMember.modifyNickname(newNickname).queue();
-            showAlert("alert.nicknameChanged", String.format(bundle.getString("alert.nicknameChangedContent"), newNickname));
+            if (newNickname.trim().isEmpty()) {
+                Platform.runLater(() ->
+                        showAlert("alert.nicknameChangeFailed", "alert.nicknameChangeFailedContentEmpty")
+                );
+                return;
+            }
+
+            try {
+                selectedMember.modifyNickname(newNickname).queue(
+                        success -> Platform.runLater(() ->
+                                showAlert("alert.nicknameChanged", "alert.nicknameChangedContent")
+                        ),
+                        error -> Platform.runLater(() -> {
+                            if (error instanceof HierarchyException) {
+                                showAlert("alert.nicknameChangeFailed", "alert.nicknameFailure1");
+                            } else if (error instanceof InsufficientPermissionException) {
+                                showAlert("alert.nicknameChangeFailed", "alert.nicknameChangeFailedPermission");
+                            } else {
+                                showAlert("alert.nicknameChangeFailed", "alert.nicknameChangeFailedUnknown");
+                                error.printStackTrace(); // Optional: Fehler im Log anzeigen
+                            }
+                        })
+                );
+            } catch (Exception e) {
+                Platform.runLater(() ->
+                        showAlert("alert.nicknameChangeFailed", "alert.nicknameChangeFailedUnknown")
+                );
+                e.printStackTrace();
+            }
         });
     }
+
 
     @FXML
     private void kickMember() {
@@ -225,17 +261,14 @@ public class MemberManagementController implements Initializable {
     }
 
     @FXML
-    private void confirmMemberSelection() {
-        Member selected = memberTableView.getSelectionModel().getSelectedItem();
-
-        if (selected == null) {
+    private void confirmMemberSelection(Member selectedMember) {
+        if (selectedMember == null) {
             showAlert("alert.noMemberSelected", "alert.noMemberSelectedContent");
             return;
         }
 
-        this.selectedMember = selected;
-        selectedMemberLabel.setText(String.format(bundle.getString("management.selectedMemberLabel"), selected.getUser().getName()));
+        this.selectedMember = selectedMember;
+        selectedMemberLabel.setText(String.format(bundle.getString("management.selectedMemberLabel"), selectedMember.getUser().getName()));
         memberManagementPane.setVisible(true);
-        memberManagementPane.setManaged(true);
     }
 }

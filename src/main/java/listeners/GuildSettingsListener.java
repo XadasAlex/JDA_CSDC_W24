@@ -16,6 +16,7 @@ public class GuildSettingsListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
+        if (!event.isFromGuild()) return;
         GuildSettings gs = GuildSettings.load(event.getGuild().getId());
 
         assert gs != null;

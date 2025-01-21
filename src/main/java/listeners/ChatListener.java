@@ -23,6 +23,7 @@ public class ChatListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
+        if (!event.isFromGuild()) return;
         GuildSettings gs = Bot.getInstance().getGuildSettingsHashMap().get(event.getGuild().getId());
 
         handleChatRestriction(gs, event);

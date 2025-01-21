@@ -34,6 +34,7 @@ public class CommandManagerListener extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        if (!event.isFromGuild()) return;
         for (ICommand command : commands) {
             if (command.getName().equals(event.getName())) {
                 if (command instanceof ICommandAsync) {

@@ -15,8 +15,8 @@ public class GuildSettingsController {
     private JDA jda;
     private GuildSettings currentSettings;
 
-    private final String trueColor = "-fx-background-color: #70db70";
-    private final String falseColor = "-fx-background-color: #ff6666";
+    private final String trueColor = "-fx-border-color: #70db70;-fx-border-radius: 5.0";
+    private final String falseColor = "-fx-border-color: #ff6666;-fx-border-radius: 5.0";
 
     @FXML
     public Label guildSettingsTitle;

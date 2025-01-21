@@ -254,6 +254,12 @@ public class Helper {
         return String.format("%d year%s ago.", years, sFormatting(years));
     }
 
+    public static void deleteAfter5(InteractionHook message) {
+        deleteAfter(message, 5);
+    }
+    public static void deleteAfter10(InteractionHook message) {
+        deleteAfter(message, 10);
+    }
     public static void deleteAfter15(InteractionHook message) {
         deleteAfter(message, 15);
     }

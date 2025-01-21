@@ -33,6 +33,7 @@ public class StatListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
+        if (!event.isFromGuild()) return;
         String memberId = Objects.requireNonNull(event.getMember()).getId();
         String guildId = Objects.requireNonNull(event.getGuild()).getId();
         if (!MemberStats.allowedStats(guildId, memberId)) return;
