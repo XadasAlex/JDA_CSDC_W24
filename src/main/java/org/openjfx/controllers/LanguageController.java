@@ -28,6 +28,8 @@ public class LanguageController implements Initializable {
         availableLocales.put("Deutsch", new Locale("de", "DE"));
         availableLocales.put("English", new Locale("en", "US"));
         availableLocales.put("Español", new Locale("es", "ES"));
+        availableLocales.put("French", new Locale("fr", "FR"));
+        availableLocales.put("Italian", new Locale("it", "IT"));
 
         // Keys (Deutsch, English, Español) in die ComboBox einfügen
         localeComboBox.getItems().addAll(availableLocales.keySet());

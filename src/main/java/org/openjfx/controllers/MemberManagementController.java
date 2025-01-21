@@ -2,8 +2,8 @@ package org.openjfx.controllers;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import net.dv8tion.jda.api.JDA;
@@ -12,12 +12,16 @@ import net.dv8tion.jda.api.entities.Member;
 import org.openjfx.services.GuildService;
 import utils.ChatMessage;
 
-public class MemberManagementController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class MemberManagementController implements Initializable {
 
     private JDA jda;
     private GuildService guildService;
     private Member selectedMember;
     private boolean showGuildList = true;
+    private ResourceBundle bundle;
 
     @FXML private ListView<String> guildListView;
     @FXML private TableView<Member> memberTableView;
@@ -33,6 +37,11 @@ public class MemberManagementController {
     @FXML private TableColumn<ChatMessage, String> timestampColumn;
     @FXML private TableColumn<ChatMessage, String> contentColumn;
     @FXML private TableColumn<ChatMessage, String> channelColumn;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        this.bundle = resources; // ResourceBundle speichern
+    }
 
     public void initializeData(JDA jda) {
         this.jda = jda;
@@ -52,9 +61,8 @@ public class MemberManagementController {
 
         showGuildList = !showGuildList;
 
-        String newText = showGuildList ? "Show Chat" : "Show Guilds";
-        String newTitle = showGuildList ?
-                "Select a Guild for Member Management" : "The Members chat history is listed below";
+        String newText = bundle.getString(showGuildList ? "management.showChat" : "management.showGuilds");
+        String newTitle = bundle.getString(showGuildList ? "management.selectGuild" : "management.chatHistory");
 
         guildListView.setVisible(showGuildList);
         guildListView.setManaged(showGuildList);
@@ -84,7 +92,7 @@ public class MemberManagementController {
     @FXML
     public void showMembers(String selectedGuild) {
         if (selectedGuild == null) {
-            showAlert("No Guild Selected", "Please select a guild to view its members.");
+            showAlert("alert.noGuildSelected", "alert.noGuildSelectedContent");
             return;
         }
 
@@ -92,26 +100,24 @@ public class MemberManagementController {
         Guild guild = jda.getGuildById(guildId);
 
         if (guild == null) {
-            showAlert("Guild Not Found", "The selected guild could not be found.");
+            showAlert("alert.guildNotFound", "alert.guildNotFoundContent");
             return;
         }
 
-        // Lade Mitglieder asynchron
         new Thread(() -> {
             guild.loadMembers().onSuccess(members -> {
                 Platform.runLater(() -> {
-                    memberTableView.getItems().setAll(members); // Mitglieder in Tabelle anzeigen
+                    memberTableView.getItems().setAll(members);
                 });
             }).onError(error -> {
                 Platform.runLater(() -> {
-                    showAlert("Error", "Failed to load members: " + error.getMessage());
+                    showAlert("alert.errorLoadingMembers", bundle.getString("alert.errorMessage") + error.getMessage());
                 });
             });
         }).start();
     }
 
     private void setupMemberTable() {
-        // Konfiguriere die Spalten für die Tabelle
         memberName.setCellValueFactory(cellData -> {
             Member member = cellData.getValue();
             return new SimpleStringProperty(member.getUser().getName());
@@ -119,7 +125,7 @@ public class MemberManagementController {
         memberNickname.setCellValueFactory(cellData -> {
             Member member = cellData.getValue();
             return new SimpleStringProperty(
-                    member.getNickname() != null ? member.getNickname() : "N/A"
+                    member.getNickname() != null ? member.getNickname() : bundle.getString("management.noNickname")
             );
         });
         memberDiscriminator.setCellValueFactory(cellData -> {
@@ -135,49 +141,55 @@ public class MemberManagementController {
     @FXML
     private void sendMessageToMember() {
         if (selectedMember == null) {
-            showAlert("No Member Selected", "Please select a member first.");
+            showAlert("alert.noMemberSelected", "alert.noMemberSelectedContent");
             return;
         }
 
-        // Beispiel: Nachricht an den ausgewählten Member senden
-        selectedMember.getUser().openPrivateChannel()
-                .queue(channel -> channel.sendMessage("Hello, " + selectedMember.getUser().getName()).queue());
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle(bundle.getString("dialog.sendMessageTitle"));
+        dialog.setHeaderText(String.format(bundle.getString("dialog.sendMessageHeader"), selectedMember.getUser().getName()));
+        dialog.setContentText(bundle.getString("dialog.sendMessagePrompt"));
+
+        dialog.showAndWait().ifPresent(text -> {
+            selectedMember.getUser().openPrivateChannel()
+                    .queue(channel -> channel.sendMessage(text).queue());
+        });
     }
 
     @FXML
     private void changeNickname() {
         if (selectedMember == null) {
-            showAlert("No Member Selected", "Please select a member first.");
+            showAlert("alert.noMemberSelected", "alert.noMemberSelectedContent");
             return;
         }
 
         TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Change Nickname");
-        dialog.setHeaderText("Change Nickname for " + selectedMember.getUser().getName());
-        dialog.setContentText("Enter new nickname:");
+        dialog.setTitle(bundle.getString("dialog.changeNicknameTitle"));
+        dialog.setHeaderText(String.format(bundle.getString("dialog.changeNicknameHeader"), selectedMember.getUser().getName()));
+        dialog.setContentText(bundle.getString("dialog.changeNicknamePrompt"));
 
         dialog.showAndWait().ifPresent(newNickname -> {
             selectedMember.modifyNickname(newNickname).queue();
-            showAlert("Nickname Changed", "The nickname has been changed to " + newNickname + ".");
+            showAlert("alert.nicknameChanged", String.format(bundle.getString("alert.nicknameChangedContent"), newNickname));
         });
     }
 
     @FXML
     private void kickMember() {
         if (selectedMember == null) {
-            showAlert("No Member Selected", "Please select a member first.");
+            showAlert("alert.noMemberSelected", "alert.noMemberSelectedContent");
             return;
         }
 
         Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmDialog.setTitle("Kick Member");
-        confirmDialog.setHeaderText("Are you sure you want to kick " + selectedMember.getUser().getName() + "?");
-        confirmDialog.setContentText("This action cannot be undone.");
+        confirmDialog.setTitle(bundle.getString("dialog.kickMemberTitle"));
+        confirmDialog.setHeaderText(String.format(bundle.getString("dialog.kickMemberHeader"), selectedMember.getUser().getName()));
+        confirmDialog.setContentText(bundle.getString("dialog.kickMemberPrompt"));
 
         confirmDialog.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 selectedMember.getGuild().kick(selectedMember).queue();
-                showAlert("Member Kicked", "The member has been kicked from the guild.");
+                showAlert("alert.memberKicked", bundle.getString("alert.memberKickedContent"));
             }
         });
     }
@@ -185,46 +197,45 @@ public class MemberManagementController {
     @FXML
     private void disconnect() {
         if (selectedMember == null) {
-            showAlert("No Member Selected", "Please select a member first.");
+            showAlert("alert.noMemberSelected", "alert.noMemberSelectedContent");
             return;
         }
 
         Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmDialog.setTitle("Disconnect Member");
-        confirmDialog.setHeaderText("Are you sure you want to disconnect " + selectedMember.getUser().getName() + "?");
-        confirmDialog.setContentText("They might get mad. :(");
+        confirmDialog.setTitle(bundle.getString("dialog.disconnectMemberTitle"));
+        confirmDialog.setHeaderText(String.format(bundle.getString("dialog.disconnectMemberHeader"), selectedMember.getUser().getName()));
+        confirmDialog.setContentText(bundle.getString("dialog.disconnectMemberPrompt"));
 
         confirmDialog.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 selectedMember.getGuild().moveVoiceMember(selectedMember, null).queue();
-                showAlert("Member Disconnected!", "The member has been disconnected from their voice channel.");
+                showAlert("alert.memberDisconnected", bundle.getString("alert.memberDisconnectedContent"));
             }
         });
     }
 
+    private void showAlert(String titleKey, String messageKey) {
+        String title = bundle.getString(titleKey);
+        String message = bundle.getString(messageKey);
 
-    private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setContentText(message);
         alert.showAndWait();
     }
 
-
     @FXML
     private void confirmMemberSelection() {
         Member selected = memberTableView.getSelectionModel().getSelectedItem();
 
         if (selected == null) {
-            showAlert("No Member Selected", "Please select a member first.");
+            showAlert("alert.noMemberSelected", "alert.noMemberSelectedContent");
             return;
         }
 
-        // Speichere den ausgewählten Member und zeige die Verwaltungsschnittstelle
         this.selectedMember = selected;
-        selectedMemberLabel.setText("Selected Member: " + selected.getUser().getName());
+        selectedMemberLabel.setText(String.format(bundle.getString("management.selectedMemberLabel"), selected.getUser().getName()));
         memberManagementPane.setVisible(true);
         memberManagementPane.setManaged(true);
     }
-
 }

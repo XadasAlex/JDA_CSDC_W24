@@ -11,11 +11,16 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ProgressIndicator?>
 
-<VBox alignment="TOP_CENTER" spacing="10" stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.controllers.GeneralController">
-    <Label style="-fx-font-size: 20;" text="General Settings" />
+<VBox alignment="TOP_CENTER" spacing="10"
+      stylesheets="@css/general.css"
+      xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.openjfx.controllers.GeneralController">
+    <Label style="-fx-font-size: 20;" text="%general.settings" />
     <HBox>
-        <Label text="Tokens and Keys">
+        <Label text="%general.tokenAndKeys">
          <HBox.margin>
             <Insets left="10.0" />
          </HBox.margin></Label>
