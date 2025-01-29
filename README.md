@@ -7,3 +7,6 @@ Created as our Project for W24 in CSDC at FH-Campus Wien.
 - openai: OPENAI_API_KEY
 
 ##### Intellij might need a restart to recognize the changes.
+
+
+##### You may find API keys in older commits, but they have been reverted. Don't even try to take advantage of my stupidity.
