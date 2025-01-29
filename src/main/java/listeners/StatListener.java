@@ -3,12 +3,15 @@ package listeners;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
+import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import stats.MemberStats;
+import org.jetbrains.annotations.NotNull;
+import utils.MemberStats;
 import utils.Helper;
 
 import java.util.Objects;
@@ -18,6 +21,7 @@ public class StatListener extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        if (!event.isFromGuild()) return;
         String memberId = Objects.requireNonNull(event.getMember()).getId();
         String guildId = Objects.requireNonNull(event.getGuild()).getId();
         if (!MemberStats.allowedStats(guildId, memberId)) return;
@@ -61,7 +65,7 @@ public class StatListener extends ListenerAdapter {
         MemberStats stats = MemberStats.getMemberStats(guildId, memberId);
 
         if (stats == null) return;
-        // self reactions increase
+
         stats.incrementSelfReactionCount();
         stats.updateSelf();
 
@@ -110,10 +114,10 @@ public class StatListener extends ListenerAdapter {
         }
 
         if (joined.equals(left)) {
-            changedVoiceState(event);
+            //changedVoiceState(event);
 
         } else {
-            switchedGuildVc(event);
+            //switchedGuildVc(event);
         }
     }
 
@@ -128,8 +132,6 @@ public class StatListener extends ListenerAdapter {
         stats.joinedVoice();
         stats.updateSelf();
     }
-
-
 
     public void leftGuildVc(GuildVoiceUpdateEvent event) {
         MemberStats stats = MemberStats.getMemberStats(event.getGuild().getId(), event.getMember().getId());
@@ -148,6 +150,8 @@ public class StatListener extends ListenerAdapter {
         stats.updateSelf();
     }
 
+    /*
+
     public void switchedGuildVc(GuildVoiceUpdateEvent event) {
 
     }
@@ -155,4 +159,6 @@ public class StatListener extends ListenerAdapter {
     public void changedVoiceState(GuildVoiceUpdateEvent event) {
 
     }
+
+     */
 }

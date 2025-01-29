@@ -1,7 +1,7 @@
 package commands.chat;
 
 import commands.ICommand;
-import utils.CommandIcons;
+import utils.IconsGuild;
 import utils.Embedder;
 import utils.Helper;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -65,7 +65,7 @@ public class CmdAssignTeams implements ICommand {
             teamIndex = (teamIndex + 1) % teamCount;
         }
 
-        EmbedBuilder embed = Embedder.createBaseEmbed(event.getMember(), CommandIcons.COMMUNITY_ICON_URL, getName(), "Shuffled Players into teams", String.format("Created %s Team(s) for %s Players", teamCount, taggedPlayers.size()));
+        EmbedBuilder embed = Embedder.createBaseEmbed(event.getMember(), IconsGuild.COMMUNITY_ICON_URL, getName(), "Shuffled Players into teams", String.format("Created %s Team(s) for %s Players", teamCount, taggedPlayers.size()));
         teamIndex = 1;
         for (List<Member> team : teams) {
             embed.addField(String.format("Team %d: ", teamIndex), String.format("%d Players", team.size()), true);

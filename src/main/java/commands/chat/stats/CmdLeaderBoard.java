@@ -5,8 +5,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import stats.MemberStats;
-import utils.CommandIcons;
+import utils.MemberStats;
+import utils.IconsGuild;
 import utils.Embedder;
 
 import java.util.Comparator;
@@ -30,7 +30,7 @@ public class CmdLeaderBoard implements ICommand {
             if (memberStatsList.size() > 10) {
                 memberStatsList.subList(0, 10);
             }
-            EmbedBuilder leaderBoardEmbed = Embedder.createBaseEmbed(event.getMember(), CommandIcons.COMMUNITY_ICON_URL, getName(),
+            EmbedBuilder leaderBoardEmbed = Embedder.createBaseEmbed(event.getMember(), IconsGuild.COMMUNITY_ICON_URL, getName(),
                     String.format("Leaderboard for server: %s", event.getGuild().getName()),
                     "Listed below are the top 10 members of this guild ranked by exp.");
             for (MemberStats stats : memberStatsList) {

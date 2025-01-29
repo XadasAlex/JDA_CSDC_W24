@@ -7,8 +7,8 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import stats.MemberStats;
-import utils.CommandIcons;
+import utils.MemberStats;
+import utils.IconsGuild;
 import utils.Embedder;
 import utils.Helper;
 
@@ -64,7 +64,7 @@ public class CmdStats implements ICommand {
 
         EmbedBuilder statsEmbed = Embedder.createBaseEmbed(
                 event.getMember(),
-                CommandIcons.STATS_ICON_URL,
+                IconsGuild.STATS_ICON_URL,
                 getName(),
                 String.format("Stats for user: %s", member.getEffectiveName()),
                 "description"

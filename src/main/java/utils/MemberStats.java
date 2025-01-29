@@ -1,19 +1,16 @@
-package stats;
+package utils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import utils.Helper;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MemberStats {
     private int messagesSent;
@@ -51,11 +48,7 @@ public class MemberStats {
     }
 
     public static boolean allowedStats(String guildId, String memberId) {
-        String path = Helper.getMemberStatPath(
-                guildId,
-                memberId
-        );
-
+        String path = Helper.getMemberStatPath(guildId, memberId);
         return (new File(path).exists());
     }
 

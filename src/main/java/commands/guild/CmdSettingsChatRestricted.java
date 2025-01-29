@@ -1,14 +1,13 @@
 package commands.guild;
 
 import commands.ICommand;
-import launcher.Bot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import utils.CommandIcons;
+import utils.IconsGuild;
 import utils.Embedder;
 import utils.GuildSettings;
 import utils.Helper;
@@ -37,7 +36,7 @@ public class CmdSettingsChatRestricted implements ICommand {
 
         if (chatRestricted) {
             gs.addMemberChatRestriction(member.getId());
-            embed = Embedder.createBaseEmbed(event.getMember(), CommandIcons.SETTINGS_ICON_URL,
+            embed = Embedder.createBaseEmbed(event.getMember(), IconsGuild.SETTINGS_ICON_URL,
                     getName(),
                     "Chat Restriction",
                     String.format("%s has been added to the members who are chat restricted.",
@@ -45,7 +44,7 @@ public class CmdSettingsChatRestricted implements ICommand {
             );
         } else {
             gs.removeMemberChatRestriction(member.getId());
-             embed = Embedder.createBaseEmbed(event.getMember(), CommandIcons.SETTINGS_ICON_URL,
+             embed = Embedder.createBaseEmbed(event.getMember(), IconsGuild.SETTINGS_ICON_URL,
                     getName(),
                     "Chat Restriction",
                     String.format("%s has been removed from the members who are chat restricted.",

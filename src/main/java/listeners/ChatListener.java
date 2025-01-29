@@ -1,21 +1,17 @@
 package listeners;
-import launcher.Bot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import utils.CommandIcons;
+import utils.IconsGuild;
 import utils.Embedder;
 import utils.GuildSettings;
 import utils.Helper;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ChatListener extends ListenerAdapter {
     @Override
@@ -60,7 +56,7 @@ public class ChatListener extends ListenerAdapter {
             if (!containsSwearWord) return;
 
             event.getMessage().delete().queue();
-            EmbedBuilder embed = Embedder.createSwearWordEmbed(CommandIcons.SETTINGS_ICON_URL);
+            EmbedBuilder embed = Embedder.createSwearWordEmbed(IconsGuild.SETTINGS_ICON_URL);
             event.getChannel().sendMessageEmbeds(embed.build()).queue(msg -> Helper.deleteAfter(msg, 5));
 
         } catch (IOException e) {

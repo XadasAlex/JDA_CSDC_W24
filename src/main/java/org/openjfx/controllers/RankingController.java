@@ -8,7 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import net.dv8tion.jda.api.JDA;
 import org.openjfx.services.GuildService;
-import stats.MemberStats;
+import utils.MemberStats;
 import utils.Helper;
 
 import java.net.URL;

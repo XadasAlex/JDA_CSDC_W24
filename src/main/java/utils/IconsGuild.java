@@ -1,6 +1,6 @@
 package utils;
 
-public class CommandIcons {
+public class IconsGuild {
     public static final String STATS_ICON_URL = "https://cdn.discordapp.com/attachments/813431472446898189/1321250730820243496/icons8-daten-96_2.png?ex=676c8e21&is=676b3ca1&hm=9815f3b99c0b62bf2315521a3ebb5af5fd49458b5ae0b484fe0c27136b04516b&";
     public static final String STATS_ERROR_ICON_URL = "https://cdn.discordapp.com/attachments/813431472446898189/1321250731000594462/icons8-daten-96_3.png?ex=676c8e21&is=676b3ca1&hm=26891f1f43ca83432eb67617527297b527ef728efdf3cc5a30b6611fc18230f8&";
 

@@ -1,7 +1,7 @@
 package commands.chat;
 
 import commands.ICommand;
-import utils.CommandIcons;
+import utils.IconsGuild;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -67,13 +67,13 @@ public class CmdRollDice implements ICommand {
         }
 
         EmbedBuilder embed = Embedder.createBaseEmbed(event.getMember(),
-                CommandIcons.GAME_ICON,
+                IconsGuild.GAME_ICON,
                 "Command: /Dice \"alea iacta est\"",
                 String.format("Rolled a number in the bounds: [%d; %d]", lowerBound, upperBound),
                 String.format("\n\nGenerated number: **%d**", randInt)
         );
 
-        embed.setThumbnail(CommandIcons.DICE_ICON);
+        embed.setThumbnail(IconsGuild.DICE_ICON);
 
         event.replyEmbeds(embed.build()).queue();
 

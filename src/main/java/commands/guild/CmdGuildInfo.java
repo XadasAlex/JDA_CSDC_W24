@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import utils.CommandIcons;
+import utils.IconsGuild;
 import utils.Embedder;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class CmdGuildInfo implements ICommand {
         String guildName = guild.getName();
         String iconUrl = guild.getIconUrl();
 
-        EmbedBuilder embed = Embedder.createBaseEmbed(event.getMember(), CommandIcons.COMMUNITY_ICON_URL, getName(), "Server Info", "");
+        EmbedBuilder embed = Embedder.createBaseEmbed(event.getMember(), IconsGuild.COMMUNITY_ICON_URL, getName(), "Server Info", "");
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("Online/Total: %d/%d", memberOnlineCount, memberCount));
         embed.setDescription(sb.toString());

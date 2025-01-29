@@ -12,7 +12,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import utils.CommandIcons;
+import utils.IconsGuild;
 import utils.Embedder;
 
 public class ChatGPT{
@@ -104,11 +104,11 @@ public class ChatGPT{
             String content = embedContent.substring(maxEmbedDescriptionLen * i, end);
 
             EmbedBuilder gptEmbed = Embedder.createBaseEmbed(event.getMember(),
-                    CommandIcons.CHAT_ICON_URL,
+                    IconsGuild.CHAT_ICON_URL,
                     "Chat-GPT",
                     "Response to your input",
                     content);
-            gptEmbed.setThumbnail(CommandIcons.CHAT_GPT_ICON);
+            gptEmbed.setThumbnail(IconsGuild.CHAT_GPT_ICON);
 
             embedsToSend.add(gptEmbed);
         }

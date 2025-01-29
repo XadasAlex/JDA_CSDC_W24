@@ -9,7 +9,7 @@ import java.time.Instant;
 public class Embedder {
     public static EmbedBuilder createMissingPermissionEmbed(Member interactingMember, String commandName) {
         EmbedBuilder embed = createBaseErrorEmbed(interactingMember, commandName);
-        embed.setAuthor("Nope! Missing Permissions", null, CommandIcons.LIGHTNING_ERROR_ICON_URL);
+        embed.setAuthor("Nope! Missing Permissions", null, IconsGuild.LIGHTNING_ERROR_ICON_URL);
         embed.setTitle(String.format("You tried to use %s with insufficient permissions.", commandName));
         embed.setDescription("If you believe this is an error contact mods or write a ticket /ticket");
 
@@ -19,7 +19,7 @@ public class Embedder {
     public static EmbedBuilder createInvalidSyntaxEmbed(Member interactingMember, String commandName) {
         EmbedBuilder embed = createBaseErrorEmbed(interactingMember, commandName);
 
-        embed.setAuthor("Hmh? Syntax Error", null, CommandIcons.LIGHTNING_ERROR_ICON_URL);
+        embed.setAuthor("Hmh? Syntax Error", null, IconsGuild.LIGHTNING_ERROR_ICON_URL);
         embed.setDescription("It seems there was an **issue** with your **input**. Please **double-check the syntax** and try again. If the problem persists, feel free to open a support ticket using **/ticket**.");
 
         return embed;
@@ -59,7 +59,7 @@ public class Embedder {
             requester = interactingMember.getEffectiveName();
         }
 
-        embed.setAuthor("Oops! an error occurred!", null, CommandIcons.LIGHTNING_ERROR_ICON_URL);
+        embed.setAuthor("Oops! an error occurred!", null, IconsGuild.LIGHTNING_ERROR_ICON_URL);
         embed.setTitle(String.format("Error while handling: %s", commandName));
         embed.setDescription(String.format("Check the with the **/?%s command** for the **correct usage** of this command, if this **error persists** you can write a ticket with **/ticket** and we'll have a look at it.", commandName));
         embed.setFooter(String.format("Requested by: %s", requester));
