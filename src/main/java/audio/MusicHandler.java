@@ -1,56 +1,75 @@
 package audio;
-/*
 
-import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import launcher.Bot;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import net.dv8tion.jda.api.entities.Guild;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MusicHandler {
-    private final AudioPlayerManager playerManager;
-    private final Bot bot;
+    private static MusicHandler instance;
 
-    public MusicHandler(AudioPlayerManager playerManager, Bot bot) {
-        this.playerManager = playerManager;
-        this.bot = bot;
+    private final AudioPlayerManager playerManager;
+    // Speichert für jede Guild den entsprechenden GuildMusicManager
+    private final Map<Long, GuildMusicManager> musicManagers;
+
+    private MusicHandler() {
+        this.playerManager = new DefaultAudioPlayerManager();
+        // Registriere Audioquellen (z.B. YouTube, SoundCloud, etc.)
+        AudioSourceManagers.registerRemoteSources(playerManager);
+        AudioSourceManagers.registerLocalSource(playerManager);
+        this.musicManagers = new HashMap<>();
     }
 
-    public void loadItem(String guildId, String identifier) {
-        TrackScheduler scheduler = bot.getTrackScheduler(guildId);
+    public static synchronized MusicHandler getInstance() {
+        if (instance == null) {
+            instance = new MusicHandler();
+        }
+        return instance;
+    }
 
-        playerManager.loadItem(identifier, new AudioLoadResultHandler() {
+    // Gibt den GuildMusicManager für die jeweilige Guild zurück (erstellt einen, falls noch nicht vorhanden)
+    public synchronized GuildMusicManager getGuildMusicManager(Guild guild) {
+        long guildId = Long.parseLong(guild.getId());
+        GuildMusicManager manager = musicManagers.get(guildId);
+        if (manager == null) {
+            manager = new GuildMusicManager(playerManager.createPlayer());
+            musicManagers.put(guildId, manager);
+        }
+        return manager;
+    }
+
+    // Methode zum Laden und Abspielen eines Tracks – hier wird direkt die Guild übergeben.
+    public void loadAndPlay(Guild guild, String trackUrl) {
+        GuildMusicManager musicManager = getGuildMusicManager(guild);
+        playerManager.loadItemOrdered(musicManager, trackUrl, new com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler() {
             @Override
-            public void trackLoaded(AudioTrack track) {
-                scheduler.queue(track);
-                scheduler.startNextTrack();
+            public void trackLoaded(com.sedmelluq.discord.lavaplayer.track.AudioTrack track) {
+                musicManager.scheduler.queue(track);
+                // Optional: Hier könntest du eine Nachricht an einen TextChannel senden
             }
 
             @Override
-            public void playlistLoaded(AudioPlaylist playlist) {
-                for (AudioTrack track : playlist.getTracks()) {
-                    scheduler.queue(track);
+            public void playlistLoaded(com.sedmelluq.discord.lavaplayer.track.AudioPlaylist playlist) {
+                com.sedmelluq.discord.lavaplayer.track.AudioTrack firstTrack = playlist.getSelectedTrack();
+                if (firstTrack == null) {
+                    firstTrack = playlist.getTracks().get(0);
                 }
-                scheduler.startNextTrack();
+                musicManager.scheduler.queue(firstTrack);
+                // Optional: Nachricht an einen TextChannel senden
             }
 
             @Override
             public void noMatches() {
-                System.out.println("No matches found for " + identifier);
+                // Optional: Log oder Nachricht an einen TextChannel
             }
 
             @Override
-            public void loadFailed(FriendlyException throwable) {
-                System.out.println("Could not load track: " + throwable.getMessage());
+            public void loadFailed(com.sedmelluq.discord.lavaplayer.tools.FriendlyException exception) {
+                // Optional: Log oder Nachricht an einen TextChannel
             }
         });
     }
-
-    public void playCurrent() {
-
-    }
 }
-
-
- */

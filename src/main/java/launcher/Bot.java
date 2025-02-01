@@ -8,6 +8,7 @@ import commands.chat.stats.CmdLeaderBoard;
 import commands.chat.stats.CmdStats;
 import commands.guild.CmdGuildInfo;
 import commands.guild.CmdSettingsChatRestricted;
+import commands.music.CmdPlay;
 import listeners.*;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import utils.GuildSettings;
@@ -75,7 +76,8 @@ public class Bot {
                 new MakeMove(),
                 new AcceptBattleshipGame(),
                 //new CmdAnnoy(),
-                new CmdSettingsChatRestricted()
+                new CmdSettingsChatRestricted(),
+                new CmdPlay()
         );
 
         // JDABuilder vorbereiten, aber nicht starten
