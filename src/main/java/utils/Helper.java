@@ -58,10 +58,10 @@ public class Helper {
         return getBaseStatPath(guildId).concat(String.format("/%s.json", memberId));
     }
 
-
     public static String getBaseDBPath() {
         return getProjectPath().concat("/src/main/resources/DB");
     }
+
     public static String getResourcePath() {
         return getProjectPath().concat("/src/main/resources/");
     }
@@ -69,6 +69,34 @@ public class Helper {
     public static String getGuildSettingsPath(String guildId) {
         return getResourcePath().concat(String.format("/guilds/%s/settings.json", guildId));
 
+    }
+
+    public static String pythonRunner(String pythonScriptPath) {
+        String pythonExecutable = "python";
+
+        StringBuilder output = new StringBuilder();
+
+        try {
+            // Start the process
+            ProcessBuilder processBuilder = new ProcessBuilder(pythonExecutable, pythonScriptPath);
+            processBuilder.environment().put("PYTHONIOENCODING", "utf-8");
+            Process process = processBuilder.start();
+
+            // Capture the output of the Python script
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
+
+            String line;
+            while ((line = stdInput.readLine()) != null) {
+                output.append(line).append("\n");
+            }
+
+            process.waitFor();
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return output.toString();
     }
 
     public static String createProgressBar(double percentage, int detail) {
@@ -108,33 +136,7 @@ public class Helper {
         return Long.parseLong(matcher.group(1));
     }
 
-    public static String pythonRunner(String pythonScriptPath) {
-        String pythonExecutable = "python";
 
-        StringBuilder output = new StringBuilder();
-
-        try {
-            // Start the process
-            ProcessBuilder processBuilder = new ProcessBuilder(pythonExecutable, pythonScriptPath);
-            processBuilder.environment().put("PYTHONIOENCODING", "utf-8");
-            Process process = processBuilder.start();
-
-            // Capture the output of the Python script
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
-
-            String line;
-            while ((line = stdInput.readLine()) != null) {
-                output.append(line).append("\n");
-            }
-
-            process.waitFor();
-
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return output.toString();
-    }
 
     public static List<Long> getIdsFromString(String content) {
         Pattern pattern = Pattern.compile("<@(\\d+)>");
@@ -316,9 +318,5 @@ public class Helper {
         Executors.newSingleThreadScheduledExecutor().schedule(() -> {
             message.delete().queue();
         }, seconds, TimeUnit.SECONDS);
-    }
-
-    public static boolean setEnvVar(String x, String y) {
-        return true;
     }
 }
