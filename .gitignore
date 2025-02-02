@@ -41,3 +41,7 @@ build/
 .gradle/
 *.class
 *.lock
+/build/
+/.idea/
+/.gradle/
+/build/
