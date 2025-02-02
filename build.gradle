@@ -4,11 +4,17 @@ plugins {
 }
 
 repositories {
+    mavenCentral()  // Standard-Repository für allgemeine Abhängigkeiten
+
     maven {
-        url 'https://m2.dv8tion.net/releases'
+        url 'https://m2.dv8tion.net/releases'  // Repository für JDA
     }
-    mavenCentral()
+
+    maven {
+        url 'https://maven.lavalink.dev/releases'  // Repository für Lavalink
+    }
 }
+
 configurations {
     sql
 }
@@ -19,10 +25,7 @@ dependencies {
     implementation 'ch.qos.logback:logback-classic:1.5.6'
     implementation 'com.google.code.gson:gson:2.8.8'
     implementation 'org.xerial:sqlite-jdbc:3.36.0.3'
-    // implementation 'dev.arbjerg:lavaplayer:2.2.2'
-    // implementation 'dev.arbjerg:lavalink-client:3.1.0'
-    // implementation 'com.github.topi314.lavasearch:lavasearch:1.0.0'
-    implementation 'com.sedmelluq:lavaplayer:1.3.78'
+    implementation("dev.arbjerg:lavalink-client:3.1.0")
 }
 
 javafx {
@@ -34,5 +37,3 @@ javafx {
 test {
     useJUnitPlatform()
 }
-
-
