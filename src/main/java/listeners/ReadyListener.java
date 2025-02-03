@@ -22,6 +22,7 @@ public class ReadyListener extends ListenerAdapter {
     @Override
     public void onReady(ReadyEvent event) {
         loadGuildSettings();
+        initAudioManagers();
     }
 
     private static void loadGuildSettings() {
@@ -29,5 +30,17 @@ public class ReadyListener extends ListenerAdapter {
         JDA jda = bot.getJda();
         HashMap<String, GuildSettings> guildSettings = GuildSettings.loadMultiple(jda.getGuilds().stream().map(Guild::getId).toList());
         bot.setGuildSettingsHashMap(guildSettings);
+    }
+
+    private static void initAudioManagers() {
+        Bot bot = Bot.getInstance();
+        JDA jda = bot.getJda();
+
+        for (Guild guild : jda.getGuilds()) {
+            bot.addAudioGuildManager(
+                    guild.getIdLong(),
+                    bot.getLavalinkClient()
+            );
+        }
     }
 }
