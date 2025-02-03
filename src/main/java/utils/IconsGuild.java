@@ -23,4 +23,5 @@ public class IconsGuild {
     public static final String DICE_ICON = "https://cdn.discordapp.com/attachments/813431472446898189/1321306475934781571/icons8-wurfel-96.png?ex=676cc20c&is=676b708c&hm=0b7da586f30873671926a47d8f772363b22883e747483193ce6ce073612c53fa&";
 
     public static final String ADMIN_ICON = "https://cdn.discordapp.com/attachments/813431472446898189/1321454697415970846/icons8-hammer-und-amboss-96.png?ex=676d4c17&is=676bfa97&hm=dcc2144f3fc2d2286fcfed7cb8cbfe71035e9494719b50897957c9b1ba0ee3ba&";
+    public static final String YOUTUBE_ICON = "https://cdn.discordapp.com/attachments/813431472446898189/1335629155504754768/image.png?ex=67a0dd15&is=679f8b95&hm=74908af3ce47bc56651dbaf910620a3df5385673cee61ca49e5694ca39b31182&";
 }
