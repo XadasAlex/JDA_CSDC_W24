@@ -2,6 +2,8 @@ package launcher;
 
 import api.ChatGPT;
 
+import audio.AudioGuildManager;
+import audio.TrackScheduler;
 import commands.battleship.*;
 import commands.chat.stats.CmdAllowStats;
 import commands.chat.stats.CmdLeaderBoard;
@@ -10,26 +12,16 @@ import commands.guild.CmdGuildInfo;
 import commands.guild.CmdJoin;
 import commands.guild.CmdLeave;
 import commands.guild.CmdSettingsChatRestricted;
-import commands.music.CmdPause;
-import commands.music.CmdPlay;
-import commands.music.CmdResume;
-import commands.music.CmdStop;
+import commands.music.*;
 import dev.arbjerg.lavalink.client.*;
-import dev.arbjerg.lavalink.client.event.EmittedEvent;
 import dev.arbjerg.lavalink.client.event.ReadyEvent;
 import dev.arbjerg.lavalink.client.event.StatsEvent;
 import dev.arbjerg.lavalink.client.event.TrackStartEvent;
 import dev.arbjerg.lavalink.client.loadbalancing.RegionGroup;
 import dev.arbjerg.lavalink.client.loadbalancing.builtin.VoiceRegionPenaltyProvider;
-import dev.arbjerg.lavalink.client.player.Track;
 import dev.arbjerg.lavalink.libraries.jda.JDAVoiceUpdateListener;
 import listeners.*;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.GuildVoiceState;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import okhttp3.ResponseBody;
 import utils.GuildSettings;
 
 import commands.chat.*;
@@ -39,7 +31,6 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import java.awt.*;
-import java.io.IOException;
 import java.net.URI;
 import java.time.Instant;
 import java.util.*;
@@ -50,6 +41,7 @@ public class Bot {
     private JDABuilder bot;
     private JDA jda;
     private ChatGPT gpt;
+    private HashMap<Long, AudioGuildManager> audioGuildManagers;
 
     private final String avatarUrl = "https://example.com/default-avatar.png"; // Placeholder
     private final Color defaultColor = new Color(115, 169, 186);
@@ -79,6 +71,7 @@ public class Bot {
         // Intents und GPT-Instanz vorbereiten
         EnumSet<GatewayIntent> INTENTS = createIntents();
         this.gpt = ChatGPT.getInstance();
+        audioGuildManagers = new HashMap<>();
 
         CommandManagerListener commandManagerListener = new CommandManagerListener(
                 new CmdPing(),
@@ -110,7 +103,9 @@ public class Bot {
                 new CmdPause(),
                 new CmdResume(),
                 new CmdJoin(),
-                new CmdLeave()
+                new CmdLeave(),
+                new CmdSearch(),
+                new CmdSkip()
         );
 
         // JDABuilder vorbereiten, aber nicht starten
@@ -224,6 +219,35 @@ public class Bot {
                 GatewayIntent.MESSAGE_CONTENT,
                 GatewayIntent.GUILD_PRESENCES
         );
+    }
+
+    public AudioGuildManager getAudioGuildManagerById(long guildId) {
+        return this.audioGuildManagers.getOrDefault(guildId, null);
+    }
+
+    public void addAudioGuildManager(long guildId, LavalinkClient client) {
+        if (!audioGuildManagers.containsKey(guildId)) {
+            AudioGuildManager audioGuildManager = new AudioGuildManager(guildId, client);
+            audioGuildManagers.put(guildId, audioGuildManager);
+        }
+    }
+
+    public void addAudioGuildManager(AudioGuildManager audioGuildManager) {
+        long guildId = audioGuildManager.getGuildId();
+        if (!audioGuildManagers.containsKey(guildId)) {
+            audioGuildManagers.put(guildId, audioGuildManager);
+        }
+    }
+
+    public TrackScheduler getTrackSchedulerById(long guildId) {
+        AudioGuildManager manager = getAudioGuildManagerById(guildId);
+        if (manager == null) {
+            AudioGuildManager newManager = new AudioGuildManager(guildId, client);
+            addAudioGuildManager(newManager);
+            return newManager.getTrackScheduler();
+        }
+
+        return manager.getTrackScheduler();
     }
 
     public HashMap<String, GuildSettings> getGuildSettingsHashMap() {
