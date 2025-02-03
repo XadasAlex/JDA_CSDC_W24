@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import utils.Embedder;
+import utils.GuildSettings;
 
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +20,11 @@ import java.util.Objects;
 public class CmdPlay implements ICommand {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
+        GuildSettings gs = GuildSettings.load(event.getGuild().getId());
+        if (!gs.isAllowMusic()) {
+            event.replyEmbeds(Embedder.createErrorMessage(event.getMember(), getName() , "Music isnt allowed on the server!").build()).queue();
+            return;
+        }
         AudioGuildManager audio = Bot.getInstance().getAudioGuildManagerById(event.getGuild().getIdLong());
 
         String query = Objects.requireNonNull(event.getOption("query")).getAsString();

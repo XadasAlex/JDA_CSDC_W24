@@ -2,9 +2,7 @@ package utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import launcher.Bot;
 
-import java.io.EOFException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -19,6 +17,7 @@ public class GuildSettings {
     private boolean memberWelcomeMessage;
     private boolean memberLeaveMessage;
     private boolean dedicatedBotChannels;
+    private boolean allowMusic;
     private final String guildId;
     private List<String> chatRestrictedMembers = new ArrayList<>();
 
@@ -29,6 +28,7 @@ public class GuildSettings {
                          boolean memberWelcomeMessage,
                          boolean memberLeaveMessage,
                          boolean dedicatedBotChannels,
+                         boolean allowMusic,
                          List<String> chatRestrictedMembers,
                          String guildId) {
         this.allowSpam = allowSpam;
@@ -36,6 +36,7 @@ public class GuildSettings {
         this.memberWelcomeMessage = memberWelcomeMessage;
         this.memberLeaveMessage = memberLeaveMessage;
         this.dedicatedBotChannels = dedicatedBotChannels;
+        this.allowMusic = allowMusic;
         this.guildId = guildId;
         this.chatRestrictedMembers = chatRestrictedMembers != null ? chatRestrictedMembers : new ArrayList<>();
     }
@@ -80,6 +81,7 @@ public class GuildSettings {
                 false, // Default memberWelcomeMessage
                 false, // Default memberLeaveMessage
                 false, // Default dedicatedBotChannels
+                false, //Default allowMusic
                 new ArrayList<>(), // Empty list for restricted members
                 guildId
         );
@@ -192,5 +194,14 @@ public class GuildSettings {
 
     public List<String> getChatRestrictedMembers() {
         return chatRestrictedMembers;
+    }
+
+    public boolean isAllowMusic() {
+        return allowMusic;
+    }
+
+    public void setAllowMusic(boolean allowMusic) {
+        this.allowMusic = allowMusic;
+        writeSettingsForGuild();
     }
 }

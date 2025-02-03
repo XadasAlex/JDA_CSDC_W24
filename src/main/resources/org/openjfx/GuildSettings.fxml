@@ -19,6 +19,8 @@
         <ToggleButton fx:id="allowSwearToggle" onAction="#toggleColor" text="%guildSettings.allowSwear" />
         <ToggleButton fx:id="welcomeMessageToggle" onAction="#toggleColor" text="%guildSettings.welcomeMessage" />
         <ToggleButton fx:id="leaveMessageToggle" onAction="#toggleColor" text="%guildSettings.leavemessages" />
+        <ToggleButton fx:id="allowMusicToggle" onAction="#toggleColor" text="%guildSettings.allowMusic" />
+
         <!-- <ToggleButton fx:id="dedicatedBotChannelsToggle" onAction="#toggleColor" text="%guildSettings.dedicatetBotChannel" /> -->
         <Separator />
         <Button fx:id="saveSettingsButton" onAction="#saveSettings" text="%guildSettings.saveSettings" />

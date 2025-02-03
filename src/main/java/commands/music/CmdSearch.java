@@ -12,12 +12,18 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import utils.Embedder;
+import utils.GuildSettings;
 
 import java.util.List;
 
 public class CmdSearch implements ICommand {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
+        GuildSettings gs = GuildSettings.load(event.getGuild().getId());
+        if (!gs.isAllowMusic()) {
+            event.replyEmbeds(Embedder.createErrorMessage(event.getMember(), getName() , "Music isnt allowed on the server!").build()).queue();
+            return;
+        }
         OptionMapping queryOption = event.getOption("query");
         if (queryOption == null) return;
 

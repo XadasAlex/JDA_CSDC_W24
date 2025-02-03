@@ -32,6 +32,8 @@ public class GuildSettingsController {
     private ToggleButton welcomeMessageToggle;
     @FXML
     private ToggleButton leaveMessageToggle;
+    @FXML
+    private ToggleButton allowMusicToggle;
     //@FXML
     //private ToggleButton dedicatedBotChannelsToggle;
 
@@ -77,6 +79,8 @@ public class GuildSettingsController {
         welcomeMessageToggle.setStyle(settings.isMemberWelcomeMessage() ? trueColor : falseColor);
         leaveMessageToggle.setSelected(settings.isMemberLeaveMessage());
         leaveMessageToggle.setStyle(settings.isMemberLeaveMessage() ? trueColor : falseColor);
+        allowMusicToggle.setSelected(settings.isAllowMusic());
+        allowMusicToggle.setStyle(settings.isAllowMusic() ? trueColor : falseColor);
         // dedicatedBotChannelsToggle.setSelected(settings.isDedicatedBotChannels());
         // dedicatedBotChannelsToggle.setStyle(settings.isDedicatedBotChannels() ? trueColor : falseColor);
 
@@ -96,6 +100,7 @@ public class GuildSettingsController {
         currentSettings.setAllowSwear(allowSwearToggle.isSelected());
         currentSettings.setMemberWelcomeMessage(welcomeMessageToggle.isSelected());
         currentSettings.setMemberLeaveMessage(leaveMessageToggle.isSelected());
+        currentSettings.setAllowMusic(allowMusicToggle.isSelected());
         //currentSettings.setDedicatedBotChannels(dedicatedBotChannelsToggle.isSelected());
 
         // Save updated settings to file
@@ -117,5 +122,9 @@ public class GuildSettingsController {
         alert.setTitle(title);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    public void toggleMusic(ActionEvent actionEvent) {
+
     }
 }
