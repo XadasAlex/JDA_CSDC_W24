@@ -3,32 +3,41 @@ package audio;
 import dev.arbjerg.lavalink.client.LavalinkClient;
 import dev.arbjerg.lavalink.client.Link;
 import dev.arbjerg.lavalink.client.event.TrackEndEvent;
+import dev.arbjerg.lavalink.client.event.TrackStartEvent;
 import dev.arbjerg.lavalink.client.player.*;
 
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import org.w3c.dom.Text;
+import reactor.core.publisher.Mono;
 import utils.Embedder;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AudioGuildManager {
     private long guildId;
     private LavalinkClient client;
     private TrackScheduler trackScheduler;
+    /* private TextChannel mrc; //music request channel */
 
-    public AudioGuildManager(long guildId, LavalinkClient client) {
+    public AudioGuildManager(long guildId, LavalinkClient client /*TextChannel dedicatedMusicRequestChannel*/) {
         this.guildId = guildId;
         this.client = client;
         this.trackScheduler = new TrackScheduler(guildId, client);
+        // todo : maybe?!
+        /*this.mrc = dedicatedMusicRequestChannel;*/
+
+        client.on(TrackStartEvent.class).subscribe(trackStartEvent -> {
+            trackScheduler.setCurrentTrack(trackStartEvent.getTrack());
+        });
 
         client.on(TrackEndEvent.class).subscribe(trackEndEvent -> {
             if (trackEndEvent.getEndReason().getMayStartNext()) {
-                Track nextTrack = trackScheduler.playNextTrack();
-                if (nextTrack == null) {
-                    System.out.println("Warteschlange leer – Musik gestoppt.");
-                }
+                trackScheduler.playNextTrack();
             }
         });
     }
@@ -40,7 +49,6 @@ public class AudioGuildManager {
     public long getGuildId() {
         return guildId;
     }
-
     public TrackScheduler getTrackScheduler() {
         return trackScheduler;
     }
@@ -56,7 +64,7 @@ public class AudioGuildManager {
             } else if (loadResult instanceof PlaylistLoaded playlistLoaded) {
                 List<Track> tracks = playlistLoaded.getTracks();
                 if (tracks != null && tracks.size() > 1) {
-                    playOrQueuePlaylist(tracks, event);
+                    playOrQueuePlaylist(playlistLoaded, tracks, event);
                     return;
                 } else if (tracks.size() == 1) {
                     playOrQueueTrack(tracks.getFirst(), event);
@@ -85,27 +93,33 @@ public class AudioGuildManager {
         });
     }
 
+
     public void playOrQueueTrack(Track track, SlashCommandInteractionEvent event) {
         getLink().getPlayer().subscribe(player -> {
             if (player.getTrack() == null) {
                 player.setTrack(track).subscribe();
-                event.replyEmbeds(Embedder.createPlayingEmbed(event, track).build()).queue();
+                event.replyEmbeds(Embedder.createPlayingEmbed(event, track, this, false).build()).queue();
             } else {
                 trackScheduler.addTrackToQueue(track);
-                event.replyEmbeds(Embedder.createAddedToQueueEmbed(event, track).build()).queue();
+                event.replyEmbeds(Embedder.createPlayingEmbed(event, track, this, true).build()).queue();
             }
         });
     }
 
-    public void playOrQueuePlaylist(List<Track> tracks, SlashCommandInteractionEvent event) {
+    public void playOrQueuePlaylist(PlaylistLoaded playList, List<Track> tracks, SlashCommandInteractionEvent event) {
         getLink().getPlayer().subscribe(player -> {
-            if (!tracks.isEmpty()) {
+            // if currently playing
+            if (player.getTrack() != null && !tracks.isEmpty()) {
+                trackScheduler.addTracksToQueue(tracks);
+                event.replyEmbeds(Embedder.createSongQueuing(event, playList, this, false).build()).queue();
+            } else {
+                // if there's nothing playing
                 Track firstTrack = tracks.getFirst();
                 player.setTrack(firstTrack).subscribe();
+                event.replyEmbeds(Embedder.createPlayingEmbed(event, firstTrack, this, false).build()).queue();
                 trackScheduler.addTracksToQueue(tracks.subList(1, tracks.size()));
-                event.replyEmbeds(Embedder.createPlayingEmbed(event, firstTrack).build()).queue();
-            } else {
-                trackScheduler.addTracksToQueue(tracks);
+                EmbedBuilder embed = Embedder.createSongQueuing(event, playList, this, true);
+                event.getHook().sendMessageEmbeds(embed.build()).queue();
             }
         });
     }
