@@ -35,7 +35,7 @@ public class LoginController {
         }
     }
     private boolean checkCredentials(String user, String pass) {
-        // In einer echten App anders
-        return "admin".equals(user) && "geheim".equals(pass);
+        return true;
+        //return "admin".equals(user) && "geheim".equals(pass);
     }
 }

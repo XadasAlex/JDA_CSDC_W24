@@ -1,14 +1,21 @@
 package org.openjfx.controllers;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.util.Duration;
 import net.dv8tion.jda.api.JDA;
 import org.openjfx.services.GuildService;
 import utils.GuildSettings;
+import utils.Helper;
+
+import java.util.Timer;
 
 public class GuildSettingsController {
     private GuildService guildService;
@@ -17,6 +24,8 @@ public class GuildSettingsController {
 
     private final String trueColor = "-fx-border-color: #70db70;-fx-border-radius: 5.0";
     private final String falseColor = "-fx-border-color: #ff6666;-fx-border-radius: 5.0";
+
+    private Timeline activeUpdater;
 
     @FXML
     public Label guildSettingsTitle;
@@ -58,10 +67,18 @@ public class GuildSettingsController {
         String guildId = guildService.extractGuildIdFromSelection(selectedGuild);
 
         // Load settings for the selected guild asynchronously
-        new Thread(() -> {
-            currentSettings = GuildSettings.load(guildId);
-            Platform.runLater(() -> displaySettings(currentSettings));
-        }).start();
+        if (activeUpdater != null) {
+            activeUpdater.stop();
+        }
+
+        activeUpdater = new Timeline(
+                new KeyFrame(Duration.seconds(0.5), event -> {
+                    currentSettings = GuildSettings.load(guildId);
+                    Platform.runLater(() -> displaySettings(currentSettings));
+                })
+        );
+        activeUpdater.setCycleCount(Animation.INDEFINITE);
+        activeUpdater.play();
     }
 
     private void displaySettings(GuildSettings settings) {
@@ -122,9 +139,5 @@ public class GuildSettingsController {
         alert.setTitle(title);
         alert.setContentText(message);
         alert.showAndWait();
-    }
-
-    public void toggleMusic(ActionEvent actionEvent) {
-
     }
 }

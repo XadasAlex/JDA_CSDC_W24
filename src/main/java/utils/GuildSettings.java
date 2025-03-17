@@ -2,6 +2,7 @@ package utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 
 import java.io.File;
 import java.io.FileReader;
@@ -81,7 +82,7 @@ public class GuildSettings {
                 false, // Default memberWelcomeMessage
                 false, // Default memberLeaveMessage
                 false, // Default dedicatedBotChannels
-                false, //Default allowMusic
+                true, //Default allowMusic
                 new ArrayList<>(), // Empty list for restricted members
                 guildId
         );
@@ -194,6 +195,11 @@ public class GuildSettings {
 
     public List<String> getChatRestrictedMembers() {
         return chatRestrictedMembers;
+    }
+
+    public static boolean isMusicAllowedInGuild(String guildId) {
+        GuildSettings gs = load(guildId);
+        return gs.isAllowMusic();
     }
 
     public boolean isAllowMusic() {

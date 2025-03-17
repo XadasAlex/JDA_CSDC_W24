@@ -119,4 +119,18 @@ public class MasterController implements Initializable {
             throw new RuntimeException(e);
         }
     }
+
+    public void showAudioSettings(ActionEvent actionEvent) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/openjfx/AudioSettingsView.fxml"));
+            loader.setResources(bundle);  // Lokalisierungs-Bundle setzen
+            Pane memberManagementPane = loader.load();
+
+            AudioSettingsController controller = loader.getController();
+            controller.initializeData();
+            contentPane.getChildren().setAll(memberManagementPane);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

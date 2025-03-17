@@ -2,6 +2,7 @@ package listeners;
 
 import commands.ICommand;
 import commands.ICommandAsync;
+import commands.IStringSelectMenu;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -48,6 +49,15 @@ public class CommandManagerListener extends ListenerAdapter {
         }
     }
 
+    @Override
+    public void onStringSelectInteraction(StringSelectInteractionEvent event) {
+        for (ICommand command : commands) {
+            if (command instanceof IStringSelectMenu) {
+                ((IStringSelectMenu) command).onStringSelectionInteraction(event);
+            }
+        }
+    }
+
     // ButtonTest.java in commands.chat.test
     @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
@@ -56,15 +66,6 @@ public class CommandManagerListener extends ListenerAdapter {
         } else if (event.getComponentId().equals("emoji")) {
             event.editMessage("That button didn't say click me").queue(); // update the message
         }
-    }
-
-    // DropDownTest.java in commands.chat.test
-    @Override
-    public void onStringSelectInteraction(StringSelectInteractionEvent event) {
-        if (event.getComponentId().equals("drop-test")) {
-            event.reply("You chose " + event.getValues().get(0)).queue();
-        }
-
     }
 
     // EntityDDTest.java in commands.chat.test

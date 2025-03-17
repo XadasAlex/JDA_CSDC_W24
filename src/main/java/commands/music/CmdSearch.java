@@ -19,11 +19,11 @@ import java.util.List;
 public class CmdSearch implements ICommand {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        GuildSettings gs = GuildSettings.load(event.getGuild().getId());
-        if (!gs.isAllowMusic()) {
+        if (!GuildSettings.isMusicAllowedInGuild(event.getGuild().getId())) {
             event.replyEmbeds(Embedder.createErrorMessage(event.getMember(), getName() , "Music isnt allowed on the server!").build()).queue();
             return;
         }
+
         OptionMapping queryOption = event.getOption("query");
         if (queryOption == null) return;
 

@@ -15,11 +15,11 @@ public class CmdResume implements ICommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        GuildSettings gs = GuildSettings.load(event.getGuild().getId());
-        if (!gs.isAllowMusic()) {
+        if (!GuildSettings.isMusicAllowedInGuild(event.getGuild().getId())) {
             event.replyEmbeds(Embedder.createErrorMessage(event.getMember(), getName() , "Music isnt allowed on the server!").build()).queue();
             return;
         }
+
         client = Bot.getInstance().getLavalinkClient();
         if (client == null) return;
         client.getOrCreateLink(event.getGuild().getIdLong())

@@ -90,7 +90,7 @@ public class CmdStats implements ICommand {
 
 
         long totalTime = stats.getTotalTime();
-        String totalTimeFormatted = Helper.formatSeconds(totalTime);
+        String totalTimeFormatted = Helper.formatSecondsHHMMSS(totalTime);
 
         statsEmbed.addField("Time spent in Voice Channels",
                 String.format("You spent %s in channels across this server.", totalTimeFormatted),

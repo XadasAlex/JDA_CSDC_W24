@@ -15,11 +15,11 @@ import java.util.List;
 public class CmdSkip implements ICommand {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        GuildSettings gs = GuildSettings.load(event.getGuild().getId());
-        if (!gs.isAllowMusic()) {
+        if (!GuildSettings.isMusicAllowedInGuild(event.getGuild().getId())) {
             event.replyEmbeds(Embedder.createErrorMessage(event.getMember(), getName() , "Music isnt allowed on the server!").build()).queue();
             return;
         }
+
         AudioGuildManager audio = Bot.getInstance().getAudioGuildManagerById(event.getGuild().getIdLong());
 
         if (audio == null) {

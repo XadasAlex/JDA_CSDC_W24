@@ -17,6 +17,7 @@
             <Button fx:id="menuButtons" onAction="#showRanking" prefWidth="150" text="%menu.ranking" />
             <Button fx:id="menuButtons" onAction="#showMemberManagement" prefWidth="150" text="%menu.members" />
             <Button fx:id="menuButtons" onAction="#showServerSettings" prefWidth="150" text="%menu.serverSettings" />
+            <Button fx:id="menuButtons" onAction="#showAudioSettings" prefWidth="150" text="Audio" />
             <Button fx:id="menuButtons" onAction="#showLanguage" prefWidth="150" text="%menu.language" />
         </VBox>
     </left>

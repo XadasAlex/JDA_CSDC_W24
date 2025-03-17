@@ -4,17 +4,17 @@ import launcher.Bot;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.Channel;
-import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import org.jsoup.*;
+import org.jsoup.nodes.*;
+import org.jsoup.select.*;
+
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -71,6 +71,24 @@ public class Helper {
 
     }
 
+    public static void jarRunner(String path, boolean terminal) {
+        try {
+            ProcessBuilder processBuilder;
+
+            if (terminal) {
+                processBuilder = new ProcessBuilder("cmd.exe", "/c", "start", "cmd.exe", "/k", String.format("java -jar %s", path));
+            } else {
+                processBuilder = new ProcessBuilder("java", "-jar", path);
+            }
+
+            processBuilder.redirectErrorStream(true);
+            processBuilder.inheritIO();
+            processBuilder.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static String pythonRunner(String pythonScriptPath) {
         String pythonExecutable = "python";
 
@@ -125,8 +143,6 @@ public class Helper {
         return memberIds.stream().map(guild::getMemberById).toList();
     }
 
-
-
     public static long getIdFromString(String content) {
         Pattern pattern = Pattern.compile("<@(\\d+)>");
         Matcher matcher = pattern.matcher(content);
@@ -135,8 +151,6 @@ public class Helper {
 
         return Long.parseLong(matcher.group(1));
     }
-
-
 
     public static List<Long> getIdsFromString(String content) {
         Pattern pattern = Pattern.compile("<@(\\d+)>");
@@ -152,7 +166,7 @@ public class Helper {
         return ids;
     }
 
-    public static String formatSeconds(long totalSeconds) {
+    public static String formatSecondsHHMMSS(long totalSeconds) {
         long seconds = totalSeconds % 60;
         int minutes = (int) ((totalSeconds / 60.0) % 60);
         int hours = (int) totalSeconds / 3600;
@@ -183,6 +197,13 @@ public class Helper {
 
         return (d.getSeconds() + h.getSeconds());
     }
+
+    public static String formatMillisMMSS(long millis) {
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis) % 60;
+        return String.format("%02d:%02d", minutes, seconds);
+    }
+
 
     public static String formatTimestamp(OffsetDateTime offsetDateTime) {
         // Konvertiere OffsetDateTime zu LocalDateTime
@@ -263,9 +284,11 @@ public class Helper {
     public static void deleteAfter5(InteractionHook message) {
         deleteAfter(message, 5);
     }
+
     public static void deleteAfter10(InteractionHook message) {
         deleteAfter(message, 10);
     }
+
     public static void deleteAfter15(InteractionHook message) {
         deleteAfter(message, 15);
     }
@@ -318,5 +341,151 @@ public class Helper {
         Executors.newSingleThreadScheduledExecutor().schedule(() -> {
             message.delete().queue();
         }, seconds, TimeUnit.SECONDS);
+    }
+
+    public static List<String[]> fetchOrdisQuoteLinks() {
+        List<String[]> links = new ArrayList<>();
+        try {
+            Document doc = Jsoup.connect("https://warframe.fandom.com/wiki/Ordis/Quotes").get();
+
+            Elements audioButtons = doc.select(".audio-button audio");
+
+            for (Element audioButton : audioButtons) {
+                String link = audioButton.attr("src");
+
+                Element listItem = audioButton.closest("li");
+                String description = (listItem != null) ? listItem.select("i").text() : "No description found";
+
+                links.add(new String[]{link, description});
+            }
+
+            return links;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static VoiceChannel handleVoiceChannelJoin(SlashCommandInteractionEvent event) {
+        Member member = event.getMember();
+        if (member == null || member.getVoiceState() == null || member.getVoiceState().getChannel() == null) {
+            event.getHook().sendMessage("❌ You must be in a voice channel!").queue(msg -> Helper.deleteAfter(msg, 5));
+            return null;
+        }
+
+        VoiceChannel channel = member.getVoiceState().getChannel().asVoiceChannel();
+        event.getGuild().getAudioManager().openAudioConnection(channel);
+
+        event.getHook().sendMessage("Joined voice channel: " + channel.getName()).queue(msg -> Helper.deleteAfter(msg, 5));
+
+        return channel;
+    }
+
+    public static void startLavaLink() {
+        getPIDListenerByPort(Helper.getLavaLinkPort());
+
+        String path = getResourcePath() + "lavalink/";
+
+        ProcessBuilder processBuilder = new ProcessBuilder("java", "-jar", "Lavalink.jar");
+        processBuilder.directory(new File(path));
+        processBuilder.redirectErrorStream(true); // Fehler- und Normal-Output zusammenführen
+
+        try {
+            Process process = processBuilder.start();
+            Bot.setLavaLinkProcess(process);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getLavaLinkPort() {
+        String path = getResourcePath().concat("lavalink/application.yml");
+
+        var yaml = new Yaml();
+
+        try {
+            File file = new File(path);
+            FileInputStream fis = new FileInputStream(file);
+
+            Map<String, Object> data = yaml.load(fis);
+            Map<String, Object> server = (Map<String, Object>) data.get("server");
+
+            return Integer.toString((int) server.get("port"));
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static String getLavaLinkAddress() {
+        String path = getResourcePath().concat("lavalink/application.yml");
+
+        var yaml = new Yaml();
+
+        try {
+            File file = new File(path);
+            FileInputStream fis = new FileInputStream(file);
+
+            Map<String, Object> data = yaml.load(fis);
+            Map<String, Object> server = (Map<String, Object>) data.get("server");
+
+            String address = (String) server.get("address");
+
+            return address;
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static List<String> getPIDListenerByPort(String port) {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe", "/c", "netstat -ano");
+            Process process = processBuilder.start();
+
+            Pattern pattern = Pattern.compile("\\s*(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)");
+
+            List<String> pids = new ArrayList<>();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    Matcher matcher = pattern.matcher(line);
+                    if (matcher.matches()) {
+                        String localAddress = matcher.group(2); // xxx.xxx.xxx.xxx:port
+                        String pid = matcher.group(5);
+                        String state = matcher.group(4); // e.g. listening
+
+                        String[] parts = localAddress.split(":");
+                        String ipPort = parts.length > 0 ? parts[1] : null;
+
+                        if (ipPort == null) continue;
+
+                        if (ipPort.equals(port) &&
+                                (state.equals("ABH?REN") || state.equals("LISTENING") || state.equals("モニター"))
+                        ) pids.add(pid);
+                    }
+                }
+
+                return pids;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static void killProcessByPID(String pid) {
+        try {
+            new ProcessBuilder("cmd.exe", "/c", String.format("taskkill /PID %s /F", pid)).start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

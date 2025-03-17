@@ -1,5 +1,7 @@
 package utils;
 
+import audio.AudioGuildManager;
+import dev.arbjerg.lavalink.client.player.PlaylistLoaded;
 import dev.arbjerg.lavalink.client.player.Track;
 import dev.arbjerg.lavalink.protocol.v4.TrackInfo;
 import launcher.Bot;
@@ -10,7 +12,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import java.awt.*;
 import java.time.Instant;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class Embedder {
     public static EmbedBuilder createMissingPermissionEmbed(Member interactingMember, String commandName) {
@@ -105,7 +106,7 @@ public class Embedder {
             Track track = tracks.get(i);
             embed.addField(
                     String.format("%02d) %s", i + 1, track.getInfo().getTitle()),
-                    String.format("Duration: %s", Helper.formatSeconds(
+                    String.format("Duration: %s", Helper.formatSecondsHHMMSS(
                             track.getInfo().getLength() / 1000)
                     ),
                     false);
@@ -117,7 +118,7 @@ public class Embedder {
         return embed;
     }
 
-    public static EmbedBuilder createPlayingEmbed(SlashCommandInteractionEvent event, Track track) {
+    public static EmbedBuilder createPlayingEmbed(SlashCommandInteractionEvent event, Track track, AudioGuildManager audio, boolean addedToQueue) {
         TrackInfo info = track.getInfo();
         String title = info.getTitle();
         String thumbnailUrl = info.getArtworkUrl();
@@ -125,52 +126,89 @@ public class Embedder {
         String artist = info.getAuthor();
         long lengthMs = info.getLength();
 
-        // Konvertiere Millisekunden in Minuten:Sekunden-Format
-        String formattedDuration = formatDuration(lengthMs);
+        String etaPlaying = "00:00";
+        String positionInQueue = "";
+        int pos = 1;
+
+        if (track.equals(audio.getTrackScheduler().getCurrent())) {
+            etaPlaying = "now";
+        } else {
+            long etaPlayingLong = 0;
+            pos = 1;
+            for (Track trackInQueue : audio.getTrackScheduler().getTrackQueue()) {
+                if (track.equals(trackInQueue)) break;
+                pos++;
+                etaPlayingLong += trackInQueue.getInfo().getLength();
+            }
+            etaPlaying = Helper.formatMillisMMSS(etaPlayingLong);
+        }
+
+        positionInQueue = Integer.toString(pos);
+
+        String formattedDuration = Helper.formatMillisMMSS(lengthMs);
 
         EmbedBuilder embed = new EmbedBuilder();
         embed.setColor(Color.CYAN);
         embed.setTitle(title + " by: " + artist, link);  // Titel als klickbaren Link setzen
         embed.setThumbnail(thumbnailUrl);
-        embed.setAuthor("Now Playing", null, IconsGuild.YOUTUBE_ICON); // Icon für "Now Playing"
-        embed.addField("Estimated time until played", "00:00", true);
+        embed.setAuthor(addedToQueue ? "Added to Queue" : "Now Playing", null, IconsGuild.YOUTUBE_ICON); // Icon für "Now Playing"
+        embed.addField("Estimated time until played", etaPlaying, true);
         embed.addField("Track Length", formattedDuration, true);
-        embed.addField("Position in upcoming", "Next", false);
-        embed.addField("Position in queue", "00", false);
+        embed.addField("Position in queue", positionInQueue, true);
         embed.setFooter("Requested by " + event.getUser().getName(), event.getUser().getEffectiveAvatarUrl());
 
         return embed;
     }
 
-    private static String formatDuration(long millis) {
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis) % 60;
-        return String.format("%02d:%02d", minutes, seconds);
-    }
+    public static EmbedBuilder createSongQueuing(SlashCommandInteractionEvent event, PlaylistLoaded playList, AudioGuildManager audio, boolean startedPlaying) {
+        Track firstTrack = playList.getTracks().get(startedPlaying ? 1 : 0);
+        Track lastTrack = playList.getTracks().getLast();
+        String playListThumbnail = firstTrack.getInfo().getUri();
 
-    public static EmbedBuilder createAddedToQueueEmbed(SlashCommandInteractionEvent event, Track track) {
-        TrackInfo info = track.getInfo();
-        String title = info.getTitle();
-        String thumbnailUrl = info.getArtworkUrl();
-        String link = info.getUri();
-        String artist = info.getAuthor();
-        long lengthMs = info.getLength();
+        List<Track> tracks = playList.getTracks();
 
-        // Konvertiere Millisekunden in Minuten:Sekunden-Format
-        String formattedDuration = formatDuration(lengthMs);
+        long duration = 0;
+        long etaPlayingLong = 0;
+        int pos = 1;
+        boolean playListStartFound = false;
+
+        for (Track trackInQueue: audio.getTrackScheduler().getTrackQueue()) {
+            if (trackInQueue.equals(firstTrack)) {
+                playListStartFound = true;
+            }
+
+            if (trackInQueue.equals(lastTrack)) {
+                break;
+            }
+
+            if (!playListStartFound) {
+                pos += 1;
+                etaPlayingLong += trackInQueue.getInfo().getLength();
+            }
+
+            if (playListStartFound) {
+                duration += trackInQueue.getInfo().getLength();
+            }
+        }
+
+        String etaPlaying = Helper.formatMillisMMSS(etaPlayingLong);
+        String formattedDuration = Helper.formatMillisMMSS(duration);
+        String positionInQueue = Integer.toString(pos);
 
         EmbedBuilder embed = new EmbedBuilder();
         embed.setColor(Color.CYAN);
-        embed.setTitle(title + " by: " + artist, link);  // Titel als klickbaren Link setzen
-        embed.setThumbnail(thumbnailUrl);
-        embed.setAuthor("Added to Queue", null, IconsGuild.YOUTUBE_ICON); // Icon für "Now Playing"
-        embed.addField("Estimated time until played", "00:00", true);
-        embed.addField("Track Length", formattedDuration, true);
-        embed.addField("Position in upcoming", "Next", false);
-        embed.addField("Position in queue", "00", false);
+        embed.setTitle("A Playlist was added to the Queue");
+        embed.setThumbnail(playListThumbnail);
+        embed.setAuthor(String.format("Added %s more Song%s to the Queue",
+                tracks.size(),
+                Helper.sFormatting(tracks.size())),
+                null,
+                IconsGuild.YOUTUBE_ICON);
+        embed.addField("Estimated time until played", etaPlaying, true);
+        embed.addField("Playlist Length", formattedDuration, true);
+        embed.addField("Position in queue", positionInQueue, true);
         embed.setFooter("Requested by " + event.getUser().getName(), event.getUser().getEffectiveAvatarUrl());
 
         return embed;
     }
-
 }

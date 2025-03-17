@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import utils.Embedder;
 import utils.GuildSettings;
+import utils.Helper;
 
 import java.util.List;
 import java.util.Objects;
@@ -20,11 +21,11 @@ import java.util.Objects;
 public class CmdPlay implements ICommand {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        GuildSettings gs = GuildSettings.load(event.getGuild().getId());
-        if (!gs.isAllowMusic()) {
+        if (!GuildSettings.isMusicAllowedInGuild(event.getGuild().getId())) {
             event.replyEmbeds(Embedder.createErrorMessage(event.getMember(), getName() , "Music isnt allowed on the server!").build()).queue();
             return;
         }
+
         AudioGuildManager audio = Bot.getInstance().getAudioGuildManagerById(event.getGuild().getIdLong());
 
         String query = Objects.requireNonNull(event.getOption("query")).getAsString();
@@ -33,24 +34,7 @@ public class CmdPlay implements ICommand {
             query = "ytsearch:" + query;
         }
 
-        if (query.isEmpty()) {
-            event.reply("❌ You must provide a search query or URL!").setEphemeral(true).queue();
-            return;
-        }
-
-        Member member = event.getMember();
-
-        if (member == null || member.getVoiceState() == null || member.getVoiceState().getChannel() == null) {
-            event.reply("❌ You must be in a voice channel!").queue();
-            return;
-        }
-
-        VoiceChannel channel = member.getVoiceState().getChannel().asVoiceChannel();
-
-        if (!event.getGuild().getAudioManager().isConnected()) {
-            event.getGuild().getAudioManager().openAudioConnection(channel);
-        }
-
+        VoiceChannel channel = Helper.handleVoiceChannelJoin(event);
         audio.play(query, event, channel);
     }
 

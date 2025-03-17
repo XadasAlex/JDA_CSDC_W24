@@ -58,7 +58,7 @@ public class RankingController implements Initializable {
         totalTimeColumn.setCellValueFactory(cellData -> {
             MemberStats memberStats = cellData.getValue();
             long totalTime = memberStats.getTotalTime();
-            String totalTimeString = Helper.formatSeconds(totalTime);
+            String totalTimeString = Helper.formatSecondsHHMMSS(totalTime);
             return new SimpleStringProperty(totalTimeString);
         });
         inVoiceColumn.setCellValueFactory(new PropertyValueFactory<>("inVoice"));
