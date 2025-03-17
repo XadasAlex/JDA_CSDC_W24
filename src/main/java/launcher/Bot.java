@@ -5,13 +5,11 @@ import api.ChatGPT;
 import audio.AudioGuildManager;
 import audio.TrackScheduler;
 import commands.battleship.*;
+import commands.chat.CmdClear;
 import commands.chat.stats.CmdAllowStats;
 import commands.chat.stats.CmdLeaderBoard;
 import commands.chat.stats.CmdStats;
-import commands.guild.CmdGuildInfo;
-import commands.guild.CmdJoin;
-import commands.guild.CmdLeave;
-import commands.guild.CmdSettingsChatRestricted;
+import commands.guild.*;
 import commands.music.*;
 import dev.arbjerg.lavalink.client.*;
 import dev.arbjerg.lavalink.client.event.ReadyEvent;
@@ -23,7 +21,7 @@ import dev.arbjerg.lavalink.libraries.jda.JDAVoiceUpdateListener;
 import listeners.*;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import utils.GuildSettings;
-
+import utils.Helper;
 import commands.chat.*;
 
 import net.dv8tion.jda.api.JDA;
@@ -51,12 +49,22 @@ public class Bot {
     private HashMap<String, GuildSettings> guildSettingsHashMap;
     private final LavalinkClient client;
 
+    private static Process lavaLinkProcess;
+
     public Instant getStartTime() {
         return startTime;
     }
 
     public LavalinkClient getLavalinkClient() {
         return client;
+    }
+
+    public static void setLavaLinkProcess(Process process) {
+        lavaLinkProcess = process;
+    }
+
+    public static Process getLavaLinkProcess() {
+        return lavaLinkProcess;
     }
 
     private static final class InstanceHolder {
@@ -105,15 +113,32 @@ public class Bot {
                 new CmdJoin(),
                 new CmdLeave(),
                 new CmdSearch(),
-                new CmdSkip()
+                new CmdSkip(),
+                new CmdQueue(),
+                new CmdGuildSettings(),
+                new CmdOrdis(),
+                new CmdClear(),
+                new CmdLoop(),
+                new CmdQueueClear()
         );
 
         // JDABuilder vorbereiten, aber nicht starten
         String TOKEN = System.getenv("DISCORD_BOT_TOKEN");
+
+
+        // terminate all running lavalink server instances
+        String port = Helper.getLavaLinkPort();
+        List<String> pids = Helper.getPIDListenerByPort(port);
+        if (pids != null) pids.forEach(Helper::killProcessByPID);
+
+        // lavalink server startup
+        Helper.startLavaLink();
+
+        // client side lavalink init
         this.client = new LavalinkClient(
                 Helpers.getUserIdFromToken(TOKEN)
         );
-        // ??
+
         this.client.getLoadBalancer().addPenaltyProvider(new VoiceRegionPenaltyProvider());
 
         registerLavalinkListeners();
@@ -135,9 +160,10 @@ public class Bot {
     }
 
     private void registerLavalinkNodes() {
+        String uri = String.format("ws://%s:%s", Helper.getLavaLinkAddress(), Helper.getLavaLinkPort());
         List.of(client.addNode(new NodeOptions.Builder()
                 .setName("Local-Lavalink")
-                .setServerUri(URI.create("ws://127.0.0.1:2333"))
+                .setServerUri(URI.create(uri))
                 .setPassword("youshallnotpass")
                 .setRegionFilter(RegionGroup.EUROPE)
                 .setHttpTimeout(5000L)
@@ -187,6 +213,12 @@ public class Bot {
             jda.shutdownNow();
             jda = null;
         }
+
+        if (lavaLinkProcess != null) {
+            lavaLinkProcess.destroy();
+            System.out.println("Terminated LavaLink");
+        }
+
         this.running = false;
         this.startTime = null;
         System.out.println("Bot has been shut down.");
